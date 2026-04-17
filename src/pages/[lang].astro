@@ -1,0 +1,169 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { t, languages, langLabels, type Lang } from '../i18n/content';
+
+export function getStaticPaths() {
+  return languages.map((l) => ({ params: { lang: l } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+const featureIcons = [
+  // Wok / recipes
+  `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-2.21 0-4 .9-4 2v1c0 3.31 1.79 6 4 6s4-2.69 4-6v-1c0-1.1-1.79-2-4-2z"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 10c-2.5.5-4 1.5-4 2.5C4 14 7.58 15 12 15s8-1 8-2.5c0-1-.5-2-4-2.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v2m-3-1l1 1.5M15 5l-1 1.5"/></svg>`,
+  // Filter / categories
+  `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/></svg>`,
+  // Heart / favourites
+  `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>`,
+  // Bell / notifications
+  `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>`,
+  // Leaf / ingredients
+  `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21c0 0-8-4-8-12 4-1 8 1 8 1s4-2 8-1c0 8-8 12-8 12z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 21c0-4 0-8 0-12"/></svg>`,
+];
+---
+
+<Layout title="MyPetitWok — Asian recipes made simple" description={i.hero.tagline} lang={lang}>
+  <!-- Nav -->
+  <nav class="fixed top-0 w-full z-50 bg-[var(--color-bg)]/90 backdrop-blur-sm border-b border-gray-200/50">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href={`/${lang}`} class="flex items-center gap-2">
+        <img src="/icon.png" alt="MyPetitWok" class="w-9 h-9 rounded-lg" />
+        <span class="text-lg font-semibold text-[var(--color-brand)]">MyPetitWok</span>
+      </a>
+      <div class="flex items-center gap-6 text-sm">
+        <a href="#features" class="hidden sm:block text-[var(--color-text-muted)] hover:text-[var(--color-brand)] transition-colors">{i.nav.features}</a>
+        <a href="#" class="hidden sm:block text-[var(--color-text-muted)] hover:text-[var(--color-brand)] transition-colors">{i.nav.download}</a>
+        <div class="flex gap-1">
+          {languages.map((l) => (
+            <a
+              href={`/${l}`}
+              class={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                l === lang
+                  ? 'bg-[var(--color-brand)] text-white'
+                  : 'text-[var(--color-text-muted)] hover:bg-gray-200'
+              }`}
+            >
+              {langLabels[l]}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="pt-32 pb-20 px-6">
+    <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-16">
+      <!-- Left: title + tagline + store badges -->
+      <div class="flex-1 text-center md:text-left">
+        <div class="flex items-center gap-3 justify-center md:justify-start mb-6">
+          <img src="/icon.png" alt="MyPetitWok" class="w-16 h-16 rounded-2xl shadow-md" />
+          <h1 class="text-4xl sm:text-5xl font-bold hero-title">
+            My Petit Wok ( Cooking now)
+          </h1>
+        </div>
+        <p class="text-lg sm:text-xl text-[var(--color-text-muted)] leading-relaxed max-w-lg mx-auto md:mx-0">
+          {i.hero.tagline}
+        </p>
+        <!-- Store badges -->
+        <div class="mt-8 flex flex-wrap gap-3 justify-center md:justify-start">
+          <div class="bg-black text-white px-5 py-3 rounded-xl flex items-center gap-2 opacity-60">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            <div class="text-left">
+              <div class="text-[10px] leading-tight opacity-80">{i.hero.comingSoon}</div>
+              <div class="text-sm font-semibold leading-tight">App Store</div>
+            </div>
+          </div>
+          <div class="bg-black text-white px-5 py-3 rounded-xl flex items-center gap-2 opacity-60">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35m13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27m.91-.91L19.59 12l-1.86-2.21L14.27 13.25l3.45 3.96M6.05 2.66l10.76 6.22-2.27 2.27-8.49-8.49z"/></svg>
+            <div class="text-left">
+              <div class="text-[10px] leading-tight opacity-80">{i.hero.comingSoon}</div>
+              <div class="text-sm font-semibold leading-tight">Google Play</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Right: QR code -->
+      <div class="flex-shrink-0">
+        <div class="bg-white p-5 rounded-2xl shadow-md">
+          <!-- QR code placeholder — replace with actual QR image -->
+          <div class="w-36 h-36 bg-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
+            <div class="text-center text-[var(--color-text-muted)]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-1 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM17 14h3v3h-3zM14 17h3v3h-3zM17 20h3" />
+              </svg>
+              <span class="text-xs">QR Code</span>
+            </div>
+          </div>
+          <p class="text-xs text-[var(--color-text-muted)] mt-2 text-center">{i.hero.scanToPreview}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section class="py-20 px-6 bg-white">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-8 text-[var(--color-text)]">{i.story.title}</h2>
+      <div class="text-[var(--color-text-muted)] leading-relaxed text-lg whitespace-pre-line">
+        {i.story.text}
+      </div>
+    </div>
+  </section>
+
+  <!-- Features with app screenshots -->
+  <section id="features" class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-16 text-[var(--color-text)]">{i.features.title}</h2>
+      <div class="flex flex-col gap-24">
+        {i.features.items.map((item, idx) => (
+          <div class={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10`}>
+            <!-- App screenshot -->
+            <div class="flex-shrink-0">
+              {idx < 3 ? (
+                <img src={`/screenshots/feature-${idx + 1}.jpg`} alt="" class="w-[220px] h-[440px] object-cover rounded-2xl shadow-xl" />
+              ) : (
+                <div class="w-[220px] h-[440px] bg-gray-100 rounded-2xl shadow-xl flex items-center justify-center">
+                  <span class="text-xs text-[var(--color-text-muted)]">Screenshot {idx + 1}</span>
+                </div>
+              )}
+            </div>
+            <!-- Feature text -->
+            <div class="flex-1 text-center md:text-left">
+              <div class="text-[var(--color-brand)] mb-4" set:html={featureIcons[idx]} />
+              <p class="text-lg text-[var(--color-text)] leading-relaxed">{item}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- More features -->
+  <section class="py-20 px-6 bg-white">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12 text-[var(--color-text)]">{i.more.title}</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {i.more.items.map((item) => (
+          <div class="bg-[var(--color-bg)] rounded-2xl p-6 hover:shadow-md transition-shadow">
+            <h3 class="font-semibold text-[var(--color-brand)] mb-2">{item.label}</h3>
+            <p class="text-[var(--color-text-muted)] text-sm leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 px-6 border-t border-gray-200">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-brand)] font-medium hover:underline">{i.footer.email}</a>
+      <div class="mt-8 flex items-center justify-center gap-2 text-sm text-[var(--color-text-muted)]">
+        <img src="/icon.png" alt="" class="w-5 h-5 rounded" />
+        <span>&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</span>
+      </div>
+    </div>
+  </footer>
+</Layout>
