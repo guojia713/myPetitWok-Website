@@ -104,10 +104,17 @@ const featureIcons = [
 
   <!-- Story -->
   <section class="py-20 px-6 bg-white">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="text-3xl font-bold text-center mb-8 text-[var(--color-text)]">{i.story.title}</h2>
-      <div class="text-[var(--color-text-muted)] leading-relaxed text-lg whitespace-pre-line">
-        {i.story.text}
+    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-10">
+      <!-- Family photo placeholder -->
+      <div class="flex-shrink-0">
+        <img src="/family.png" alt="Family" class="w-[400px] h-[300px] object-cover rounded-2xl shadow-md" />
+      </div>
+      <!-- Text -->
+      <div class="flex-1">
+        <h2 class="text-3xl font-bold text-center md:text-left mb-8 text-[var(--color-text)]">{i.story.title}</h2>
+        <div class="text-[var(--color-text-muted)] leading-relaxed text-lg whitespace-pre-line">
+          {i.story.text}
+        </div>
       </div>
     </div>
   </section>
@@ -122,9 +129,9 @@ const featureIcons = [
             <!-- App screenshot -->
             <div class="flex-shrink-0">
               {idx < 3 ? (
-                <img src={`/screenshots/feature-${idx + 1}.jpg`} alt="" class="w-[220px] h-[440px] object-cover rounded-2xl shadow-xl" />
+                <img src={`/screenshots/feature-${idx + 1}.jpg`} alt="" class="w-[300px] h-[600px] object-cover rounded-2xl shadow-xl" />
               ) : (
-                <div class="w-[220px] h-[440px] bg-gray-100 rounded-2xl shadow-xl flex items-center justify-center">
+                <div class="w-[300px] h-[600px] bg-gray-100 rounded-2xl shadow-xl flex items-center justify-center">
                   <span class="text-xs text-[var(--color-text-muted)]">Screenshot {idx + 1}</span>
                 </div>
               )}
