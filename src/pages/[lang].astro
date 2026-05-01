@@ -53,7 +53,7 @@ const featureIcons = [
   </nav>
 
   <!-- Hero -->
-  <section class="pt-32 pb-20 px-6">
+  <section class="pt-32 pb-20 px-6 bg-white">
     <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-16">
       <!-- Left: title + tagline + store badges -->
       <div class="flex-1 text-center md:text-left">
@@ -94,25 +94,8 @@ const featureIcons = [
     </div>
   </section>
 
-  <!-- Story -->
-  <section class="py-20 px-6 bg-white">
-    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-10">
-      <!-- Family photo placeholder -->
-      <div class="flex-shrink-0">
-        <img src="/family.png" alt="Family" class="w-[400px] h-[300px] object-cover rounded-2xl shadow-md" />
-      </div>
-      <!-- Text -->
-      <div class="flex-1">
-        <h2 class="text-3xl font-bold text-center md:text-left mb-8 text-[var(--color-text)]">{i.story.title}</h2>
-        <div class="text-[var(--color-text-muted)] leading-relaxed text-lg whitespace-pre-line">
-          {i.story.text}
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Features with app screenshots -->
-  <section id="features" class="py-20 px-6">
+  <section id="features" class="py-20 px-6 bg-[var(--color-bg)]">
     <div class="max-w-5xl mx-auto">
       <h2 class="text-3xl font-bold text-center mb-16 text-[var(--color-text)]">{i.features.title}</h2>
       <div class="flex flex-col gap-24">
@@ -150,6 +133,23 @@ const featureIcons = [
             <p class="text-[var(--color-text-muted)] text-sm leading-relaxed">{item.desc}</p>
           </div>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section class="py-20 px-6 bg-white">
+    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-10">
+      <!-- Family photo -->
+      <div class="flex-shrink-0">
+        <img src="/family.png" alt="Family" class="w-[400px] h-[300px] object-cover rounded-2xl shadow-md" />
+      </div>
+      <!-- Text -->
+      <div class="flex-1">
+        <h2 class="text-3xl font-bold text-center md:text-left mb-8 text-[var(--color-text)]">{i.story.title}</h2>
+        <div class="text-[var(--color-text-muted)] leading-relaxed text-lg whitespace-pre-line">
+          {i.story.text}
+        </div>
       </div>
     </div>
   </section>
