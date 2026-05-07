@@ -41,7 +41,7 @@ const translations: Record<Lang, {
     hero: {
       tagline: 'Sweet, sour, spicy — vibrant Asian flavors made simple at home.',
       comingSoon: 'Coming Soon',
-      scanToPreview: 'Scan to preview',
+      scanToPreview: 'Test on Android with me',
     },
     story: {
       title: 'Our story',
@@ -50,22 +50,20 @@ const translations: Record<Lang, {
     features: {
       title: "What's inside",
       items: [
-        'Curated Asian recipes with ingredient guides and where to find them',
-        'Filter recipes by cuisine, category, and spice level to find exactly what you want',
-        'Save your favourite recipes and come back to them anytime',
-        'Get notified when new recipes are published',
-        'Introduction to Asian ingredients: what they are, how to use them, and where to find them',
+        'Explore recipes — authentic Asian dishes from Chinese, Thai, Vietnamese, Japanese & Korean kitchens, with step-by-step guides, reviews and detailed ingredients',
+        'Explore Asian ingredients — discover sauces, spices and more, with descriptions, where to buy, and online shopping links',
+        'Save your favourites — heart the recipes you love and find them in one tap',
       ],
     },
     more: {
       title: 'And also…',
       items: [
-        { label: 'Multilingual', desc: 'Available in English, French, and Chinese' },
-        { label: 'Offline mode', desc: 'Access your saved recipes even without internet' },
-        { label: 'Share recipes', desc: 'Send beautiful recipe cards to friends and family' },
-        { label: 'Ratings', desc: 'Rate recipes and see what the community loves' },
-        { label: 'Where to buy', desc: 'Links to online shops for hard-to-find ingredients' },
-        { label: 'Free & no ads', desc: 'A clean experience with no interruptions' },
+        { label: '3 languages', desc: 'Cook in English, French or Chinese — your choice' },
+        { label: 'Rate & review', desc: 'Share your cooking experience and photos with the community' },
+        { label: 'Share recipes', desc: 'Send recipes as text or export a printable PDF for the kitchen' },
+        { label: 'Push notifications', desc: 'Be the first to know when new recipes drop' },
+        { label: 'Where to buy', desc: 'Links to online shops for hard-to-find Asian ingredients' },
+        { label: '100% free', desc: 'All recipes and features, completely free' },
       ],
     },
     download: {
@@ -84,7 +82,7 @@ const translations: Record<Lang, {
     hero: {
       tagline: 'Sucré, acide, épicé — des saveurs asiatiques éclatantes, simples à préparer chez soi.',
       comingSoon: 'Bientôt disponible',
-      scanToPreview: 'Scanner pour découvrir',
+      scanToPreview: 'Testez sur Android avec moi',
     },
     story: {
       title: 'Notre histoire',
@@ -93,22 +91,20 @@ const translations: Record<Lang, {
     features: {
       title: 'Ce que vous trouverez',
       items: [
-        "Des recettes asiatiques sélectionnées avec guides d'ingrédients et où les trouver",
-        'Filtrez les recettes par cuisine, catégorie et niveau de piment pour trouver exactement ce que vous voulez',
-        'Sauvegardez vos recettes favorites et retrouvez-les quand vous voulez',
-        'Recevez une notification à chaque nouvelle recette publiée',
-        'Découvrez les ingrédients asiatiques : ce qu\'ils sont, comment les utiliser et où les trouver',
+        'Explorez les recettes — des plats asiatiques authentiques chinois, thaïlandais, vietnamiens, japonais et coréens, avec guides pas à pas, avis et ingrédients détaillés',
+        'Explorez les ingrédients asiatiques — découvrez sauces, épices et plus, avec descriptions, où les acheter et liens de boutiques en ligne',
+        'Sauvegardez vos favoris — ajoutez un cœur et retrouvez-les en un clic',
       ],
     },
     more: {
       title: 'Et aussi…',
       items: [
-        { label: 'Multilingue', desc: 'Disponible en anglais, français et chinois' },
-        { label: 'Mode hors-ligne', desc: 'Consultez vos recettes sauvegardées sans connexion' },
-        { label: 'Partage de recettes', desc: 'Envoyez de jolies fiches recettes à vos proches' },
-        { label: 'Notes', desc: 'Notez les recettes et découvrez les préférées de la communauté' },
-        { label: 'Où acheter', desc: 'Liens vers des boutiques en ligne pour les ingrédients rares' },
-        { label: 'Gratuit et sans pub', desc: 'Une expérience fluide, sans interruption' },
+        { label: '3 langues', desc: 'Cuisinez en français, anglais ou chinois — à vous de choisir' },
+        { label: 'Avis & photos', desc: 'Partagez votre expérience culinaire et vos photos avec la communauté' },
+        { label: 'Partage de recettes', desc: 'Envoyez vos recettes par message ou exportez un PDF imprimable' },
+        { label: 'Notifications', desc: 'Soyez prévenu dès qu\'une nouvelle recette est publiée' },
+        { label: 'Où acheter', desc: 'Liens vers des boutiques en ligne pour les ingrédients introuvables' },
+        { label: '100% gratuit', desc: 'Toutes les recettes et fonctionnalités, entièrement gratuites' },
       ],
     },
     download: {
@@ -127,7 +123,7 @@ const translations: Record<Lang, {
     hero: {
       tagline: '酸甜苦辣，一应俱全 — 在家轻松烹饪地道亚洲美食。',
       comingSoon: '即将上线',
-      scanToPreview: '扫码预览',
+      scanToPreview: '扫码在安卓上体验',
     },
     story: {
       title: '我们的故事',
@@ -136,22 +132,20 @@ const translations: Record<Lang, {
     features: {
       title: '功能介绍',
       items: [
-        '精选亚洲菜谱，附食材指南及购买渠道',
-        '按菜系、分类和辣度筛选菜谱，精准找到你想要的',
-        '收藏喜爱的菜谱，随时查看',
-        '新菜谱上线时，第一时间收到通知',
-        '亚洲食材介绍：了解它们是什么、如何使用以及去哪里购买',
+        '探索菜谱 — 中餐、泰餐、越南菜、日料和韩餐，附详细步骤指导、用户评价和食材清单',
+        '探索亚洲食材 — 酱料、香料等详细介绍，告诉你去哪买，还有在线购买链接',
+        '收藏你的最爱 — 一键收藏，随时找到心仪菜谱',
       ],
     },
     more: {
       title: '更多亮点',
       items: [
-        { label: '多语言', desc: '支持中文、英文和法文' },
-        { label: '离线模式', desc: '没有网络也能查看已保存的菜谱' },
-        { label: '分享菜谱', desc: '将精美菜谱卡片分享给亲朋好友' },
-        { label: '评分', desc: '为菜谱评分，看看大家最喜欢哪道菜' },
-        { label: '哪里买', desc: '提供在线购买链接，轻松找到特色食材' },
-        { label: '免费无广告', desc: '干净清爽的使用体验' },
+        { label: '三种语言', desc: '支持中文、英文和法文，随心切换' },
+        { label: '评价与晒图', desc: '分享你的烹饪体验和美食照片' },
+        { label: '分享菜谱', desc: '发送菜谱文字或导出可打印的PDF' },
+        { label: '推送通知', desc: '新菜谱上线，第一时间知道' },
+        { label: '哪里买', desc: '提供在线购买链接，轻松找到亚洲特色食材' },
+        { label: '完全免费', desc: '所有菜谱和功能，全部免费' },
       ],
     },
     download: {
