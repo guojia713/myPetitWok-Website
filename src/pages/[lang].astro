@@ -173,6 +173,11 @@ const featureIcons = [
     <div class="max-w-4xl mx-auto text-center">
       <p class="text-[var(--color-text-muted)] mb-2 text-lg">{i.footer.contact}</p>
       <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] text-lg font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6">
+        <a href={`/${lang}/privacy`} class="text-[var(--color-text-muted)] text-sm hover:text-[var(--color-logo-red)] hover:underline">
+          {lang === 'fr' ? 'Politique de confidentialité' : lang === 'zh' ? '隐私政策' : 'Privacy Policy'}
+        </a>
+      </div>
       <div class="mt-8 flex items-center justify-center gap-2 text-base text-[var(--color-text-muted)]">
         <img src="/icon.png" alt="" class="w-7 h-7 rounded" />
         <span>&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</span>
