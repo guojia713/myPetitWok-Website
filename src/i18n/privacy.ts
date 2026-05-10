@@ -20,7 +20,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '1. Who we are',
         body:
-          'MyPetitWok is operated by Jia Guo, based in France. You can contact us at guojia713@gmail.com for any privacy-related question or to exercise your rights.',
+          'MyPetitWok is operated by My Petit Wok, a French micro-entreprise registered in France. You can contact us at hello@mypetitwok.com for any privacy-related question or to exercise your rights.',
       },
       {
         heading: '2. Data we collect',
@@ -55,7 +55,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '8. Your rights',
         body:
-          'Under GDPR you have the right to access, rectify, delete, restrict, port, or object to the processing of your personal data, and to withdraw consent. You can delete your account at any time from the app, or contact us at guojia713@gmail.com. You can also lodge a complaint with the French data protection authority (CNIL, www.cnil.fr).',
+          'Under GDPR you have the right to access, rectify, delete, restrict, port, or object to the processing of your personal data, and to withdraw consent. You can delete your account at any time from the app, or contact us at hello@mypetitwok.com. You can also lodge a complaint with the French data protection authority (CNIL, www.cnil.fr).',
       },
       {
         heading: '9. Children',
@@ -74,7 +74,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       },
       {
         heading: '12. Contact',
-        body: 'For any question about this policy or your personal data: guojia713@gmail.com.',
+        body: 'For any question about this policy or your personal data: hello@mypetitwok.com.',
       },
     ],
     back: '← Back to home',
@@ -88,7 +88,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '1. Qui sommes-nous',
         body:
-          "MyPetitWok est édité par Jia Guo, basé en France. Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez-nous à guojia713@gmail.com.",
+          "MyPetitWok est édité par My Petit Wok, micro-entreprise immatriculée en France. Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez-nous à hello@mypetitwok.com.",
       },
       {
         heading: '2. Données collectées',
@@ -123,7 +123,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '8. Vos droits',
         body:
-          "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression, de limitation, de portabilité et d'opposition au traitement de vos données, ainsi que du droit de retirer votre consentement. Vous pouvez supprimer votre compte directement depuis l'application, ou nous écrire à guojia713@gmail.com. Vous pouvez également introduire une réclamation auprès de la CNIL (www.cnil.fr).",
+          "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression, de limitation, de portabilité et d'opposition au traitement de vos données, ainsi que du droit de retirer votre consentement. Vous pouvez supprimer votre compte directement depuis l'application, ou nous écrire à hello@mypetitwok.com. Vous pouvez également introduire une réclamation auprès de la CNIL (www.cnil.fr).",
       },
       {
         heading: '9. Enfants',
@@ -142,7 +142,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       },
       {
         heading: '12. Contact',
-        body: "Pour toute question sur cette politique ou vos données personnelles : guojia713@gmail.com.",
+        body: "Pour toute question sur cette politique ou vos données personnelles : hello@mypetitwok.com.",
       },
     ],
     back: '← Retour à l\'accueil',
@@ -156,7 +156,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '1. 关于我们',
         body:
-          'MyPetitWok 由位于法国的 Jia Guo 运营。如有任何隐私相关问题或需行使您的权利，请通过 guojia713@gmail.com 联系我们。',
+          'MyPetitWok 由 My Petit Wok（在法国注册的微型企业 micro-entreprise）运营。如有任何隐私相关问题或需行使您的权利，请通过 hello@mypetitwok.com 联系我们。',
       },
       {
         heading: '2. 我们收集的数据',
@@ -191,7 +191,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '8. 您的权利',
         body:
-          '根据 GDPR，您有权访问、更正、删除、限制、可携带和反对处理您的个人数据，并有权撤回同意。您可以随时从应用内删除您的账户，或通过 guojia713@gmail.com 联系我们。您还可以向法国数据保护机构（CNIL，www.cnil.fr）提出投诉。',
+          '根据 GDPR，您有权访问、更正、删除、限制、可携带和反对处理您的个人数据，并有权撤回同意。您可以随时从应用内删除您的账户，或通过 hello@mypetitwok.com 联系我们。您还可以向法国数据保护机构（CNIL，www.cnil.fr）提出投诉。',
       },
       {
         heading: '9. 儿童',
@@ -210,7 +210,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       },
       {
         heading: '12. 联系方式',
-        body: '关于本政策或您的个人数据的任何问题，请联系：guojia713@gmail.com。',
+        body: '关于本政策或您的个人数据的任何问题，请联系：hello@mypetitwok.com。',
       },
     ],
     back: '← 返回首页',
