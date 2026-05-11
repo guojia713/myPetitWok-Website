@@ -98,23 +98,23 @@ const featureIcons = [
         {i.features.items.map((item, idx) => (
           <div class={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10`}>
             <!-- App screenshot(s) -->
-            <div class="flex-shrink-0 flex gap-4">
+            <div class="flex-shrink-0 flex flex-col sm:flex-row gap-4 items-center">
               {idx === 0 ? (
                 <>
                   <button class="photo-trigger" type="button" data-fullscreen-photo="/screenshots/feature-1.jpg" aria-label="Open screenshot 1 full screen">
-                    <img src="/screenshots/feature-1.jpg" alt="" class="w-[220px] h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
+                    <img src="/screenshots/feature-1.jpg" alt="" class="w-[180px] h-[360px] sm:w-[220px] sm:h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
                   </button>
                   <button class="photo-trigger" type="button" data-fullscreen-photo="/screenshots/feature-1.1.png" aria-label="Open screenshot 1.1 full screen">
-                    <img src="/screenshots/feature-1.1.png" alt="" class="w-[220px] h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
+                    <img src="/screenshots/feature-1.1.png" alt="" class="w-[180px] h-[360px] sm:w-[220px] sm:h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
                   </button>
                 </>
               ) : idx === 1 ? (
                 <>
                   <button class="photo-trigger" type="button" data-fullscreen-photo="/screenshots/feature-2.jpg" aria-label="Open screenshot 2 full screen">
-                    <img src="/screenshots/feature-2.jpg" alt="" class="w-[220px] h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
+                    <img src="/screenshots/feature-2.jpg" alt="" class="w-[180px] h-[360px] sm:w-[220px] sm:h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
                   </button>
                   <button class="photo-trigger" type="button" data-fullscreen-photo="/screenshots/feature-2.1.jpg" aria-label="Open screenshot 2.1 full screen">
-                    <img src="/screenshots/feature-2.1.jpg" alt="" class="w-[220px] h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
+                    <img src="/screenshots/feature-2.1.jpg" alt="" class="w-[180px] h-[360px] sm:w-[220px] sm:h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
                   </button>
                 </>
               ) : (
