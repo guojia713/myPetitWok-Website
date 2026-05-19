@@ -10,6 +10,7 @@ export const langLabels: Record<Lang, string> = {
 export const defaultLang: Lang = 'en';
 
 const translations: Record<Lang, {
+  pageTitle: string;
   nav: { features: string; download: string };
   hero: {
     tagline: string;
@@ -37,6 +38,7 @@ const translations: Record<Lang, {
   };
 }> = {
   en: {
+    pageTitle: 'MyPetitWok — Asian Recipes Mobile App',
     nav: { features: 'Features', download: 'Download' },
     hero: {
       tagline: 'Sweet, sour, spicy — vibrant Asian flavors made simple at home.',
@@ -78,6 +80,7 @@ const translations: Record<Lang, {
     },
   },
   fr: {
+    pageTitle: 'MyPetitWok — Application Mobile de Recettes Asiatiques',
     nav: { features: 'Fonctions', download: 'Télécharger' },
     hero: {
       tagline: 'Sucré, acide, épicé — des saveurs asiatiques éclatantes, simples à préparer chez soi.',
@@ -119,6 +122,7 @@ const translations: Record<Lang, {
     },
   },
   zh: {
+    pageTitle: 'MyPetitWok — 亚洲食谱手机应用',
     nav: { features: '功能', download: '下载' },
     hero: {
       tagline: '酸甜苦辣，一应俱全 — 在家轻松烹饪地道亚洲美食。',
