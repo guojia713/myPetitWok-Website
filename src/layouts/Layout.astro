@@ -42,6 +42,28 @@ const langs = ['en', 'fr', 'zh'];
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>{title}</title>
 
+    <!-- Structured data: MobileApplication -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "MobileApplication",
+      "name": "MyPetitWok",
+      "url": `https://mypetitwok.com/${lang}`,
+      "description": description,
+      "image": "https://mypetitwok.com/icon.png",
+      "applicationCategory": "FoodApplication",
+      "operatingSystem": "iOS, Android",
+      "inLanguage": ["en", "fr", "zh"],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "author": {
+        "@type": "Person",
+        "email": "hello@mypetitwok.com"
+      }
+    })} />
+
     <!-- Google Analytics (GA4) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-MP5NT96945"></script>
     <script is:inline>
