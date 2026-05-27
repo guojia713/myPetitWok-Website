@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { t, languages, langLabels, type Lang } from '../i18n/content';
+import { t, languages, langLabels, launchDate, type Lang } from '../i18n/content';
 
 export function getStaticPaths() {
   return languages.map((l) => ({ params: { lang: l } }));
@@ -9,32 +9,68 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const i = t(lang);
 
+// App screenshots paired to each feature deep-dive
+const featureShots: string[][] = [
+  ['/screenshots/feature-1.jpg', '/screenshots/feature-1.1.png'],
+  ['/screenshots/feature-2.jpg', '/screenshots/feature-2.1.jpg'],
+  ['/screenshots/feature-3.jpg'],
+];
+
 const featureIcons = [
   // Wok / recipes
-  `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-2.21 0-4 .9-4 2v1c0 3.31 1.79 6 4 6s4-2.69 4-6v-1c0-1.1-1.79-2-4-2z"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 10c-2.5.5-4 1.5-4 2.5C4 14 7.58 15 12 15s8-1 8-2.5c0-1-.5-2-4-2.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v2m-3-1l1 1.5M15 5l-1 1.5"/></svg>`,
-  // Filter / categories
-  `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-2.21 0-4 .9-4 2v1c0 3.31 1.79 6 4 6s4-2.69 4-6v-1c0-1.1-1.79-2-4-2z"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 10c-2.5.5-4 1.5-4 2.5C4 14 7.58 15 12 15s8-1 8-2.5c0-1-.5-2-4-2.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v2m-3-1l1 1.5M15 5l-1 1.5"/></svg>`,
+  // Ingredients / sauces
+  `<svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3h6m-5 0v3.2a4 4 0 01-.6 2.1l-2.8 4.5A3 3 0 008.7 18h6.6a3 3 0 002.1-4.2l-2.8-4.5a4 4 0 01-.6-2.1V3"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 14h10"/></svg>`,
   // Heart / favourites
-  `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>`,
+];
+
+const storeBadges = [
+  {
+    name: 'App Store',
+    icon: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>`,
+  },
+  {
+    name: 'Google Play',
+    icon: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35m13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27m.91-.91L19.59 12l-1.86-2.21L14.27 13.25l3.45 3.96M6.05 2.66l10.76 6.22-2.27 2.27-8.49-8.49z"/></svg>`,
+  },
 ];
 ---
 
 <Layout title={i.pageTitle} description={i.hero.tagline} lang={lang}>
+  <!-- Launch countdown banner -->
+  <div class="launch-banner text-white">
+    <div class="max-w-6xl mx-auto px-6 py-2.5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-center">
+      <span class="font-semibold text-sm sm:text-base">{i.launch.prefix}</span>
+      <div id="countdown" class="countdown" data-launch={launchDate}>
+        <span class="cd-unit"><b data-cd="days">--</b><i>{i.countdown.days}</i></span>
+        <span class="cd-sep">:</span>
+        <span class="cd-unit"><b data-cd="hours">--</b><i>{i.countdown.hours}</i></span>
+        <span class="cd-sep">:</span>
+        <span class="cd-unit"><b data-cd="minutes">--</b><i>{i.countdown.minutes}</i></span>
+        <span class="cd-sep">:</span>
+        <span class="cd-unit"><b data-cd="seconds">--</b><i>{i.countdown.seconds}</i></span>
+      </div>
+      <span id="countdown-live" class="font-semibold text-sm sm:text-base hidden">{i.launch.live}</span>
+    </div>
+  </div>
+
   <!-- Nav -->
-  <nav class="fixed top-0 w-full z-50 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-brand)]/15">
+  <nav class="sticky top-0 w-full z-50 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-brand)]/15">
     <div class="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
       <a href={`/${lang}`} class="flex items-center gap-2">
-        <img src="/icon.png" alt="MyPetitWok" class="w-11 h-11 rounded-xl shadow-sm" />
-        <span class="text-xl font-bold text-[var(--color-brand)]">MyPetitWok</span>
+        <img src="/icon.png" alt="MyPetitWok" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl shadow-sm" />
+        <span class="text-lg sm:text-xl font-bold text-[var(--color-brand)]">MyPetitWok</span>
       </a>
-      <div class="flex items-center gap-6 text-base">
+      <div class="flex items-center gap-4 sm:gap-6 text-base">
         <a href="#features" class="hidden sm:block font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.features}</a>
+        <a href="#story" class="hidden sm:block font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.story}</a>
         <a href="#download" class="hidden sm:block font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.download}</a>
         <div class="flex gap-1">
           {languages.map((l) => (
             <a
               href={`/${l}`}
-              class={`px-3 py-1.5 rounded-full text-sm font-bold transition-colors ${
+              class={`px-2.5 sm:px-3 py-1.5 rounded-full text-sm font-bold transition-colors ${
                 l === lang
                   ? 'bg-[var(--color-logo-red)] text-white'
                   : 'text-[var(--color-text-muted)] hover:bg-[var(--color-brand)]/10'
@@ -49,77 +85,84 @@ const featureIcons = [
   </nav>
 
   <!-- Hero -->
-  <section class="pt-34 pb-20 px-6 bg-[var(--color-cream)]">
-    <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-16">
+  <section class="pt-14 pb-20 px-6 bg-[var(--color-cream)]">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-16">
       <!-- Left: title + tagline + store badges -->
       <div class="flex-1 text-center md:text-left">
         <div class="flex items-center gap-3 justify-center md:justify-start mb-6">
-          <img src="/icon.png" alt="MyPetitWok" class="w-18 h-18 rounded-2xl shadow-md" />
-          <h1 class="text-3xl sm:text-4xl font-extrabold hero-title leading-tight">
-            My Petit Wok
-          </h1>
+          <img src="/icon.png" alt="MyPetitWok" class="w-16 h-16 rounded-2xl shadow-md" />
+          <span class="text-2xl font-extrabold text-[var(--color-brand)]">My Petit Wok</span>
         </div>
+        <span class="inline-block bg-[var(--color-logo-red)]/10 text-[var(--color-logo-red)] font-bold text-sm px-4 py-1.5 rounded-full mb-5">{i.hero.launchPill}</span>
+        <h1 class="text-4xl sm:text-5xl font-extrabold hero-title leading-tight mb-5">
+          {i.hero.headline}
+        </h1>
         <p class="text-xl sm:text-2xl text-[var(--color-text)] leading-relaxed max-w-2xl mx-auto md:mx-0 font-medium">
           {i.hero.tagline}
         </p>
         <!-- Store badges -->
         <div id="download" class="mt-8 flex flex-wrap gap-3 justify-center md:justify-start scroll-mt-28">
-          <div class="bg-[var(--color-brand-dark)] text-white px-5 py-3 rounded-xl flex items-center gap-2 opacity-75">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-            <div class="text-left">
-              <div class="text-xs leading-tight opacity-85">{i.hero.comingSoon}</div>
-              <div class="text-base font-semibold leading-tight">App Store</div>
+          {storeBadges.map((b) => (
+            <div class="bg-[var(--color-brand-dark)] text-white px-5 py-3 rounded-xl flex items-center gap-2.5">
+              <Fragment set:html={b.icon} />
+              <div class="text-left">
+                <div class="text-xs leading-tight opacity-85">{i.hero.badgeWhen}</div>
+                <div class="text-base font-semibold leading-tight">{b.name}</div>
+              </div>
             </div>
-          </div>
-          <div class="bg-[var(--color-brand-dark)] text-white px-5 py-3 rounded-xl flex items-center gap-2 opacity-75">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35m13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27m.91-.91L19.59 12l-1.86-2.21L14.27 13.25l3.45 3.96M6.05 2.66l10.76 6.22-2.27 2.27-8.49-8.49z"/></svg>
-            <div class="text-left">
-              <div class="text-xs leading-tight opacity-85">{i.hero.comingSoon}</div>
-              <div class="text-base font-semibold leading-tight">Google Play</div>
-            </div>
-          </div>
+          ))}
         </div>
+        <!-- Trust line -->
+        <ul class="mt-6 flex flex-wrap gap-x-6 gap-y-2 justify-center md:justify-start text-[var(--color-text-muted)] font-semibold">
+          {i.hero.trust.map((point) => (
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-[var(--color-brand)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              {point}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <!-- Right: hero phone -->
+      <div class="flex-shrink-0">
+        <button class="photo-trigger" type="button" data-fullscreen-photo="/screenshots/feature-1.jpg" aria-label="Open app preview full screen">
+          <img src="/screenshots/feature-1.jpg" alt="MyPetitWok app preview" class="phone-shot phone-shot--hero" />
+        </button>
       </div>
     </div>
   </section>
 
+  <!-- Overview -->
+  <section class="py-16 px-6 bg-[var(--color-bg)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-4xl font-extrabold mb-4 text-[var(--color-brand-dark)]">{i.overview.title}</h2>
+      <p class="text-xl sm:text-2xl text-[var(--color-text-muted)] leading-relaxed">{i.overview.subtitle}</p>
+      <p class="mt-6 inline-flex items-center gap-2.5 bg-[var(--color-brand)]/10 text-[var(--color-brand-dark)] font-semibold text-lg px-5 py-2.5 rounded-full">
+        <svg class="w-5 h-5 text-[var(--color-logo-red)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-3.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636"/><circle cx="12" cy="12" r="3.5"/></svg>
+        {i.overview.growth}
+      </p>
+    </div>
+  </section>
+
   <!-- Features with app screenshots -->
-  <section id="features" class="py-20 px-6 bg-[var(--color-bg)]">
+  <section id="features" class="pb-20 px-6 bg-[var(--color-bg)] scroll-mt-24">
     <div class="max-w-5xl mx-auto">
       <h2 class="text-4xl font-extrabold text-center mb-16 text-[var(--color-brand-dark)]">{i.features.title}</h2>
       <div class="flex flex-col gap-24">
         {i.features.items.map((item, idx) => (
-          <div class={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10`}>
+          <div class={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-14`}>
             <!-- App screenshot(s) -->
-            <div class="flex-shrink-0 flex flex-col sm:flex-row gap-4 items-center">
-              {idx === 0 ? (
-                <>
-                  <button class="photo-trigger" type="button" data-fullscreen-photo="/screenshots/feature-1.jpg" aria-label="Open screenshot 1 full screen">
-                    <img src="/screenshots/feature-1.jpg" alt="" class="w-[180px] h-[360px] sm:w-[220px] sm:h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
-                  </button>
-                  <button class="photo-trigger" type="button" data-fullscreen-photo="/screenshots/feature-1.1.png" aria-label="Open screenshot 1.1 full screen">
-                    <img src="/screenshots/feature-1.1.png" alt="" class="w-[180px] h-[360px] sm:w-[220px] sm:h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
-                  </button>
-                </>
-              ) : idx === 1 ? (
-                <>
-                  <button class="photo-trigger" type="button" data-fullscreen-photo="/screenshots/feature-2.jpg" aria-label="Open screenshot 2 full screen">
-                    <img src="/screenshots/feature-2.jpg" alt="" class="w-[180px] h-[360px] sm:w-[220px] sm:h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
-                  </button>
-                  <button class="photo-trigger" type="button" data-fullscreen-photo="/screenshots/feature-2.1.jpg" aria-label="Open screenshot 2.1 full screen">
-                    <img src="/screenshots/feature-2.1.jpg" alt="" class="w-[180px] h-[360px] sm:w-[220px] sm:h-[440px] object-cover rounded-2xl shadow-xl border-4 border-white" />
-                  </button>
-                </>
-              ) : (
-                <button class="photo-trigger" type="button" data-fullscreen-photo={`/screenshots/feature-${idx + 1}.jpg`} aria-label={`Open screenshot ${idx + 1} full screen`}>
-                  <img src={`/screenshots/feature-${idx + 1}.jpg`} alt="" class="w-[300px] h-[600px] object-cover rounded-2xl shadow-xl border-4 border-white" />
+            <div class="flex-shrink-0 flex flex-col sm:flex-row gap-5 items-center justify-center">
+              {featureShots[idx].map((shot, sIdx) => (
+                <button class="photo-trigger" type="button" data-fullscreen-photo={shot} aria-label={`Open screenshot ${idx + 1}.${sIdx + 1} full screen`}>
+                  <img src={shot} alt="" class="phone-shot" />
                 </button>
-              )}
+              ))}
             </div>
             <!-- Feature text -->
             <div class="flex-1 text-center md:text-left">
-              <div class="text-[var(--color-logo-red)] mb-4" set:html={featureIcons[idx]} />
-              <p class="text-xl sm:text-2xl text-[var(--color-text)] leading-relaxed font-medium">{item}</p>
+              <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--color-logo-red)]/10 text-[var(--color-logo-red)] mb-5" set:html={featureIcons[idx]} />
+              <h3 class="text-2xl sm:text-3xl font-extrabold text-[var(--color-brand-dark)] mb-3">{item.heading}</h3>
+              <p class="text-xl text-[var(--color-text-muted)] leading-relaxed">{item.text}</p>
             </div>
           </div>
         ))}
@@ -143,12 +186,12 @@ const featureIcons = [
   </section>
 
   <!-- Story -->
-  <section class="py-20 px-6 bg-white">
+  <section id="story" class="py-20 px-6 bg-white scroll-mt-24">
     <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-10">
       <!-- Family photo -->
       <div class="flex-shrink-0">
         <button class="photo-trigger" type="button" data-fullscreen-photo="/family.png" aria-label="Open family photo full screen">
-          <img src="/family.png" alt="Family" class="w-[400px] h-[300px] object-cover rounded-2xl shadow-md border-4 border-[var(--color-cream)]" />
+          <img src="/family.png" alt="Family" class="w-[400px] max-w-full h-[300px] object-cover rounded-2xl shadow-md border-4 border-[var(--color-cream)]" />
         </button>
       </div>
       <!-- Text -->
@@ -158,6 +201,26 @@ const featureIcons = [
           {i.story.text}
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="py-20 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-4xl font-extrabold mb-4">{i.download.title}</h2>
+      <p class="text-xl sm:text-2xl text-white/90 leading-relaxed mb-8">{i.download.subtitle}</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        {storeBadges.map((b) => (
+          <div class="bg-white text-[var(--color-brand-dark)] px-5 py-3 rounded-xl flex items-center gap-2.5">
+            <Fragment set:html={b.icon} />
+            <div class="text-left">
+              <div class="text-xs leading-tight opacity-70">{i.hero.badgeWhen}</div>
+              <div class="text-base font-semibold leading-tight">{b.name}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p class="mt-6 text-white/80 text-base">{i.download.webNote}</p>
     </div>
   </section>
 
@@ -183,6 +246,50 @@ const featureIcons = [
     <img src="" alt="" data-lightbox-image />
   </dialog>
 
+  <!-- Launch countdown -->
+  <script>
+    const root = document.getElementById('countdown');
+    const liveEl = document.getElementById('countdown-live');
+
+    if (root) {
+      const target = new Date(root.dataset.launch ?? '').getTime();
+      const fields: Record<string, HTMLElement | null> = {
+        days: root.querySelector('[data-cd="days"]'),
+        hours: root.querySelector('[data-cd="hours"]'),
+        minutes: root.querySelector('[data-cd="minutes"]'),
+        seconds: root.querySelector('[data-cd="seconds"]'),
+      };
+
+      const pad = (n: number) => String(n).padStart(2, '0');
+
+      const tick = () => {
+        const diff = target - Date.now();
+        if (diff <= 0) {
+          root.classList.add('hidden');
+          liveEl?.classList.remove('hidden');
+          return false;
+        }
+        const totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        if (fields.days) fields.days.textContent = String(days);
+        if (fields.hours) fields.hours.textContent = pad(hours);
+        if (fields.minutes) fields.minutes.textContent = pad(minutes);
+        if (fields.seconds) fields.seconds.textContent = pad(seconds);
+        return true;
+      };
+
+      if (tick()) {
+        const timer = setInterval(() => {
+          if (!tick()) clearInterval(timer);
+        }, 1000);
+      }
+    }
+  </script>
+
+  <!-- Photo lightbox -->
   <script>
     const dialog = document.querySelector<HTMLDialogElement>('.photo-lightbox');
     const lightboxImage = document.querySelector<HTMLImageElement>('[data-lightbox-image]');
