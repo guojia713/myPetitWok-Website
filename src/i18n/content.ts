@@ -14,6 +14,7 @@ export const launchDate = '2026-07-13T00:00:00';
 
 const translations: Record<Lang, {
   pageTitle: string;
+  metaDescription: string;
   nav: { features: string; story: string; download: string };
   launch: { prefix: string; live: string };
   countdown: { days: string; hours: string; minutes: string; seconds: string };
@@ -46,7 +47,8 @@ const translations: Record<Lang, {
   };
 }> = {
   en: {
-    pageTitle: 'MyPetitWok - Authentic Asian Recipes, Made Simple',
+    pageTitle: 'MyPetitWok — Free Asian Recipe App for Authentic Home Cooking',
+    metaDescription: 'Discover authentic Chinese, Thai, Vietnamese, Japanese and Korean recipes. MyPetitWok helps you cook Asian food at home with recipes, ingredient guides and shopping tips. Launching July 13, 2026 — free on iPhone & Android.',
     nav: { features: 'Features', story: 'Our story', download: 'Get the app' },
     launch: {
       prefix: 'MyPetitWok launches July 13, 2026 - free on iPhone & Android',
@@ -109,7 +111,8 @@ const translations: Record<Lang, {
     },
   },
   fr: {
-    pageTitle: 'MyPetitWok - Recettes Asiatiques Authentiques, en Toute Simplicité',
+    pageTitle: 'MyPetitWok — Application gratuite de recettes asiatiques maison',
+    metaDescription: 'Découvrez des recettes asiatiques authentiques — chinoises, thaïes, vietnamiennes, japonaises et coréennes. MyPetitWok vous aide à cuisiner asiatique chez vous avec recettes, guide des ingrédients et conseils pour les courses. Lancement le 13 juillet 2026 — gratuit sur iPhone et Android.',
     nav: { features: 'Fonctions', story: 'Notre histoire', download: "Obtenir l'app" },
     launch: {
       prefix: 'MyPetitWok arrive le 13 juillet 2026 - gratuit sur iPhone & Android',
@@ -172,7 +175,8 @@ const translations: Record<Lang, {
     },
   },
   zh: {
-    pageTitle: 'MyPetitWok 小锅 - 地道亚洲美食，化繁为简',
+    pageTitle: 'MyPetitWok 小锅 — 免费亚洲菜谱应用',
+    metaDescription: '发现地道的中餐、泰餐、越南菜、日料和韩餐菜谱。小锅 MyPetitWok 帮你在家轻松烹饪亚洲美食，提供菜谱、食材指南和购物建议。2026 年 7 月 13 日上线 — iPhone 与安卓免费下载。',
     nav: { features: '功能', story: '我们的故事', download: '下载应用' },
     launch: {
       prefix: '小锅将于 2026 年 7 月 13 日上线 - iPhone 与安卓免费下载',

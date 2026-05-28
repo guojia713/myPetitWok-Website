@@ -64,6 +64,18 @@ const langs = ['en', 'fr', 'zh'];
       }
     })} />
 
+    <!-- Structured data: Organization -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "MyPetitWok",
+      "alternateName": "小锅",
+      "url": siteUrl,
+      "logo": `${siteUrl}/icon.png`,
+      "email": "hello@mypetitwok.com",
+      "description": "Maker of MyPetitWok, a free mobile app for authentic Asian recipes, ingredient guides and shopping help."
+    })} />
+
     <!-- Google Analytics (GA4) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-MP5NT96945"></script>
     <script is:inline>

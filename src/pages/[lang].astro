@@ -37,7 +37,7 @@ const storeBadges = [
 ];
 ---
 
-<Layout title={i.pageTitle} description={i.hero.tagline} lang={lang}>
+<Layout title={i.pageTitle} description={i.metaDescription} lang={lang}>
   <!-- Launch countdown banner -->
   <div class="launch-banner text-white">
     <div class="max-w-6xl mx-auto px-6 py-2.5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-center">
@@ -51,7 +51,7 @@ const storeBadges = [
         <span class="cd-sep">:</span>
         <span class="cd-unit"><b data-cd="seconds">--</b><i>{i.countdown.seconds}</i></span>
       </div>
-      <span id="countdown-live" class="font-semibold text-sm sm:text-base hidden">{i.launch.live}</span>
+      <span id="countdown-live" class="font-semibold text-sm sm:text-base hidden" data-live-text={i.launch.live}></span>
     </div>
   </div>
 
@@ -266,7 +266,10 @@ const storeBadges = [
         const diff = target - Date.now();
         if (diff <= 0) {
           root.classList.add('hidden');
-          liveEl?.classList.remove('hidden');
+          if (liveEl) {
+            liveEl.textContent = liveEl.dataset.liveText ?? '';
+            liveEl.classList.remove('hidden');
+          }
           return false;
         }
         const totalSeconds = Math.floor(diff / 1000);

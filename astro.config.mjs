@@ -7,7 +7,18 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://mypetitwok.com',
   output: 'static',
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      i18n: {
+        defaultLocale: 'en',
+        locales: {
+          en: 'en',
+          fr: 'fr',
+          zh: 'zh',
+        },
+      },
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()]
   }
