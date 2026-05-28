@@ -1,6 +1,14 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import { t, languages, langLabels, launchDate, type Lang } from '../i18n/content';
+import iconImg from '../assets/icon.png';
+import familyImg from '../assets/family.png';
+import feature1 from '../assets/screenshots/feature-1.jpg';
+import feature1_1 from '../assets/screenshots/feature-1.1.png';
+import feature2 from '../assets/screenshots/feature-2.jpg';
+import feature2_1 from '../assets/screenshots/feature-2.1.jpg';
+import feature3 from '../assets/screenshots/feature-3.jpg';
 
 export function getStaticPaths() {
   return languages.map((l) => ({ params: { lang: l } }));
@@ -9,11 +17,17 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const i = t(lang);
 
-// App screenshots paired to each feature deep-dive
-const featureShots: string[][] = [
-  ['/screenshots/feature-1.jpg', '/screenshots/feature-1.1.png'],
-  ['/screenshots/feature-2.jpg', '/screenshots/feature-2.1.jpg'],
-  ['/screenshots/feature-3.jpg'],
+// App screenshots paired to each feature deep-dive (imported assets + raw paths for lightbox)
+const featureShots: { src: ImageMetadata; full: string }[][] = [
+  [
+    { src: feature1, full: feature1.src },
+    { src: feature1_1, full: feature1_1.src },
+  ],
+  [
+    { src: feature2, full: feature2.src },
+    { src: feature2_1, full: feature2_1.src },
+  ],
+  [{ src: feature3, full: feature3.src }],
 ];
 
 const featureIcons = [
@@ -59,7 +73,7 @@ const storeBadges = [
   <nav class="sticky top-0 w-full z-50 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-brand)]/15">
     <div class="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
       <a href={`/${lang}`} class="flex items-center gap-2">
-        <img src="/icon.png" alt="MyPetitWok" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl shadow-sm" />
+        <Image src={iconImg} alt="MyPetitWok" width={88} height={88} class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl shadow-sm" loading="eager" />
         <span class="text-lg sm:text-xl font-bold text-[var(--color-brand)]">MyPetitWok</span>
       </a>
       <div class="flex items-center gap-4 sm:gap-6 text-base">
@@ -90,7 +104,7 @@ const storeBadges = [
       <!-- Left: title + tagline + store badges -->
       <div class="flex-1 text-center md:text-left">
         <div class="flex items-center gap-3 justify-center md:justify-start mb-6">
-          <img src="/icon.png" alt="MyPetitWok" class="w-16 h-16 rounded-2xl shadow-md" />
+          <Image src={iconImg} alt="MyPetitWok" width={128} height={128} class="w-16 h-16 rounded-2xl shadow-md" loading="eager" />
           <span class="text-2xl font-extrabold text-[var(--color-brand)]">My Petit Wok</span>
         </div>
         <span class="inline-block bg-[var(--color-logo-red)]/10 text-[var(--color-logo-red)] font-bold text-sm px-4 py-1.5 rounded-full mb-5">{i.hero.launchPill}</span>
@@ -124,8 +138,8 @@ const storeBadges = [
       </div>
       <!-- Right: hero phone -->
       <div class="flex-shrink-0">
-        <button class="photo-trigger" type="button" data-fullscreen-photo="/screenshots/feature-1.jpg" aria-label="Open app preview full screen">
-          <img src="/screenshots/feature-1.jpg" alt="MyPetitWok app preview" class="phone-shot phone-shot--hero" />
+        <button class="photo-trigger" type="button" data-fullscreen-photo={feature1.src} aria-label="Open app preview full screen">
+          <Image src={feature1} alt="MyPetitWok app preview" width={680} height={1360} class="phone-shot phone-shot--hero" loading="eager" fetchpriority="high" />
         </button>
       </div>
     </div>
@@ -153,8 +167,8 @@ const storeBadges = [
             <!-- App screenshot(s) -->
             <div class="flex-shrink-0 flex flex-col sm:flex-row gap-5 items-center justify-center">
               {featureShots[idx].map((shot, sIdx) => (
-                <button class="photo-trigger" type="button" data-fullscreen-photo={shot} aria-label={`Open screenshot ${idx + 1}.${sIdx + 1} full screen`}>
-                  <img src={shot} alt="" class="phone-shot" />
+                <button class="photo-trigger" type="button" data-fullscreen-photo={shot.full} aria-label={`Open screenshot ${idx + 1}.${sIdx + 1} full screen`}>
+                  <Image src={shot.src} alt="" width={600} height={1200} class="phone-shot" loading="lazy" />
                 </button>
               ))}
             </div>
@@ -190,8 +204,8 @@ const storeBadges = [
     <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-10">
       <!-- Family photo -->
       <div class="flex-shrink-0">
-        <button class="photo-trigger" type="button" data-fullscreen-photo="/family.png" aria-label="Open family photo full screen">
-          <img src="/family.png" alt="Family" class="w-[400px] max-w-full h-[300px] object-cover rounded-2xl shadow-md border-4 border-[var(--color-cream)]" />
+        <button class="photo-trigger" type="button" data-fullscreen-photo={familyImg.src} aria-label="Open family photo full screen">
+          <Image src={familyImg} alt="Family" width={800} height={600} class="w-[400px] max-w-full h-[300px] object-cover rounded-2xl shadow-md border-4 border-[var(--color-cream)]" loading="lazy" />
         </button>
       </div>
       <!-- Text -->
@@ -235,7 +249,7 @@ const storeBadges = [
         </a>
       </div>
       <div class="mt-8 flex items-center justify-center gap-2 text-base text-[var(--color-text-muted)]">
-        <img src="/icon.png" alt="" class="w-7 h-7 rounded" />
+        <Image src={iconImg} alt="" width={56} height={56} class="w-7 h-7 rounded" loading="lazy" />
         <span>&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</span>
       </div>
     </div>
