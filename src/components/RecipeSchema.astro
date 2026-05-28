@@ -1,0 +1,74 @@
+---
+import type { RecipeDetail } from '../lib/api';
+
+interface Props {
+  recipe: RecipeDetail;
+  url: string;
+  lang: string;
+}
+
+const { recipe, url, lang } = Astro.props;
+
+const isoDuration = (mins: number) => `PT${mins}M`;
+
+const cuisineLabel: Record<string, string> = {
+  CHINESE: 'Chinese',
+  JAPANESE: 'Japanese',
+  KOREAN: 'Korean',
+  THAI: 'Thai',
+  VIETNAMESE: 'Vietnamese',
+};
+
+const difficultyLabel: Record<string, string> = {
+  BEGINNER: 'Easy',
+  INTERMEDIATE: 'Medium',
+  ADVANCED: 'Hard',
+};
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Recipe',
+  name: recipe.name.trim(),
+  description: recipe.description,
+  image: recipe.imageUrl ? [recipe.imageUrl] : undefined,
+  recipeCuisine: cuisineLabel[recipe.cuisineType] ?? recipe.cuisineType,
+  recipeCategory: recipe.categories?.[0] ?? undefined,
+  recipeYield: `${recipe.servings} servings`,
+  prepTime: isoDuration(recipe.prepTimeMinutes),
+  cookTime: isoDuration(recipe.cookTimeMinutes),
+  totalTime: isoDuration(recipe.prepTimeMinutes + recipe.cookTimeMinutes),
+  keywords: [
+    cuisineLabel[recipe.cuisineType] ?? recipe.cuisineType,
+    difficultyLabel[recipe.difficulty] ?? recipe.difficulty,
+    'Asian recipe',
+    'authentic',
+  ].join(', '),
+  inLanguage: lang,
+  url,
+  author: {
+    '@type': 'Organization',
+    name: 'MyPetitWok',
+    url: 'https://mypetitwok.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'MyPetitWok',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://mypetitwok.com/icon.png',
+    },
+  },
+  recipeIngredient: recipe.ingredients.map((ing) => {
+    const qty = [ing.quantity, ing.unit].filter(Boolean).join(' ').trim();
+    return qty ? `${qty} ${ing.name}` : ing.name;
+  }),
+  recipeInstructions: recipe.steps.map((s) => ({
+    '@type': 'HowToStep',
+    position: s.stepOrder,
+    text: s.instruction,
+    ...(s.imageUrl ? { image: s.imageUrl } : {}),
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

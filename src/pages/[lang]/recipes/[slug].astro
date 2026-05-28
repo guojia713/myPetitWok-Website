@@ -1,0 +1,197 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import RecipeSchema from '../../../components/RecipeSchema.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+import { fetchRecipeAllLangs, type RecipeDetail } from '../../../lib/api';
+import { FEATURED_RECIPE_IDS } from '../../../lib/featured';
+import { slugify } from '../../../lib/slugify';
+
+interface PageProps {
+  recipe: RecipeDetail;
+  alternateSlugs: Record<Lang, string | null>;
+}
+
+export async function getStaticPaths() {
+  const all = await Promise.all(
+    FEATURED_RECIPE_IDS.map(async (id) => ({ id, langs: await fetchRecipeAllLangs(id) })),
+  );
+
+  const paths: { params: { lang: Lang; slug: string }; props: PageProps }[] = [];
+
+  for (const { langs } of all) {
+    const alternateSlugs: Record<Lang, string | null> = {
+      en: langs.en ? slugify(langs.en.name) : null,
+      fr: langs.fr ? slugify(langs.fr.name) : null,
+      zh: langs.zh ? slugify(langs.zh.name) : null,
+    };
+    for (const l of languages) {
+      const r = langs[l];
+      if (!r) continue;
+      paths.push({
+        params: { lang: l, slug: slugify(r.name) },
+        props: { recipe: r, alternateSlugs },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { recipe, alternateSlugs } = Astro.props as PageProps;
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+const cuisine = i.recipes.cuisineLabels[recipe.cuisineType as keyof typeof i.recipes.cuisineLabels] ?? recipe.cuisineType;
+const difficulty = i.recipes.difficultyLabels[recipe.difficulty as keyof typeof i.recipes.difficultyLabels] ?? recipe.difficulty;
+
+const pageUrl = `https://mypetitwok.com/${lang}/recipes/${Astro.params.slug}`;
+const pageTitle = `${recipe.name.trim()} — MyPetitWok`;
+const pageDescription = recipe.description.length > 160
+  ? recipe.description.slice(0, 157) + '...'
+  : recipe.description;
+
+const sortedIngredients = [...recipe.ingredients];
+const sortedSteps = [...recipe.steps].sort((a, b) => a.stepOrder - b.stepOrder);
+
+const totalTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
+
+const layoutAlternates: Partial<Record<Lang, string>> = {};
+for (const l of languages) {
+  if (alternateSlugs[l]) layoutAlternates[l] = `/${l}/recipes/${alternateSlugs[l]}`;
+}
+---
+
+<Layout title={pageTitle} description={pageDescription} lang={lang} alternates={layoutAlternates}>
+  <RecipeSchema recipe={recipe} url={pageUrl} lang={lang} />
+
+  <!-- Nav -->
+  <nav class="sticky top-0 w-full z-50 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-brand)]/15">
+    <div class="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
+      <a href={`/${lang}`} class="flex items-center gap-2">
+        <img src="/icon.png" alt="MyPetitWok" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl shadow-sm" width="88" height="88" />
+        <span class="text-lg sm:text-xl font-bold text-[var(--color-brand)]">MyPetitWok</span>
+      </a>
+      <div class="flex items-center gap-4 sm:gap-6 text-base">
+        <a href={`/${lang}/recipes`} class="font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.recipes.navLabel}</a>
+        <a href={`/${lang}#download`} class="hidden sm:block font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.download}</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="bg-[var(--color-cream)] px-6 pt-6">
+    <div class="max-w-4xl mx-auto text-sm text-[var(--color-text-muted)]">
+      <a href={`/${lang}/recipes`} class="hover:text-[var(--color-logo-red)] hover:underline">← {i.recipes.backToList}</a>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="pt-6 pb-10 px-6 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto">
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="text-xs font-bold uppercase tracking-wide bg-[var(--color-logo-red)]/10 text-[var(--color-logo-red)] px-2.5 py-1 rounded-full">{cuisine}</span>
+        <span class="text-xs font-bold uppercase tracking-wide bg-[var(--color-brand)]/10 text-[var(--color-brand-dark)] px-2.5 py-1 rounded-full">{difficulty}</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold hero-title leading-tight mb-4">{recipe.name.trim()}</h1>
+      {recipe.phonetic && (
+        <p class="text-lg text-[var(--color-text-muted)] italic mb-4">{recipe.phonetic}</p>
+      )}
+      <p class="text-lg sm:text-xl text-[var(--color-text)] leading-relaxed mb-6">{recipe.description}</p>
+
+      <!-- Meta strip -->
+      <div class="flex flex-wrap gap-6 text-[var(--color-text-muted)] font-semibold mb-6">
+        <div><span class="text-[var(--color-brand-dark)]">{i.recipes.prep}:</span> {recipe.prepTimeMinutes} {i.recipes.minutes}</div>
+        <div><span class="text-[var(--color-brand-dark)]">{i.recipes.cook}:</span> {recipe.cookTimeMinutes} {i.recipes.minutes}</div>
+        <div><span class="text-[var(--color-brand-dark)]">⏱ Total:</span> {totalTime} {i.recipes.minutes}</div>
+        <div><span class="text-[var(--color-brand-dark)]">🍽</span> {recipe.servings} {i.recipes.servings}</div>
+      </div>
+
+      {recipe.imageUrl && (
+        <img src={recipe.imageUrl} alt={recipe.name} width="640" height="427" fetchpriority="high" class="w-full max-w-md mx-auto rounded-2xl shadow-md aspect-[3/2] object-cover" />
+      )}
+    </div>
+  </section>
+
+  <!-- Ingredients -->
+  <section class="py-10 px-6 bg-[var(--color-bg)]">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-5 flex items-center gap-2">
+        <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+        {i.recipes.ingredients}
+      </h2>
+      <ul class="space-y-2.5">
+        {sortedIngredients.map((ing) => {
+          const qty = ing.quantity && ing.unit
+            ? `${ing.quantity} ${ing.unit}`
+            : ing.quantity || '';
+          return (
+            <li class="group flex items-center gap-4 bg-white rounded-2xl px-5 py-3.5 border border-[var(--color-brand)]/10 hover:border-[var(--color-logo-red)]/30 hover:shadow-sm transition-all">
+              <div class="flex-1 min-w-0">
+                <div class="text-base font-semibold text-[var(--color-text)] leading-snug">
+                  {ing.name}
+                  {ing.optional && (
+                    <span class="ml-2 text-xs font-normal text-[var(--color-text-muted)] italic">{i.recipes.optional}</span>
+                  )}
+                </div>
+                {ing.asianName && (
+                  <div class="text-sm text-[var(--color-text-muted)] mt-0.5">{ing.asianName}</div>
+                )}
+              </div>
+              {qty && (
+                <span class="flex-shrink-0 inline-flex items-center justify-center min-w-[3.25rem] px-3 py-1 bg-[var(--color-cream)] text-[var(--color-brand-dark)] text-sm font-bold rounded-full">
+                  {qty}
+                </span>
+              )}
+              {ing.joybuyUrl && (
+                <a href={ing.joybuyUrl} target="_blank" rel="sponsored noopener" class="flex-shrink-0 text-xs font-bold bg-[var(--color-logo-red)] text-white px-3 py-1.5 rounded-full hover:bg-[var(--color-logo-red-dark)] transition-colors whitespace-nowrap">
+                  {i.recipes.buyOnJoybuy} →
+                </a>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Steps -->
+  <section class="py-12 px-6 bg-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-extrabold text-[var(--color-brand-dark)] mb-6">{i.recipes.steps}</h2>
+      <ol class="space-y-6">
+        {sortedSteps.map((step) => (
+          <li class="flex gap-4">
+            <span class="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--color-logo-red)] text-white font-extrabold flex items-center justify-center">{step.stepOrder}</span>
+            <div class="flex-1">
+              <p class="text-lg text-[var(--color-text)] leading-relaxed whitespace-pre-line">{step.instruction}</p>
+              {step.tip && (
+                <p class="mt-2 text-sm text-[var(--color-text-muted)] italic bg-[var(--color-cream)] p-3 rounded-lg border-l-4 border-[var(--color-logo-red)]">💡 {step.tip}</p>
+              )}
+              {step.imageUrl && (
+                <img src={step.imageUrl} alt="" loading="lazy" width="800" height="600" class="mt-3 rounded-xl max-w-md w-full" />
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- App CTA -->
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.recipes.saveCtaTitle}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.recipes.saveCtaText}</p>
+      <a href={`/${lang}#download`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.recipes.saveCtaButton}</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>

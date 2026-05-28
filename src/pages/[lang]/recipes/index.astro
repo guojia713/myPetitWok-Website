@@ -1,0 +1,104 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+import { fetchRecipe } from '../../../lib/api';
+import { FEATURED_RECIPE_IDS } from '../../../lib/featured';
+import { slugify } from '../../../lib/slugify';
+
+export async function getStaticPaths() {
+  return languages.map((l) => ({ params: { lang: l } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+// Fetch all featured recipes in the current language at build time.
+const recipes = (
+  await Promise.all(FEATURED_RECIPE_IDS.map((id) => fetchRecipe(id, lang)))
+).filter((r): r is NonNullable<typeof r> => r !== null);
+
+const recipeCards = recipes.map((r) => ({
+  id: r.id,
+  name: r.name.trim(),
+  slug: slugify(r.name),
+  description: r.description,
+  imageUrl: r.imageUrl,
+  cuisine: i.recipes.cuisineLabels[r.cuisineType as keyof typeof i.recipes.cuisineLabels] ?? r.cuisineType,
+  difficulty: i.recipes.difficultyLabels[r.difficulty as keyof typeof i.recipes.difficultyLabels] ?? r.difficulty,
+  totalTime: r.prepTimeMinutes + r.cookTimeMinutes,
+  servings: r.servings,
+}));
+---
+
+<Layout title={i.recipes.indexTitle} description={i.recipes.indexDescription} lang={lang}>
+  <!-- Nav -->
+  <nav class="sticky top-0 w-full z-50 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-brand)]/15">
+    <div class="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
+      <a href={`/${lang}`} class="flex items-center gap-2">
+        <img src="/icon.png" alt="MyPetitWok" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl shadow-sm" width="88" height="88" />
+        <span class="text-lg sm:text-xl font-bold text-[var(--color-brand)]">MyPetitWok</span>
+      </a>
+      <div class="flex items-center gap-4 sm:gap-6 text-base">
+        <a href={`/${lang}/recipes`} class="font-semibold text-[var(--color-logo-red)]">{i.recipes.navLabel}</a>
+        <a href={`/${lang}#download`} class="hidden sm:block font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.download}</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <section class="pt-14 pb-10 px-6 bg-[var(--color-cream)]">
+    <div class="max-w-5xl mx-auto text-center">
+      <h1 class="text-4xl sm:text-5xl font-extrabold hero-title leading-tight mb-5">{i.recipes.indexHeading}</h1>
+      <p class="text-xl sm:text-2xl text-[var(--color-text)] leading-relaxed max-w-3xl mx-auto">{i.recipes.indexIntro}</p>
+    </div>
+  </section>
+
+  <!-- Recipe grid -->
+  <section class="py-12 px-6 bg-[var(--color-bg)]">
+    <div class="max-w-6xl mx-auto">
+      {recipeCards.length === 0 ? (
+        <p class="text-center text-[var(--color-text-muted)] text-lg">No recipes available right now.</p>
+      ) : (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {recipeCards.map((r) => (
+            <a href={`/${lang}/recipes/${r.slug}`} class="group bg-white rounded-2xl overflow-hidden border border-[var(--color-brand)]/15 hover:shadow-lg transition-shadow flex flex-col">
+              {r.imageUrl && (
+                <img src={r.imageUrl} alt={r.name} loading="lazy" width="600" height="400" class="w-full h-52 object-cover" />
+              )}
+              <div class="p-5 flex-1 flex flex-col">
+                <div class="flex flex-wrap gap-2 mb-3">
+                  <span class="text-xs font-bold uppercase tracking-wide bg-[var(--color-logo-red)]/10 text-[var(--color-logo-red)] px-2.5 py-1 rounded-full">{r.cuisine}</span>
+                  <span class="text-xs font-bold uppercase tracking-wide bg-[var(--color-brand)]/10 text-[var(--color-brand-dark)] px-2.5 py-1 rounded-full">{r.difficulty}</span>
+                </div>
+                <h2 class="text-xl font-extrabold text-[var(--color-brand-dark)] mb-2 group-hover:text-[var(--color-logo-red)] transition-colors">{r.name}</h2>
+                <p class="text-[var(--color-text-muted)] leading-relaxed flex-1">{r.description}</p>
+                <div class="mt-4 flex gap-4 text-sm text-[var(--color-text-muted)] font-semibold">
+                  <span>⏱ {r.totalTime} {i.recipes.minutes}</span>
+                  <span>🍽 {r.servings} {i.recipes.servings}</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- App CTA -->
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.recipes.saveCtaTitle}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.recipes.saveCtaText}</p>
+      <a href={`/${lang}#download`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.recipes.saveCtaButton}</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>

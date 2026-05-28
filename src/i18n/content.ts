@@ -45,6 +45,31 @@ const translations: Record<Lang, {
     email: string;
     rights: string;
   };
+  recipes: {
+    navLabel: string;
+    indexTitle: string;
+    indexDescription: string;
+    indexHeading: string;
+    indexIntro: string;
+    minutes: string;
+    servings: string;
+    prep: string;
+    cook: string;
+    difficulty: string;
+    ingredients: string;
+    steps: string;
+    optional: string;
+    saveCtaTitle: string;
+    saveCtaText: string;
+    saveCtaButton: string;
+    notFoundTitle: string;
+    notFoundText: string;
+    backToList: string;
+    whereToFind: string;
+    buyOnJoybuy: string;
+    difficultyLabels: { BEGINNER: string; INTERMEDIATE: string; ADVANCED: string };
+    cuisineLabels: { CHINESE: string; JAPANESE: string; KOREAN: string; THAI: string; VIETNAMESE: string };
+  };
 }> = {
   en: {
     pageTitle: 'MyPetitWok — Free Asian Recipe App for Authentic Home Cooking',
@@ -108,6 +133,31 @@ const translations: Record<Lang, {
       contact: 'Have a suggestion or a recipe to share? We\'d love to hear from you.',
       email: 'hello@mypetitwok.com',
       rights: 'All rights reserved.',
+    },
+    recipes: {
+      navLabel: 'Recipes',
+      indexTitle: 'Authentic Asian Recipes — MyPetitWok',
+      indexDescription: 'Browse free authentic Asian recipes — Chinese, Japanese, Vietnamese and more. Step-by-step home cooking with the MyPetitWok app.',
+      indexHeading: 'Authentic Asian recipes',
+      indexIntro: 'A small selection of recipes from the MyPetitWok app — free, step-by-step, made for home cooks. The full library lives in the app.',
+      minutes: 'min',
+      servings: 'servings',
+      prep: 'Prep',
+      cook: 'Cook',
+      difficulty: 'Difficulty',
+      ingredients: 'Ingredients',
+      steps: 'Steps',
+      optional: 'optional',
+      saveCtaTitle: 'Love this recipe?',
+      saveCtaText: 'Save it to your cookbook, get more recipes, an ingredient guide and shopping help — all in the free MyPetitWok app.',
+      saveCtaButton: 'Get the free app',
+      notFoundTitle: 'Recipe not found',
+      notFoundText: 'This recipe is no longer available.',
+      backToList: 'Back to all recipes',
+      whereToFind: 'Where to find it',
+      buyOnJoybuy: 'Buy online',
+      difficultyLabels: { BEGINNER: 'Easy', INTERMEDIATE: 'Medium', ADVANCED: 'Hard' },
+      cuisineLabels: { CHINESE: 'Chinese', JAPANESE: 'Japanese', KOREAN: 'Korean', THAI: 'Thai', VIETNAMESE: 'Vietnamese' },
     },
   },
   fr: {
@@ -173,6 +223,31 @@ const translations: Record<Lang, {
       email: 'hello@mypetitwok.com',
       rights: 'Tous droits réservés.',
     },
+    recipes: {
+      navLabel: 'Recettes',
+      indexTitle: 'Recettes asiatiques authentiques — MyPetitWok',
+      indexDescription: 'Découvrez des recettes asiatiques authentiques et gratuites — chinoises, japonaises, vietnamiennes et plus. Cuisinez chez vous pas à pas avec MyPetitWok.',
+      indexHeading: 'Recettes asiatiques authentiques',
+      indexIntro: "Une petite sélection de recettes de l'app MyPetitWok — gratuites, pas à pas, pensées pour la maison. La bibliothèque complète est dans l'app.",
+      minutes: 'min',
+      servings: 'parts',
+      prep: 'Préparation',
+      cook: 'Cuisson',
+      difficulty: 'Difficulté',
+      ingredients: 'Ingrédients',
+      steps: 'Étapes',
+      optional: 'optionnel',
+      saveCtaTitle: 'Cette recette vous plaît ?',
+      saveCtaText: "Sauvegardez-la, accédez à plus de recettes, à un guide des ingrédients et à des conseils pour les courses — gratuit dans l'app MyPetitWok.",
+      saveCtaButton: "Obtenir l'app gratuite",
+      notFoundTitle: 'Recette introuvable',
+      notFoundText: "Cette recette n'est plus disponible.",
+      backToList: 'Retour aux recettes',
+      whereToFind: 'Où le trouver',
+      buyOnJoybuy: 'Acheter en ligne',
+      difficultyLabels: { BEGINNER: 'Facile', INTERMEDIATE: 'Moyen', ADVANCED: 'Difficile' },
+      cuisineLabels: { CHINESE: 'Chinoise', JAPANESE: 'Japonaise', KOREAN: 'Coréenne', THAI: 'Thaïe', VIETNAMESE: 'Vietnamienne' },
+    },
   },
   zh: {
     pageTitle: 'MyPetitWok 小锅 — 免费亚洲菜谱应用',
@@ -236,6 +311,31 @@ const translations: Record<Lang, {
       contact: '有建议或想分享菜谱？欢迎联系我们。',
       email: 'hello@mypetitwok.com',
       rights: '版权所有。',
+    },
+    recipes: {
+      navLabel: '菜谱',
+      indexTitle: '地道亚洲菜谱 — MyPetitWok 小锅',
+      indexDescription: '免费的地道亚洲菜谱 — 中餐、日料、越南菜等。跟着小锅 MyPetitWok 在家轻松烹饪。',
+      indexHeading: '地道亚洲菜谱',
+      indexIntro: '小锅 MyPetitWok 应用中精选的菜谱 — 免费、分步、为家庭烹饪而设。完整菜谱库请在应用中查看。',
+      minutes: '分钟',
+      servings: '人份',
+      prep: '准备',
+      cook: '烹饪',
+      difficulty: '难度',
+      ingredients: '食材',
+      steps: '步骤',
+      optional: '可选',
+      saveCtaTitle: '喜欢这道菜？',
+      saveCtaText: '收藏到你的菜谱本，发现更多菜谱、食材指南和购物建议 — 全部免费，尽在小锅 MyPetitWok 应用。',
+      saveCtaButton: '免费下载应用',
+      notFoundTitle: '菜谱未找到',
+      notFoundText: '该菜谱已不可用。',
+      backToList: '返回菜谱列表',
+      whereToFind: '哪里能买到',
+      buyOnJoybuy: '在线购买',
+      difficultyLabels: { BEGINNER: '简单', INTERMEDIATE: '中等', ADVANCED: '较难' },
+      cuisineLabels: { CHINESE: '中餐', JAPANESE: '日料', KOREAN: '韩餐', THAI: '泰餐', VIETNAMESE: '越南菜' },
     },
   },
 };
