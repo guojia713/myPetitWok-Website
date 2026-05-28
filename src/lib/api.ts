@@ -62,11 +62,65 @@ export async function fetchRecipe(id: number, lang: Lang): Promise<RecipeDetail 
       console.warn(`[api] ${url} → ${res.status}`);
       return null;
     }
-    return (await res.json()) as RecipeDetail;
+    const data = (await res.json()) as RecipeDetail;
+    // Defensive cleanup — strip stray whitespace from user-entered fields.
+    data.name = data.name?.trim();
+    data.description = data.description?.trim();
+    data.phonetic = data.phonetic?.trim() || null;
+    return data;
   } catch (err) {
     console.warn(`[api] ${url} failed:`, err);
     return null;
   }
+}
+
+export interface IngredientDetail {
+  id: number;
+  name: string;
+  asianName: string | null;
+  description: string;
+  whereToFind: string | null;
+  imageUrl: string | null;
+  category: string;
+  asianIngredient: boolean;
+  joybuyUrl: string | null;
+  substitute: string | null;
+}
+
+/** Fetch the full ingredient list in a single language (paginated under the hood). */
+export async function fetchIngredients(lang: Lang): Promise<IngredientDetail[]> {
+  const url = `${API_BASE_URL}/api/v1/ingredients?lang=${apiLang[lang]}&size=200`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.warn(`[api] ${url} → ${res.status}`);
+      return [];
+    }
+    const data = await res.json();
+    const items: IngredientDetail[] = Array.isArray(data) ? data : data.content ?? [];
+    return items.map((x) => ({
+      ...x,
+      name: x.name?.trim(),
+      description: x.description?.trim() ?? '',
+      whereToFind: x.whereToFind?.trim() || null,
+    }));
+  } catch (err) {
+    console.warn(`[api] ${url} failed:`, err);
+    return [];
+  }
+}
+
+/** Fetch the same ingredient list in all 3 languages, keyed by id. */
+export async function fetchIngredientsAllLangs(): Promise<
+  Record<Lang, Map<number, IngredientDetail>>
+> {
+  const [en, fr, zh] = await Promise.all([
+    fetchIngredients('en'),
+    fetchIngredients('fr'),
+    fetchIngredients('zh'),
+  ]);
+  const toMap = (arr: IngredientDetail[]) => new Map(arr.map((x) => [x.id, x]));
+  return { en: toMap(en), fr: toMap(fr), zh: toMap(zh) };
 }
 
 /** Fetch the same recipe in all 3 languages. */

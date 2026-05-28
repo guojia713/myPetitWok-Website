@@ -9,9 +9,12 @@ interface Props {
   lang?: string;
   /** Per-language paths for hreflang. If omitted, falls back to /{lang} for all. */
   alternates?: Partial<Record<'en' | 'fr' | 'zh', string>>;
+  /** Absolute URL for og:image. Defaults to the app icon. */
+  ogImage?: string;
 }
 
-const { title, description, lang = 'en', alternates } = Astro.props;
+const { title, description, lang = 'en', alternates, ogImage } = Astro.props;
+const resolvedOgImage = ogImage ?? 'https://mypetitwok.com/icon.png';
 const i = t(lang as Lang);
 
 const siteUrl = 'https://mypetitwok.com';
@@ -47,7 +50,9 @@ const canonicalUrl = `${siteUrl}${resolvedAlternates[lang as 'en' | 'fr' | 'zh']
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={`${siteUrl}/icon.png`} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={resolvedOgImage} />
     <meta property="og:locale" content={lang} />
     <title>{title}</title>
 

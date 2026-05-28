@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
 import { t, languages, langLabels, launchDate, type Lang } from '../i18n/content';
 import iconImg from '../assets/icon.png';
 import familyImg from '../assets/family.png';
@@ -52,35 +53,7 @@ const storeBadges = [
 ---
 
 <Layout title={i.pageTitle} description={i.metaDescription} lang={lang}>
-  <!-- Nav -->
-  <nav class="sticky top-0 w-full z-50 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-brand)]/15">
-    <div class="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
-      <a href={`/${lang}`} class="flex items-center gap-2">
-        <Image src={iconImg} alt="MyPetitWok" width={88} height={88} class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl shadow-sm" loading="eager" />
-        <span class="text-lg sm:text-xl font-bold text-[var(--color-brand)]">MyPetitWok</span>
-      </a>
-      <div class="flex items-center gap-4 sm:gap-6 text-base">
-        <a href={`/${lang}/recipes`} class="font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.recipes.navLabel}</a>
-        <a href="#features" class="hidden sm:block font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.features}</a>
-        <a href="#story" class="hidden sm:block font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.story}</a>
-        <a href="#download" class="hidden sm:block font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.download}</a>
-        <div class="flex gap-1">
-          {languages.map((l) => (
-            <a
-              href={`/${l}`}
-              class={`px-2.5 sm:px-3 py-1.5 rounded-full text-sm font-bold transition-colors ${
-                l === lang
-                  ? 'bg-[var(--color-logo-red)] text-white'
-                  : 'text-[var(--color-text-muted)] hover:bg-[var(--color-brand)]/10'
-              }`}
-            >
-              {langLabels[l]}
-            </a>
-          ))}
-        </div>
-      </div>
-    </div>
-  </nav>
+  <Nav lang={lang} current="home" />
 
   <!-- Hero -->
   <section class="pt-14 pb-20 px-6 bg-[var(--color-cream)]">
@@ -183,25 +156,6 @@ const storeBadges = [
     </div>
   </section>
 
-  <!-- Story -->
-  <section id="story" class="py-20 px-6 bg-white scroll-mt-24">
-    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-10">
-      <!-- Family photo -->
-      <div class="flex-shrink-0">
-        <button class="photo-trigger" type="button" data-fullscreen-photo={familyImg.src} aria-label="Open family photo full screen">
-          <Image src={familyImg} alt="Family" width={800} height={600} class="w-[400px] max-w-full h-[300px] object-cover rounded-2xl shadow-md border-4 border-[var(--color-cream)]" loading="lazy" />
-        </button>
-      </div>
-      <!-- Text -->
-      <div class="flex-1">
-        <h2 class="text-4xl font-extrabold text-center md:text-left mb-8 text-[var(--color-brand-dark)]">{i.story.title}</h2>
-        <div class="text-[var(--color-text-muted)] leading-relaxed text-xl whitespace-pre-line">
-          {i.story.text}
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Final CTA -->
   <section class="py-20 px-6 bg-[var(--color-brand)] text-white">
     <div class="max-w-3xl mx-auto text-center">
@@ -218,7 +172,7 @@ const storeBadges = [
           </div>
         ))}
       </div>
-      <p class="mt-6 text-white/80 text-base">{i.download.webNote}</p>
+      <a href={`/${lang}/recipes`} class="inline-block mt-6 text-white/90 text-base font-semibold underline underline-offset-4 hover:text-white transition-colors">{i.download.webNote}</a>
     </div>
   </section>
 

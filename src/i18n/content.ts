@@ -70,6 +70,36 @@ const translations: Record<Lang, {
     difficultyLabels: { BEGINNER: string; INTERMEDIATE: string; ADVANCED: string };
     cuisineLabels: { CHINESE: string; JAPANESE: string; KOREAN: string; THAI: string; VIETNAMESE: string };
   };
+  ingredients: {
+    navLabel: string;
+    indexTitle: string;
+    indexDescription: string;
+    indexHeading: string;
+    indexIntro: string;
+    substitute: string;
+    whereToFind: string;
+    buyOnJoybuy: string;
+    usedIn: string;
+    detailTitleSuffix: string;
+    backToList: string;
+    indexShowingNote: string;
+    moreInAppTitle: string;
+    moreInAppText: string;
+    moreInAppButton: string;
+  };
+  about: {
+    navLabel: string;
+    title: string;
+    description: string;
+    heading: string;
+    intro: string;
+    founderName: string;
+    founderRole: string;
+    bodyParagraphs: string[];
+    values: { title: string; text: string }[];
+    contactHeading: string;
+    contactBody: string;
+  };
 }> = {
   en: {
     pageTitle: 'MyPetitWok — Free Asian Recipe App for Authentic Home Cooking',
@@ -127,7 +157,7 @@ const translations: Record<Lang, {
     download: {
       title: 'Be ready for launch day',
       subtitle: 'MyPetitWok arrives July 13, 2026 on the App Store and Google Play - free.',
-      webNote: 'A web version is coming later.',
+      webNote: 'In the meantime, browse our recipes online →',
     },
     footer: {
       contact: 'Have a suggestion or a recipe to share? We\'d love to hear from you.',
@@ -158,6 +188,58 @@ const translations: Record<Lang, {
       buyOnJoybuy: 'Buy online',
       difficultyLabels: { BEGINNER: 'Easy', INTERMEDIATE: 'Medium', ADVANCED: 'Hard' },
       cuisineLabels: { CHINESE: 'Chinese', JAPANESE: 'Japanese', KOREAN: 'Korean', THAI: 'Thai', VIETNAMESE: 'Vietnamese' },
+    },
+    ingredients: {
+      navLabel: 'Ingredients',
+      indexTitle: 'Essential Asian Ingredients — MyPetitWok',
+      indexDescription: 'Learn about authentic Asian ingredients — doubanjiang, gochujang, fish sauce, Sichuan peppercorn and more. Clear descriptions and where to find each one.',
+      indexHeading: 'Asian ingredient guide',
+      indexIntro: 'Curious what doubanjiang is, or where to buy gochujang? Here\'s a plain-English guide to the Asian ingredients used in the MyPetitWok app — what they taste like, where to find them, and what to substitute when you can\'t.',
+      substitute: 'Substitute',
+      whereToFind: 'Where to find it',
+      buyOnJoybuy: 'Buy online',
+      usedIn: 'Used in these recipes',
+      detailTitleSuffix: '— MyPetitWok Ingredient Guide',
+      backToList: 'Back to all ingredients',
+      indexShowingNote: 'A taste of our ingredient library — featured here are the ones used in our online recipes.',
+      moreInAppTitle: 'Want the full ingredient library?',
+      moreInAppText: 'Get 50+ Asian ingredients with photos, substitutes and shopping tips — completely free in the MyPetitWok app.',
+      moreInAppButton: 'Get the free app',
+    },
+    about: {
+      navLabel: 'About',
+      title: 'About MyPetitWok — Authentic Asian Cooking from Xi\'an to Your Kitchen',
+      description: 'The story behind MyPetitWok — a free Asian recipe app built by a developer and mom from Xi\'an, China, now living in France. Authentic recipes, real techniques, made for home cooks.',
+      heading: 'About MyPetitWok',
+      intro: 'A free Asian recipe app, made by one person who genuinely cooks this food every week.',
+      founderName: 'Jia Guo',
+      founderRole: 'Founder, developer & home cook',
+      bodyParagraphs: [
+        'I grew up in Xi\'an, one of China\'s oldest and most food-obsessed cities — a place where street food is taken seriously and home cooking is a daily ritual. After moving to France for university, I became a software developer, then a mom of two boys. Through every move and life change, one thing stayed constant: the food I cook at home is still mostly Asian.',
+        'Twelve years in France taught me something specific: there are so many people who love Asian food but feel locked out of cooking it themselves. The recipes online are confusing, the ingredients have unfamiliar names, the techniques look intimidating. And the recipe sites that do exist are often written by someone who learned from a cookbook, not from a grandmother.',
+        'MyPetitWok is my answer. It\'s the app I wish existed when my French friends asked "how do you actually make this?" Every recipe is one I cook for my own family. Every ingredient guide is written from the perspective of someone who has stood confused in a Western supermarket looking for doubanjiang.',
+        'The app is completely free. No subscriptions, no paywalls, no upsells. It\'s supported by ads and affiliate links on ingredients — that\'s it. My goal isn\'t to maximize revenue; it\'s to make authentic Asian home cooking accessible to anyone who wants to learn.',
+      ],
+      values: [
+        {
+          title: 'Authentic, not adapted',
+          text: 'Real recipes from real Asian kitchens — Chinese, Japanese, Vietnamese, Korean and Thai. No Westernization, no shortcuts that betray the flavor. If a dish needs Sichuan peppercorns, the recipe uses Sichuan peppercorns.',
+        },
+        {
+          title: 'Built for beginners',
+          text: 'Every ingredient is explained. Every step is photographed. Every "weird" item comes with a guide on where to find it (or what to substitute when you can\'t).',
+        },
+        {
+          title: 'Multilingual by design',
+          text: 'English, French, Chinese — switch any time. Made for families like mine where everyone reads a different language.',
+        },
+        {
+          title: 'Free, forever',
+          text: 'Ad-supported, no subscriptions. The full recipe library is free for everyone, on iPhone, Android and the web.',
+        },
+      ],
+      contactHeading: 'Get in touch',
+      contactBody: 'Have a recipe to share, a suggestion, or want to collaborate? I read every email.',
     },
   },
   fr: {
@@ -216,7 +298,7 @@ const translations: Record<Lang, {
     download: {
       title: 'Prêt pour le jour du lancement',
       subtitle: "MyPetitWok arrive le 13 juillet 2026 sur l'App Store et Google Play - gratuitement.",
-      webNote: 'Une version web arrivera plus tard.',
+      webNote: 'En attendant, découvrez nos recettes en ligne →',
     },
     footer: {
       contact: 'Une suggestion ou une recette à partager ? Écrivez-nous.',
@@ -247,6 +329,58 @@ const translations: Record<Lang, {
       buyOnJoybuy: 'Acheter en ligne',
       difficultyLabels: { BEGINNER: 'Facile', INTERMEDIATE: 'Moyen', ADVANCED: 'Difficile' },
       cuisineLabels: { CHINESE: 'Chinoise', JAPANESE: 'Japonaise', KOREAN: 'Coréenne', THAI: 'Thaïe', VIETNAMESE: 'Vietnamienne' },
+    },
+    ingredients: {
+      navLabel: 'Ingrédients',
+      indexTitle: 'Ingrédients asiatiques essentiels — MyPetitWok',
+      indexDescription: "Découvrez les ingrédients asiatiques authentiques — doubanjiang, gochujang, sauce poisson, poivre de Sichuan et bien plus. Descriptions claires et où les trouver.",
+      indexHeading: 'Guide des ingrédients asiatiques',
+      indexIntro: "Vous vous demandez ce qu'est le doubanjiang ou où acheter du gochujang ? Voici un guide simple des ingrédients asiatiques utilisés dans l'app MyPetitWok — leur goût, où les trouver, et par quoi les remplacer si besoin.",
+      substitute: 'Substitut',
+      whereToFind: 'Où le trouver',
+      buyOnJoybuy: 'Acheter en ligne',
+      usedIn: 'Utilisé dans ces recettes',
+      detailTitleSuffix: "— Guide des ingrédients MyPetitWok",
+      backToList: 'Retour aux ingrédients',
+      indexShowingNote: "Un avant-goût de notre bibliothèque d'ingrédients — voici ceux utilisés dans nos recettes en ligne.",
+      moreInAppTitle: "Vous voulez la bibliothèque complète ?",
+      moreInAppText: "Plus de 50 ingrédients asiatiques avec photos, substituts et conseils d'achat — entièrement gratuit dans l'app MyPetitWok.",
+      moreInAppButton: "Obtenir l'app gratuite",
+    },
+    about: {
+      navLabel: 'À propos',
+      title: "À propos de MyPetitWok — Cuisine asiatique authentique de Xi'an à votre cuisine",
+      description: "L'histoire derrière MyPetitWok — une app de recettes asiatiques gratuite, créée par une développeuse et maman originaire de Xi'an, vivant en France. Recettes authentiques, vraies techniques, pour cuisiner à la maison.",
+      heading: 'À propos de MyPetitWok',
+      intro: 'Une app de recettes asiatiques gratuite, créée par une personne qui cuisine vraiment ces plats chaque semaine.',
+      founderName: 'Jia Guo',
+      founderRole: 'Fondatrice, développeuse et cuisinière',
+      bodyParagraphs: [
+        "J'ai grandi à Xi'an, l'une des villes les plus anciennes et les plus passionnées de cuisine en Chine — un lieu où la street food se prend au sérieux et où cuisiner à la maison est un rituel quotidien. Après être venue étudier en France, je suis devenue développeuse, puis maman de deux garçons. À travers chaque déménagement et chaque changement de vie, une chose est restée constante : ce que je cuisine à la maison est encore largement asiatique.",
+        "Douze ans en France m'ont appris une chose précise : il y a tellement de gens qui adorent la cuisine asiatique mais qui se sentent exclus quand il s'agit de la cuisiner eux-mêmes. Les recettes en ligne sont confuses, les ingrédients portent des noms inconnus, les techniques semblent intimidantes. Et les sites de recettes qui existent sont souvent écrits par quelqu'un qui a appris dans un livre, pas auprès d'une grand-mère.",
+        "MyPetitWok est ma réponse. C'est l'app que j'aurais aimé avoir quand mes amis français me demandaient « mais comment tu fais, en vrai ? ». Chaque recette est une que je cuisine pour ma propre famille. Chaque guide d'ingrédient est écrit du point de vue de quelqu'un qui s'est déjà retrouvé perdu dans un supermarché à chercher du doubanjiang.",
+        "L'app est entièrement gratuite. Pas d'abonnement, pas de paywall, pas de vente cachée. Elle est financée par la publicité et les liens d'affiliation sur les ingrédients — c'est tout. Mon objectif n'est pas de maximiser les revenus ; c'est de rendre la cuisine asiatique authentique accessible à toute personne qui veut apprendre.",
+      ],
+      values: [
+        {
+          title: 'Authentique, pas adapté',
+          text: "Des vraies recettes de vraies cuisines asiatiques — chinoise, japonaise, vietnamienne, coréenne et thaïe. Pas d'occidentalisation, pas de raccourcis qui trahissent le goût. Si un plat demande du poivre de Sichuan, la recette utilise du poivre de Sichuan.",
+        },
+        {
+          title: 'Pensé pour les débutants',
+          text: "Chaque ingrédient est expliqué. Chaque étape est photographiée. Chaque produit « étrange » est accompagné d'un guide pour le trouver (ou pour le remplacer si vous ne le trouvez pas).",
+        },
+        {
+          title: 'Multilingue par nature',
+          text: "Anglais, français, chinois — basculez quand vous voulez. Pensé pour les familles comme la mienne où chacun lit une langue différente.",
+        },
+        {
+          title: 'Gratuit, pour toujours',
+          text: "Financé par la publicité, sans abonnement. La bibliothèque complète de recettes est gratuite pour tout le monde, sur iPhone, Android et le web.",
+        },
+      ],
+      contactHeading: 'Me contacter',
+      contactBody: "Une recette à partager, une suggestion, ou envie de collaborer ? Je lis chaque message.",
     },
   },
   zh: {
@@ -305,7 +439,7 @@ const translations: Record<Lang, {
     download: {
       title: '为上线日做好准备',
       subtitle: '小锅将于 2026 年 7 月 13 日登陆 App Store 和 Google Play - 完全免费。',
-      webNote: '网页版稍后推出。',
+      webNote: '在此期间，先浏览我们的在线菜谱 →',
     },
     footer: {
       contact: '有建议或想分享菜谱？欢迎联系我们。',
@@ -336,6 +470,58 @@ const translations: Record<Lang, {
       buyOnJoybuy: '在线购买',
       difficultyLabels: { BEGINNER: '简单', INTERMEDIATE: '中等', ADVANCED: '较难' },
       cuisineLabels: { CHINESE: '中餐', JAPANESE: '日料', KOREAN: '韩餐', THAI: '泰餐', VIETNAMESE: '越南菜' },
+    },
+    ingredients: {
+      navLabel: '食材',
+      indexTitle: '亚洲食材指南 — MyPetitWok 小锅',
+      indexDescription: '了解地道亚洲食材 — 豆瓣酱、辣椒酱、鱼露、花椒等。清晰介绍以及哪里能买到。',
+      indexHeading: '亚洲食材指南',
+      indexIntro: '想了解豆瓣酱是什么，或者哪里能买到韩式辣椒酱？这里有小锅 MyPetitWok 应用中使用的亚洲食材的简明指南 — 介绍味道、在哪里购买，以及找不到时可以用什么代替。',
+      substitute: '替代品',
+      whereToFind: '哪里能买到',
+      buyOnJoybuy: '在线购买',
+      usedIn: '用于这些菜谱',
+      detailTitleSuffix: '— MyPetitWok 食材指南',
+      backToList: '返回食材列表',
+      indexShowingNote: '我们食材库的一小部分 — 这里展示的是在线菜谱中使用的食材。',
+      moreInAppTitle: '想看完整的食材库？',
+      moreInAppText: '50+ 种亚洲食材，含图片、替代品建议和购物提示 — 在小锅 MyPetitWok 应用中完全免费。',
+      moreInAppButton: '免费下载应用',
+    },
+    about: {
+      navLabel: '关于',
+      title: '关于 MyPetitWok 小锅 — 从西安到你的厨房的地道亚洲料理',
+      description: 'MyPetitWok 小锅背后的故事 — 一款免费的亚洲菜谱应用，由一位来自西安、现居法国的开发者兼妈妈打造。地道菜谱，真实技法，为家庭烹饪而设。',
+      heading: '关于 MyPetitWok',
+      intro: '一款免费的亚洲菜谱应用，由一位真的每周都在做这些菜的人亲手打造。',
+      founderName: '郭佳',
+      founderRole: '创始人、开发者、家厨',
+      bodyParagraphs: [
+        '我在西安长大 — 中国最古老、最讲究吃的城市之一。在那里，街头小吃被认真对待，家常菜是每天的仪式。来法国念书后，我成了软件开发员，又当了俩男孩的妈妈。每次搬家，每次人生改变，唯一不变的是：我在家做的饭还是以亚洲菜为主。',
+        '在法国生活十二年让我看清一件事：太多人爱吃亚洲菜，却觉得自己学不会做。网上的菜谱说得不清楚，食材名字陌生，技法看着吓人。而那些现有的菜谱网站，写的人很多是从书里学的，不是从奶奶手里学的。',
+        '小锅 MyPetitWok 就是我的答案。这是我希望多年前就有的那款应用 — 当法国朋友问我"你到底怎么做出来的？"时我能给他们的工具。每一道菜谱都是我为自己家做的菜。每一份食材指南，都是从一个曾经在西方超市迷茫找豆瓣酱的人的角度写的。',
+        '应用完全免费。没有订阅、没有付费墙、没有隐藏收费。靠广告和食材的联盟链接维持 — 仅此而已。我的目标不是赚得最多，而是让任何想学的人都能接触到地道的亚洲家常菜。',
+      ],
+      values: [
+        {
+          title: '地道，不妥协',
+          text: '来自真正亚洲厨房的真菜谱 — 中餐、日料、越南菜、韩餐和泰餐。不西化、不走那种丢失味道的捷径。一道菜要花椒，菜谱就用花椒。',
+        },
+        {
+          title: '为新手而设',
+          text: '每个食材都解释清楚。每一步都有图示。每个"陌生"的东西，都附上哪里能买到的指引（或者买不到时该用什么代替）。',
+        },
+        {
+          title: '天生多语言',
+          text: '中文、英文、法文 — 随时切换。为像我这样家里每个人读不同语言的家庭而设。',
+        },
+        {
+          title: '永远免费',
+          text: '广告支持，无订阅。完整菜谱库对所有人免费 — iPhone、安卓、网页都一样。',
+        },
+      ],
+      contactHeading: '联系我',
+      contactBody: '有菜谱想分享、有建议、或想合作？每封邮件我都会读。',
     },
   },
 };

@@ -1,0 +1,96 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+import { fetchIngredients } from '../../../lib/api';
+import { buildIngredientToRecipes } from '../../../lib/ingredientCrossref';
+import { slugify } from '../../../lib/slugify';
+
+const MAX_INGREDIENTS = 10;
+
+export async function getStaticPaths() {
+  return languages.map((l) => ({ params: { lang: l } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+const all = await fetchIngredients(lang);
+// Cross-reference: which ingredients are used in our featured web recipes?
+const featuredRecipeIngredientIds = new Set((await buildIngredientToRecipes(lang)).keys());
+
+// Show only: SEO-worthy (asianIngredient + real description) AND used in a featured recipe.
+const ingredients = all
+  .filter((x) => x.asianIngredient && (x.description?.length ?? 0) > 50)
+  .filter((x) => featuredRecipeIngredientIds.has(x.id))
+  .slice(0, MAX_INGREDIENTS)
+  .map((x) => ({
+    id: x.id,
+    name: x.name,
+    asianName: x.asianName,
+    slug: slugify(x.name),
+    description: x.description.length > 140 ? x.description.slice(0, 137) + '...' : x.description,
+    imageUrl: x.imageUrl,
+  }));
+---
+
+<Layout title={i.ingredients.indexTitle} description={i.ingredients.indexDescription} lang={lang}>
+  <Nav lang={lang} current="ingredients" alternates={{ en: '/en/ingredients', fr: '/fr/ingredients', zh: '/zh/ingredients' }} />
+
+  <!-- Header -->
+  <section class="pt-14 pb-10 px-6 bg-[var(--color-cream)]">
+    <div class="max-w-5xl mx-auto text-center">
+      <h1 class="text-4xl sm:text-5xl font-extrabold hero-title leading-tight mb-5">{i.ingredients.indexHeading}</h1>
+      <p class="text-xl sm:text-2xl text-[var(--color-text)] leading-relaxed max-w-3xl mx-auto">{i.ingredients.indexIntro}</p>
+    </div>
+  </section>
+
+  <!-- Ingredient grid -->
+  <section class="py-12 px-6 bg-[var(--color-bg)]">
+    <div class="max-w-6xl mx-auto">
+      {ingredients.length === 0 ? (
+        <p class="text-center text-[var(--color-text-muted)] text-lg">No ingredients available right now.</p>
+      ) : (
+        <>
+        <p class="text-center text-[var(--color-text-muted)] mb-8 max-w-2xl mx-auto">{i.ingredients.indexShowingNote}</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {ingredients.map((ing) => (
+            <a href={`/${lang}/ingredients/${ing.slug}`} class="group bg-white rounded-2xl overflow-hidden border border-[var(--color-brand)]/15 hover:shadow-lg hover:border-[var(--color-logo-red)]/30 transition-all flex flex-col">
+              {ing.imageUrl ? (
+                <img src={ing.imageUrl} alt={ing.name} loading="lazy" width="600" height="400" class="w-full h-44 object-cover" />
+              ) : (
+                <div class="w-full h-44 bg-[var(--color-cream)] flex items-center justify-center text-5xl">🥢</div>
+              )}
+              <div class="p-5 flex-1 flex flex-col">
+                <h2 class="text-xl font-extrabold text-[var(--color-brand-dark)] mb-1 group-hover:text-[var(--color-logo-red)] transition-colors">{ing.name}</h2>
+                {ing.asianName && ing.asianName !== ing.name && (
+                  <div class="text-sm text-[var(--color-text-muted)] mb-3">{ing.asianName}</div>
+                )}
+                <p class="text-[var(--color-text-muted)] leading-relaxed flex-1">{ing.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+        </>
+      )}
+    </div>
+  </section>
+
+  <!-- App CTA (ingredient-specific) -->
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.ingredients.moreInAppTitle}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.ingredients.moreInAppText}</p>
+      <a href={`/${lang}#download`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.ingredients.moreInAppButton}</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>

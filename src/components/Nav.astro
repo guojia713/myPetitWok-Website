@@ -1,0 +1,116 @@
+---
+import { t, languages, langLabels, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+  /** Highlights the active nav item. */
+  current?: 'recipes' | 'ingredients' | 'about' | 'home';
+  /** Per-language paths for the language switcher. Falls back to /{lang} if absent. */
+  alternates?: Partial<Record<Lang, string>>;
+}
+
+const { lang, current, alternates } = Astro.props;
+const i = t(lang);
+
+const langHref = (l: Lang) => alternates?.[l] ?? `/${l}`;
+const desktopLink = (id: string) =>
+  current === id
+    ? 'font-semibold text-[var(--color-logo-red)]'
+    : 'font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors';
+const mobileLink = (id: string) =>
+  current === id
+    ? 'block py-3 px-3 rounded-lg font-semibold bg-[var(--color-logo-red)]/10 text-[var(--color-logo-red)]'
+    : 'block py-3 px-3 rounded-lg font-semibold text-[var(--color-text)] hover:bg-[var(--color-brand)]/10';
+---
+
+<nav class="sticky top-0 w-full z-50 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-brand)]/15">
+  <div class="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
+    <a href={`/${lang}`} class="flex items-center gap-2">
+      <img src="/icon.png" alt="MyPetitWok" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl shadow-sm" width="88" height="88" />
+      <span class="hidden sm:inline text-lg sm:text-xl font-bold text-[var(--color-brand)]">MyPetitWok</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <div class="hidden sm:flex items-center gap-6 text-base">
+      <a href={`/${lang}/recipes`} class={desktopLink('recipes')}>{i.recipes.navLabel}</a>
+      <a href={`/${lang}/ingredients`} class={desktopLink('ingredients')}>{i.ingredients.navLabel}</a>
+      <a href={`/${lang}/about`} class={desktopLink('about')}>{i.about.navLabel}</a>
+      <a href={`/${lang}#download`} class="font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.download}</a>
+      <div class="flex gap-1 ml-1">
+        {languages.map((l) => (
+          <a href={langHref(l)} class={`px-2.5 py-1.5 rounded-full text-sm font-bold transition-colors ${l === lang ? 'bg-[var(--color-logo-red)] text-white' : 'text-[var(--color-text-muted)] hover:bg-[var(--color-brand)]/10'}`}>
+            {langLabels[l]}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Mobile hamburger trigger -->
+    <button type="button" data-nav-toggle class="sm:hidden flex items-center justify-center w-10 h-10 rounded-lg text-[var(--color-brand-dark)] hover:bg-[var(--color-brand)]/10 transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+      <svg data-nav-icon="open" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <svg data-nav-icon="close" class="w-6 h-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile dropdown panel -->
+  <div id="mobile-menu" data-nav-panel class="hidden sm:hidden border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="px-6 py-4 flex flex-col gap-1">
+      <a href={`/${lang}/recipes`} class={mobileLink('recipes')}>{i.recipes.navLabel}</a>
+      <a href={`/${lang}/ingredients`} class={mobileLink('ingredients')}>{i.ingredients.navLabel}</a>
+      <a href={`/${lang}/about`} class={mobileLink('about')}>{i.about.navLabel}</a>
+      <a href={`/${lang}#download`} class="block py-3 px-3 rounded-lg font-semibold text-[var(--color-text)] hover:bg-[var(--color-brand)]/10">{i.nav.download}</a>
+
+      <!-- Language switcher -->
+      <div class="mt-3 pt-3 border-t border-[var(--color-brand)]/15">
+        <div class="text-xs font-bold uppercase tracking-wide text-[var(--color-text-muted)] px-3 mb-2">Language · Langue · 语言</div>
+        <div class="flex gap-2 px-3 flex-wrap">
+          {languages.map((l) => (
+            <a href={langHref(l)} class={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${l === lang ? 'bg-[var(--color-logo-red)] text-white' : 'bg-white text-[var(--color-text-muted)] hover:bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/15'}`}>
+              {langLabels[l]}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-nav-panel]');
+  const openIcon = document.querySelector<HTMLElement>('[data-nav-icon="open"]');
+  const closeIcon = document.querySelector<HTMLElement>('[data-nav-icon="close"]');
+
+  if (toggle && panel) {
+    const setOpen = (open: boolean) => {
+      panel.classList.toggle('hidden', !open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      openIcon?.classList.toggle('hidden', open);
+      closeIcon?.classList.toggle('hidden', !open);
+    };
+
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = toggle.getAttribute('aria-expanded') === 'true';
+      setOpen(!open);
+    });
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (!panel.contains(e.target as Node) && !toggle.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    });
+
+    // Close when resizing up to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 640) setOpen(false);
+    });
+  }
+</script>

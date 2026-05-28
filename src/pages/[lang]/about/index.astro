@@ -1,0 +1,97 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+
+export async function getStaticPaths() {
+  return languages.map((l) => ({ params: { lang: l } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+const pageUrl = `https://mypetitwok.com/${lang}/about`;
+const layoutAlternates = { en: '/en/about', fr: '/fr/about', zh: '/zh/about' };
+
+// Person schema — for Google's E-E-A-T signal (Expertise, Experience, Authoritativeness, Trust).
+// Food content ranks better when there's a real, traceable human author.
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: i.about.founderName,
+  jobTitle: i.about.founderRole,
+  description: i.about.intro,
+  url: pageUrl,
+  worksFor: {
+    '@type': 'Organization',
+    name: 'MyPetitWok',
+    url: 'https://mypetitwok.com',
+  },
+  nationality: { '@type': 'Country', name: 'China' },
+  homeLocation: { '@type': 'Country', name: 'France' },
+  knowsAbout: ['Chinese cuisine', 'Asian cooking', 'Xi\'an food', 'Sichuan cuisine', 'Home cooking', 'Software development'],
+  email: 'hello@mypetitwok.com',
+};
+---
+
+<Layout title={i.about.title} description={i.about.description} lang={lang} alternates={layoutAlternates}>
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+  <Nav lang={lang} current="about" alternates={layoutAlternates} />
+
+  <!-- Hero -->
+  <section class="pt-14 pb-12 px-6 bg-[var(--color-cream)]">
+    <div class="max-w-3xl mx-auto text-center">
+      <h1 class="text-4xl sm:text-5xl font-extrabold hero-title leading-tight mb-5">{i.about.heading}</h1>
+      <p class="text-xl sm:text-2xl text-[var(--color-text)] leading-relaxed">{i.about.intro}</p>
+    </div>
+  </section>
+
+  <!-- Founder card -->
+  <section class="py-12 px-6 bg-white">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center sm:text-left mb-10">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)]">{i.about.founderName}</h2>
+        <p class="text-[var(--color-text-muted)] font-semibold">{i.about.founderRole}</p>
+      </div>
+
+      <div class="space-y-6 text-lg text-[var(--color-text)] leading-relaxed">
+        {i.about.bodyParagraphs.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="py-16 px-6 bg-[var(--color-bg)]">
+    <div class="max-w-5xl mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {i.about.values.map((v) => (
+          <div class="bg-white rounded-2xl p-6 border border-[var(--color-brand)]/10">
+            <h3 class="text-xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+              <span class="inline-block w-1.5 h-5 bg-[var(--color-logo-red)] rounded-full"></span>
+              {v.title}
+            </h3>
+            <p class="text-[var(--color-text-muted)] leading-relaxed">{v.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.about.contactHeading}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.about.contactBody}</p>
+      <a href={`mailto:${i.footer.email}`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.footer.email}</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>

@@ -1,0 +1,193 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+import { fetchIngredientsAllLangs, type IngredientDetail } from '../../../lib/api';
+import { buildIngredientToRecipes, type RecipeRef } from '../../../lib/ingredientCrossref';
+import { slugify } from '../../../lib/slugify';
+
+interface PageProps {
+  ingredient: IngredientDetail;
+  alternateSlugs: Partial<Record<Lang, string>>;
+  usedIn: RecipeRef[];
+}
+
+export async function getStaticPaths() {
+  const byLang = await fetchIngredientsAllLangs();
+
+  // Cross-reference: ingredient → featured recipes (per language)
+  const crossref: Record<Lang, Map<number, RecipeRef[]>> = {
+    en: await buildIngredientToRecipes('en'),
+    fr: await buildIngredientToRecipes('fr'),
+    zh: await buildIngredientToRecipes('zh'),
+  };
+
+  // Collect IDs that are SEO-worthy in EN (single source of truth for which to publish).
+  const seoIds: number[] = [];
+  for (const [id, ing] of byLang.en.entries()) {
+    if (ing.asianIngredient && (ing.description?.length ?? 0) > 50) {
+      seoIds.push(id);
+    }
+  }
+
+  const paths: { params: { lang: Lang; slug: string }; props: PageProps }[] = [];
+
+  for (const id of seoIds) {
+    const alternateSlugs: Partial<Record<Lang, string>> = {};
+    for (const l of languages) {
+      const ing = byLang[l].get(id);
+      if (ing) alternateSlugs[l] = slugify(ing.name);
+    }
+    for (const l of languages) {
+      const ing = byLang[l].get(id);
+      if (!ing) continue;
+      paths.push({
+        params: { lang: l, slug: slugify(ing.name) },
+        props: {
+          ingredient: ing,
+          alternateSlugs,
+          usedIn: crossref[l].get(id) ?? [],
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { ingredient, alternateSlugs, usedIn } = Astro.props as PageProps;
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+const pageTitle = `${ingredient.name} (${ingredient.asianName ?? ''}) ${i.ingredients.detailTitleSuffix}`.replace(/\s+/g, ' ').trim();
+const pageDescription = ingredient.description.length > 160
+  ? ingredient.description.slice(0, 157) + '...'
+  : ingredient.description;
+const pageUrl = `https://mypetitwok.com/${lang}/ingredients/${Astro.params.slug}`;
+
+const layoutAlternates: Partial<Record<Lang, string>> = {};
+for (const l of languages) {
+  if (alternateSlugs[l]) layoutAlternates[l] = `/${l}/ingredients/${alternateSlugs[l]}`;
+}
+
+// Structured data: DefinedTerm + Article (Google understands both for educational content)
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: `${ingredient.name}${ingredient.asianName ? ` (${ingredient.asianName})` : ''}`,
+  description: ingredient.description,
+  image: ingredient.imageUrl ?? undefined,
+  inLanguage: lang,
+  mainEntityOfPage: pageUrl,
+  about: {
+    '@type': 'DefinedTerm',
+    name: ingredient.name,
+    alternateName: ingredient.asianName ?? undefined,
+    description: ingredient.description,
+    inDefinedTermSet: 'https://mypetitwok.com/' + lang + '/ingredients/',
+  },
+  author: { '@type': 'Organization', name: 'MyPetitWok', url: 'https://mypetitwok.com' },
+  publisher: {
+    '@type': 'Organization',
+    name: 'MyPetitWok',
+    logo: { '@type': 'ImageObject', url: 'https://mypetitwok.com/icon.png' },
+  },
+};
+---
+
+<Layout title={pageTitle} description={pageDescription} lang={lang} alternates={layoutAlternates} ogImage={ingredient.imageUrl ?? undefined}>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <Nav lang={lang} current="ingredients" alternates={layoutAlternates} />
+
+  <!-- Breadcrumb -->
+  <div class="bg-[var(--color-cream)] px-6 pt-6">
+    <div class="max-w-4xl mx-auto text-sm text-[var(--color-text-muted)]">
+      <a href={`/${lang}/ingredients`} class="hover:text-[var(--color-logo-red)] hover:underline">← {i.ingredients.backToList}</a>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="pt-6 pb-10 px-6 bg-[var(--color-cream)]">
+    <div class="max-w-3xl mx-auto">
+      <div class="flex flex-col sm:flex-row gap-6 items-start">
+        {ingredient.imageUrl && (
+          <img src={ingredient.imageUrl} alt={ingredient.name} width="320" height="320" fetchpriority="high" class="w-48 h-48 sm:w-56 sm:h-56 object-cover rounded-2xl shadow-md flex-shrink-0" />
+        )}
+        <div class="flex-1">
+          <h1 class="text-3xl sm:text-4xl font-extrabold hero-title leading-tight mb-2">{ingredient.name}</h1>
+          {ingredient.asianName && ingredient.asianName !== ingredient.name && (
+            <p class="text-xl text-[var(--color-text-muted)] mb-4">{ingredient.asianName}</p>
+          )}
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{ingredient.description}</p>
+        </div>
+      </div>
+
+      <!-- Info chips -->
+      <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {ingredient.whereToFind && (
+          <div class="bg-white rounded-xl p-4 border border-[var(--color-brand)]/10">
+            <div class="text-xs font-bold uppercase tracking-wide text-[var(--color-logo-red)] mb-1">📍 {i.ingredients.whereToFind}</div>
+            <div class="text-[var(--color-text)]">{ingredient.whereToFind}</div>
+          </div>
+        )}
+        {ingredient.substitute && (
+          <div class="bg-white rounded-xl p-4 border border-[var(--color-brand)]/10">
+            <div class="text-xs font-bold uppercase tracking-wide text-[var(--color-logo-red)] mb-1">🔄 {i.ingredients.substitute}</div>
+            <div class="text-[var(--color-text)]">{ingredient.substitute}</div>
+          </div>
+        )}
+      </div>
+
+      {ingredient.joybuyUrl && (
+        <div class="mt-6">
+          <a href={ingredient.joybuyUrl} target="_blank" rel="sponsored noopener" class="inline-flex items-center gap-2 bg-[var(--color-logo-red)] text-white font-bold px-5 py-3 rounded-xl hover:bg-[var(--color-logo-red-dark)] transition-colors">
+            {i.ingredients.buyOnJoybuy} →
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Used in recipes -->
+  {usedIn.length > 0 && (
+    <section class="py-12 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {i.ingredients.usedIn}
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {usedIn.map((r) => (
+            <a href={`/${lang}/recipes/${r.slug}`} class="group bg-white rounded-xl overflow-hidden border border-[var(--color-brand)]/15 hover:shadow-md hover:border-[var(--color-logo-red)]/30 transition-all">
+              {r.imageUrl && (
+                <img src={r.imageUrl} alt={r.name} loading="lazy" width="400" height="240" class="w-full h-32 object-cover" />
+              )}
+              <div class="p-4">
+                <div class="font-bold text-[var(--color-brand-dark)] group-hover:text-[var(--color-logo-red)] transition-colors">{r.name}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- App CTA -->
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.recipes.saveCtaTitle}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.recipes.saveCtaText}</p>
+      <a href={`/${lang}#download`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.recipes.saveCtaButton}</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>

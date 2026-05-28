@@ -1,20 +1,38 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
 import RecipeSchema from '../../../components/RecipeSchema.astro';
 import { t, languages, type Lang } from '../../../i18n/content';
-import { fetchRecipeAllLangs, type RecipeDetail } from '../../../lib/api';
+import { fetchRecipeAllLangs, fetchIngredients, type RecipeDetail } from '../../../lib/api';
 import { FEATURED_RECIPE_IDS } from '../../../lib/featured';
 import { slugify } from '../../../lib/slugify';
 
 interface PageProps {
   recipe: RecipeDetail;
   alternateSlugs: Record<Lang, string | null>;
+  ingredientSlugs: Record<number, string>;
 }
 
 export async function getStaticPaths() {
   const all = await Promise.all(
     FEATURED_RECIPE_IDS.map(async (id) => ({ id, langs: await fetchRecipeAllLangs(id) })),
   );
+
+  // Build a per-language map: ingredientId → slug (only for ingredients
+  // that have their own published detail page, i.e. asianIngredient + real description).
+  const ingredientsByLang: Record<Lang, Map<number, string>> = {
+    en: new Map(),
+    fr: new Map(),
+    zh: new Map(),
+  };
+  for (const l of languages) {
+    const list = await fetchIngredients(l);
+    for (const ing of list) {
+      if (ing.asianIngredient && (ing.description?.length ?? 0) > 50) {
+        ingredientsByLang[l].set(ing.id, slugify(ing.name));
+      }
+    }
+  }
 
   const paths: { params: { lang: Lang; slug: string }; props: PageProps }[] = [];
 
@@ -27,9 +45,14 @@ export async function getStaticPaths() {
     for (const l of languages) {
       const r = langs[l];
       if (!r) continue;
+      const ingredientSlugs: Record<number, string> = {};
+      for (const ing of r.ingredients) {
+        const slug = ingredientsByLang[l].get(ing.ingredientId);
+        if (slug) ingredientSlugs[ing.ingredientId] = slug;
+      }
       paths.push({
         params: { lang: l, slug: slugify(r.name) },
-        props: { recipe: r, alternateSlugs },
+        props: { recipe: r, alternateSlugs, ingredientSlugs },
       });
     }
   }
@@ -37,7 +60,7 @@ export async function getStaticPaths() {
   return paths;
 }
 
-const { recipe, alternateSlugs } = Astro.props as PageProps;
+const { recipe, alternateSlugs, ingredientSlugs } = Astro.props as PageProps;
 const lang = Astro.params.lang as Lang;
 const i = t(lang);
 
@@ -61,22 +84,10 @@ for (const l of languages) {
 }
 ---
 
-<Layout title={pageTitle} description={pageDescription} lang={lang} alternates={layoutAlternates}>
+<Layout title={pageTitle} description={pageDescription} lang={lang} alternates={layoutAlternates} ogImage={recipe.imageUrl ?? undefined}>
   <RecipeSchema recipe={recipe} url={pageUrl} lang={lang} />
 
-  <!-- Nav -->
-  <nav class="sticky top-0 w-full z-50 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-brand)]/15">
-    <div class="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
-      <a href={`/${lang}`} class="flex items-center gap-2">
-        <img src="/icon.png" alt="MyPetitWok" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl shadow-sm" width="88" height="88" />
-        <span class="text-lg sm:text-xl font-bold text-[var(--color-brand)]">MyPetitWok</span>
-      </a>
-      <div class="flex items-center gap-4 sm:gap-6 text-base">
-        <a href={`/${lang}/recipes`} class="font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.recipes.navLabel}</a>
-        <a href={`/${lang}#download`} class="hidden sm:block font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.download}</a>
-      </div>
-    </div>
-  </nav>
+  <Nav lang={lang} current="recipes" alternates={layoutAlternates} />
 
   <!-- Breadcrumb -->
   <div class="bg-[var(--color-cream)] px-6 pt-6">
@@ -128,7 +139,11 @@ for (const l of languages) {
             <li class="group flex items-center gap-4 bg-white rounded-2xl px-5 py-3.5 border border-[var(--color-brand)]/10 hover:border-[var(--color-logo-red)]/30 hover:shadow-sm transition-all">
               <div class="flex-1 min-w-0">
                 <div class="text-base font-semibold text-[var(--color-text)] leading-snug">
-                  {ing.name}
+                  {ingredientSlugs[ing.ingredientId] ? (
+                    <a href={`/${lang}/ingredients/${ingredientSlugs[ing.ingredientId]}`} class="hover:text-[var(--color-logo-red)] hover:underline transition-colors">{ing.name}</a>
+                  ) : (
+                    ing.name
+                  )}
                   {ing.optional && (
                     <span class="ml-2 text-xs font-normal text-[var(--color-text-muted)] italic">{i.recipes.optional}</span>
                   )}
