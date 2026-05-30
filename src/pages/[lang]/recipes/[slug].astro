@@ -173,19 +173,20 @@ for (const l of languages) {
   <section class="py-12 px-6 bg-white">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-3xl font-extrabold text-[var(--color-brand-dark)] mb-6">{i.recipes.steps}</h2>
-      <ol class="space-y-6">
+      <ol class="space-y-8">
         {sortedSteps.map((step) => (
-          <li class="flex gap-4">
-            <span class="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--color-logo-red)] text-white font-extrabold flex items-center justify-center">{step.stepOrder}</span>
-            <div class="flex-1">
-              <p class="text-lg text-[var(--color-text)] leading-relaxed whitespace-pre-line">{step.instruction}</p>
-              {step.tip && (
-                <p class="mt-2 text-sm text-[var(--color-text-muted)] italic bg-[var(--color-cream)] p-3 rounded-lg border-l-4 border-[var(--color-logo-red)]">💡 {step.tip}</p>
-              )}
-              {step.imageUrl && (
-                <img src={step.imageUrl} alt="" loading="lazy" width="800" height="600" class="mt-3 rounded-xl max-w-md w-full" />
-              )}
+          <li>
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-xs font-extrabold tracking-wider text-[var(--color-logo-red)]">{String(step.stepOrder).padStart(2, '0')}</span>
+              <span class="flex-1 h-px bg-[var(--color-logo-red)]/30"></span>
             </div>
+            <p class="text-lg text-[var(--color-text)] leading-relaxed whitespace-pre-line">{step.instruction}</p>
+            {step.tip && (
+              <p class="mt-2 text-sm text-[var(--color-text-muted)] italic bg-[var(--color-cream)] p-3 rounded-lg border-l-4 border-[var(--color-logo-red)]">💡 {step.tip}</p>
+            )}
+            {step.imageUrl && (
+              <img src={step.imageUrl} alt="" loading="lazy" width="800" height="600" class="mt-3 rounded-xl max-w-md w-full" />
+            )}
           </li>
         ))}
       </ol>
