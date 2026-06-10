@@ -86,6 +86,10 @@ const translations: Record<Lang, {
     moreInAppTitle: string;
     moreInAppText: string;
     moreInAppButton: string;
+    faqTitle: string;
+    faqWhatIs: string;
+    faqSubstituteQ: string;
+    faqWhereQ: string;
   };
   about: {
     navLabel: string;
@@ -205,6 +209,10 @@ const translations: Record<Lang, {
       moreInAppTitle: 'Want the full ingredient library?',
       moreInAppText: 'Get 50+ Asian ingredients with photos, substitutes and shopping tips — completely free in the MyPetitWok app.',
       moreInAppButton: 'Get the free app',
+      faqTitle: 'Frequently asked questions',
+      faqWhatIs: 'What is {name}?',
+      faqSubstituteQ: 'What can I substitute for {name}?',
+      faqWhereQ: 'Where can I buy {name}?',
     },
     about: {
       navLabel: 'About',
@@ -346,6 +354,10 @@ const translations: Record<Lang, {
       moreInAppTitle: "Vous voulez la bibliothèque complète ?",
       moreInAppText: "Plus de 50 ingrédients asiatiques avec photos, substituts et conseils d'achat — entièrement gratuit dans l'app MyPetitWok.",
       moreInAppButton: "Obtenir l'app gratuite",
+      faqTitle: 'Questions fréquentes',
+      faqWhatIs: "Qu'est-ce que {name} ?",
+      faqSubstituteQ: 'Par quoi remplacer {name} ?',
+      faqWhereQ: 'Où acheter {name} ?',
     },
     about: {
       navLabel: 'À propos',
@@ -487,6 +499,10 @@ const translations: Record<Lang, {
       moreInAppTitle: '想看完整的食材库？',
       moreInAppText: '50+ 种亚洲食材，含图片、替代品建议和购物提示 — 在小锅 MyPetitWok 应用中完全免费。',
       moreInAppButton: '免费下载应用',
+      faqTitle: '常见问题',
+      faqWhatIs: '{name}是什么？',
+      faqSubstituteQ: '{name}可以用什么代替？',
+      faqWhereQ: '哪里能买到{name}？',
     },
     about: {
       navLabel: '关于',
