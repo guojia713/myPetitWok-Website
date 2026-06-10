@@ -82,6 +82,7 @@ const translations: Record<Lang, {
     usedIn: string;
     detailTitleSuffix: string;
     backToList: string;
+    relatedReading: string;
     indexShowingNote: string;
     moreInAppTitle: string;
     moreInAppText: string;
@@ -90,6 +91,12 @@ const translations: Record<Lang, {
     faqWhatIs: string;
     faqSubstituteQ: string;
     faqWhereQ: string;
+  };
+  guides: {
+    navLabel: string;
+    title: string;
+    subtitle: string;
+    items: { title: string; description: string; href: string }[];
   };
   about: {
     navLabel: string;
@@ -205,6 +212,7 @@ const translations: Record<Lang, {
       usedIn: 'Used in these recipes',
       detailTitleSuffix: '— MyPetitWok Ingredient Guide',
       backToList: 'Back to all ingredients',
+      relatedReading: 'Related reading',
       indexShowingNote: 'A taste of our ingredient library — featured here are the ones used in our online recipes.',
       moreInAppTitle: 'Want the full ingredient library?',
       moreInAppText: 'Get 50+ Asian ingredients with photos, substitutes and shopping tips — completely free in the MyPetitWok app.',
@@ -213,6 +221,23 @@ const translations: Record<Lang, {
       faqWhatIs: 'What is {name}?',
       faqSubstituteQ: 'What can I substitute for {name}?',
       faqWhereQ: 'Where can I buy {name}?',
+    },
+    guides: {
+      navLabel: 'Articles',
+      title: 'Cooking guides',
+      subtitle: 'Short, practical answers to the questions every Asian home cook asks.',
+      items: [
+        {
+          title: "Light soy sauce vs dark soy sauce: what's the difference?",
+          description: 'One seasons, the other colors — and swapping them is the most common mistake in Chinese home cooking. Here is when to use each.',
+          href: '/articles/light-vs-dark-soy-sauce',
+        },
+        {
+          title: "Yakitori sauce vs teriyaki sauce: what's the difference?",
+          description: 'Same Japanese base, two different jobs. A side-by-side comparison — and when you can swap one for the other.',
+          href: '/articles/yakitori-vs-teriyaki',
+        },
+      ],
     },
     about: {
       navLabel: 'About',
@@ -350,6 +375,7 @@ const translations: Record<Lang, {
       usedIn: 'Utilisé dans ces recettes',
       detailTitleSuffix: "— Guide des ingrédients MyPetitWok",
       backToList: 'Retour aux ingrédients',
+      relatedReading: 'À lire aussi',
       indexShowingNote: "Un avant-goût de notre bibliothèque d'ingrédients — voici ceux utilisés dans nos recettes en ligne.",
       moreInAppTitle: "Vous voulez la bibliothèque complète ?",
       moreInAppText: "Plus de 50 ingrédients asiatiques avec photos, substituts et conseils d'achat — entièrement gratuit dans l'app MyPetitWok.",
@@ -358,6 +384,23 @@ const translations: Record<Lang, {
       faqWhatIs: "Qu'est-ce que {name} ?",
       faqSubstituteQ: 'Par quoi remplacer {name} ?',
       faqWhereQ: 'Où acheter {name} ?',
+    },
+    guides: {
+      navLabel: 'Articles',
+      title: 'Guides de cuisine',
+      subtitle: 'Des réponses courtes et pratiques aux questions que se posent tous les cuisiniers de plats asiatiques.',
+      items: [
+        {
+          title: 'Sauce soja claire vs sauce soja foncée : quelle différence ?',
+          description: "L'une assaisonne, l'autre colore — les confondre est l'erreur la plus courante en cuisine chinoise. Voici quand utiliser chacune.",
+          href: '/articles/light-vs-dark-soy-sauce',
+        },
+        {
+          title: 'Sauce yakitori vs sauce teriyaki : quelle différence ?',
+          description: "Même base japonaise, deux rôles différents. Une comparaison côte à côte — et quand remplacer l'une par l'autre.",
+          href: '/articles/yakitori-vs-teriyaki',
+        },
+      ],
     },
     about: {
       navLabel: 'À propos',
@@ -495,6 +538,7 @@ const translations: Record<Lang, {
       usedIn: '用于这些菜谱',
       detailTitleSuffix: '— MyPetitWok 食材指南',
       backToList: '返回食材列表',
+      relatedReading: '延伸阅读',
       indexShowingNote: '我们食材库的一小部分 — 这里展示的是在线菜谱中使用的食材。',
       moreInAppTitle: '想看完整的食材库？',
       moreInAppText: '50+ 种亚洲食材，含图片、替代品建议和购物提示 — 在小锅 MyPetitWok 应用中完全免费。',
@@ -503,6 +547,23 @@ const translations: Record<Lang, {
       faqWhatIs: '{name}是什么？',
       faqSubstituteQ: '{name}可以用什么代替？',
       faqWhereQ: '哪里能买到{name}？',
+    },
+    guides: {
+      navLabel: '文章',
+      title: '烹饪指南',
+      subtitle: '简短实用，解答每位亚洲家常菜爱好者都会问的问题。',
+      items: [
+        {
+          title: '生抽和老抽有什么区别？',
+          description: '一个调味，一个上色 — 混用是海外做中餐最常见的错误。一张对比表说清什么时候用哪个。',
+          href: '/articles/light-vs-dark-soy-sauce',
+        },
+        {
+          title: '烤鸡肉串酱和照烧酱有什么区别？',
+          description: '基础原料相同，用途各异。一张对比表看懂区别 — 以及什么时候可以互相替代。',
+          href: '/articles/yakitori-vs-teriyaki',
+        },
+      ],
     },
     about: {
       navLabel: '关于',

@@ -18,6 +18,17 @@ export async function getStaticPaths() {
     FEATURED_RECIPE_IDS.map(async (id) => ({ id, langs: await fetchRecipeAllLangs(id) })),
   );
 
+  // Build safety: a featured recipe that resolves in NO language means the API
+  // is down, rate-limited (429), or the ID is wrong. Fail the build instead of
+  // silently deploying a site with missing recipe pages.
+  const dead = all.filter(({ langs }) => !langs.en && !langs.fr && !langs.zh);
+  if (dead.length > 0) {
+    throw new Error(
+      `[build] Featured recipe(s) ${dead.map((d) => d.id).join(', ')} returned no data in any language. ` +
+        'API may be down or rate-limited — aborting build to avoid deploying missing pages.',
+    );
+  }
+
   // Build a per-language map: ingredientId → slug (only for ingredients
   // that have their own published detail page, i.e. asianIngredient + real description).
   const ingredientsByLang: Record<Lang, Map<number, string>> = {
@@ -82,10 +93,21 @@ const layoutAlternates: Partial<Record<Lang, string>> = {};
 for (const l of languages) {
   if (alternateSlugs[l]) layoutAlternates[l] = `/${l}/recipes/${alternateSlugs[l]}`;
 }
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'MyPetitWok', item: `https://mypetitwok.com/${lang}` },
+    { '@type': 'ListItem', position: 2, name: i.recipes.navLabel, item: `https://mypetitwok.com/${lang}/recipes` },
+    { '@type': 'ListItem', position: 3, name: recipe.name.trim(), item: pageUrl },
+  ],
+};
 ---
 
 <Layout title={pageTitle} description={pageDescription} lang={lang} alternates={layoutAlternates} ogImage={recipe.imageUrl ?? undefined}>
   <RecipeSchema recipe={recipe} url={pageUrl} lang={lang} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <Nav lang={lang} current="recipes" alternates={layoutAlternates} />
 

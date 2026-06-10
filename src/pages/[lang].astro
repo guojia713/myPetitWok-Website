@@ -156,6 +156,23 @@ const storeBadges = [
     </div>
   </section>
 
+  <!-- Cooking guides -->
+  <section class="py-20 px-6 bg-white">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-4xl font-extrabold text-center mb-4 text-[var(--color-brand-dark)]">{i.guides.title}</h2>
+      <p class="text-xl text-[var(--color-text-muted)] text-center mb-10 max-w-2xl mx-auto">{i.guides.subtitle}</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        {i.guides.items.map((g) => (
+          <a href={`/${lang}${g.href}`} class="group bg-[var(--color-cream)] rounded-2xl p-6 border border-[var(--color-brand)]/15 hover:shadow-lg hover:border-[var(--color-logo-red)]/30 transition-all">
+            <h3 class="text-xl font-extrabold text-[var(--color-brand-dark)] mb-2 group-hover:text-[var(--color-logo-red)] transition-colors">{g.title}</h3>
+            <p class="text-[var(--color-text-muted)] leading-relaxed">{g.description}</p>
+            <div class="mt-4 text-sm font-bold text-[var(--color-logo-red)]">→</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <!-- Final CTA -->
   <section class="py-20 px-6 bg-[var(--color-brand)] text-white">
     <div class="max-w-3xl mx-auto text-center">

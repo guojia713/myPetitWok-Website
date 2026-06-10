@@ -7,6 +7,9 @@ import { buildIngredientToRecipes } from '../../../lib/ingredientCrossref';
 import { slugify } from '../../../lib/slugify';
 
 const MAX_INGREDIENTS = 10;
+// Always shown on the index, even if not used in a featured recipe
+// (e.g. ingredients featured in articles/guides).
+const PINNED_INGREDIENT_IDS = [119, 120, 2, 3]; // Teriyaki, Yakitori, Light soy, Dark soy (featured in articles)
 
 export async function getStaticPaths() {
   return languages.map((l) => ({ params: { lang: l } }));
@@ -19,11 +22,18 @@ const all = await fetchIngredients(lang);
 // Cross-reference: which ingredients are used in our featured web recipes?
 const featuredRecipeIngredientIds = new Set((await buildIngredientToRecipes(lang)).keys());
 
-// Show only: SEO-worthy (asianIngredient + real description) AND used in a featured recipe.
+// Show only: SEO-worthy (asianIngredient + real description) AND
+// (used in a featured recipe OR pinned). Pinned items always come first so
+// they survive the slice even as the recipe-linked pool grows.
 const ingredients = all
   .filter((x) => x.asianIngredient && (x.description?.length ?? 0) > 50)
-  .filter((x) => featuredRecipeIngredientIds.has(x.id))
-  .slice(0, MAX_INGREDIENTS)
+  .filter((x) => featuredRecipeIngredientIds.has(x.id) || PINNED_INGREDIENT_IDS.includes(x.id))
+  .sort((a, b) => {
+    const aPinned = PINNED_INGREDIENT_IDS.includes(a.id) ? 0 : 1;
+    const bPinned = PINNED_INGREDIENT_IDS.includes(b.id) ? 0 : 1;
+    return aPinned - bPinned;
+  })
+  .slice(0, MAX_INGREDIENTS + PINNED_INGREDIENT_IDS.length)
   .map((x) => ({
     id: x.id,
     name: x.name,

@@ -4,7 +4,7 @@ import { t, languages, langLabels, type Lang } from '../i18n/content';
 interface Props {
   lang: Lang;
   /** Highlights the active nav item. */
-  current?: 'recipes' | 'ingredients' | 'about' | 'home';
+  current?: 'recipes' | 'ingredients' | 'articles' | 'about' | 'home';
   /** Per-language paths for the language switcher. Falls back to /{lang} if absent. */
   alternates?: Partial<Record<Lang, string>>;
 }
@@ -34,6 +34,7 @@ const mobileLink = (id: string) =>
     <div class="hidden sm:flex items-center gap-6 text-base">
       <a href={`/${lang}/recipes`} class={desktopLink('recipes')}>{i.recipes.navLabel}</a>
       <a href={`/${lang}/ingredients`} class={desktopLink('ingredients')}>{i.ingredients.navLabel}</a>
+      <a href={`/${lang}/articles`} class={desktopLink('articles')}>{i.guides.navLabel}</a>
       <a href={`/${lang}/about`} class={desktopLink('about')}>{i.about.navLabel}</a>
       <a href={`/${lang}#download`} class="font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] transition-colors">{i.nav.download}</a>
       <div class="flex gap-1 ml-1">
@@ -57,6 +58,7 @@ const mobileLink = (id: string) =>
     <div class="px-6 py-4 flex flex-col gap-1">
       <a href={`/${lang}/recipes`} class={mobileLink('recipes')}>{i.recipes.navLabel}</a>
       <a href={`/${lang}/ingredients`} class={mobileLink('ingredients')}>{i.ingredients.navLabel}</a>
+      <a href={`/${lang}/articles`} class={mobileLink('articles')}>{i.guides.navLabel}</a>
       <a href={`/${lang}/about`} class={mobileLink('about')}>{i.about.navLabel}</a>
       <a href={`/${lang}#download`} class="block py-3 px-3 rounded-lg font-semibold text-[var(--color-text)] hover:bg-[var(--color-brand)]/10">{i.nav.download}</a>
 
