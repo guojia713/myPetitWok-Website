@@ -1,0 +1,311 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+import { fetchIngredients, type IngredientDetail } from '../../../lib/api';
+import { slugify } from '../../../lib/slugify';
+
+const LIGHT_ID = 2;
+const DARK_ID = 3;
+
+interface PageProps {
+  light: IngredientDetail;
+  dark: IngredientDetail;
+}
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const l of languages) {
+    const list = await fetchIngredients(l);
+    const light = list.find((x) => x.id === 2);
+    const dark = list.find((x) => x.id === 3);
+    if (!light || !dark) continue;
+    paths.push({ params: { lang: l }, props: { light, dark } });
+  }
+  return paths;
+}
+
+const { light, dark } = Astro.props as PageProps;
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+const copy: Record<Lang, {
+  title: string;
+  metaTitle: string;
+  metaDescription: string;
+  shortAnswer: string;
+  intro: string;
+  tableHeading: string;
+  rows: { label: string; light: string; dark: string }[];
+  verdictHeading: string;
+  verdict: string;
+  swapHeading: string;
+  swap: string;
+  learnMore: string;
+  faqTitle: string;
+  faqs: { q: string; a: string }[];
+}> = {
+  en: {
+    title: "Light Soy Sauce vs Dark Soy Sauce: What's the Difference?",
+    metaTitle: "Light Soy Sauce vs Dark Soy Sauce — What's the Difference? | MyPetitWok",
+    metaDescription: 'Light soy sauce (生抽) is thin and salty, used for seasoning. Dark soy sauce (老抽) is thicker, less salty and slightly sweet, used for color in braised dishes. They are NOT interchangeable — here is when to use each.',
+    shortAnswer: 'Short answer: light soy sauce (生抽, shēngchōu) is thin and salty — it is the everyday seasoning sauce that brings flavor. Dark soy sauce (老抽, lǎochōu) is thicker, darker, less salty and slightly sweet — its job is color, giving braised and "red-cooked" dishes their deep mahogany shine. They are not interchangeable.',
+    intro: 'This is the single most common mistake in Western kitchens cooking Chinese food: a recipe calls for "soy sauce," you grab whichever bottle is at hand, and the dish comes out either pale and flat or dark and bitter. Chinese cooking treats these as two completely different ingredients — most savory dishes actually use both, in different amounts, for different reasons.',
+    tableHeading: 'Side-by-side comparison',
+    rows: [
+      { label: 'Chinese name', light: '生抽 (shēngchōu) — "fresh extraction"', dark: '老抽 (lǎochōu) — "aged extraction"' },
+      { label: 'Main job', light: 'Seasoning — brings saltiness and umami', dark: 'Color — gives dishes a deep, glossy brown' },
+      { label: 'Saltiness', light: 'Saltier', dark: 'Less salty, slightly sweet (often with molasses)' },
+      { label: 'Texture & color', light: 'Thin, light reddish-brown', dark: 'Thicker, almost black, coats the spoon' },
+      { label: 'Classic uses', light: 'Stir-fries, dipping sauces, marinades, dumpling sauce, fried rice seasoning', dark: 'Red-braised pork (hongshao rou), soy sauce eggs, braised noodles, char siu color' },
+      { label: 'When it goes in', light: 'Throughout cooking, or raw as a dip', dark: 'During braising or at the coloring stage — rarely used raw' },
+      { label: 'Typical amount', light: 'The main soy sauce — by the tablespoon', dark: 'A little goes far — usually ½ to 1 teaspoon' },
+    ],
+    verdictHeading: 'Which one should you buy?',
+    verdict: 'If you only buy one, buy light soy sauce — it is what 90% of recipes mean by "soy sauce" and what you season with daily. But for 2-3€ more, the dark bottle unlocks the entire family of Chinese braised dishes: red-braised pork, soy eggs, lu rou fan. Real Chinese home cooking keeps both next to the stove.',
+    swapHeading: 'Can you substitute one for the other?',
+    swap: 'Not really — and this is the one swap that genuinely ruins dishes. Using dark soy instead of light makes food look burnt and taste flat (not enough salt). Using light instead of dark leaves braises pale and watery-looking, and adding more only makes them too salty. If a recipe lists both, it needs both. The only acceptable emergency: skip the dark soy and accept a paler dish.',
+    learnMore: 'Read the full ingredient guide',
+    faqTitle: 'Frequently asked questions',
+    faqs: [
+      { q: 'Are light and dark soy sauce interchangeable?', a: 'No. Light soy sauce is for salt and flavor; dark soy sauce is for color. Swapping them makes dishes either too salty and pale, or flat-tasting and overly dark.' },
+      { q: 'Which soy sauce should I use if the recipe just says "soy sauce"?', a: 'Light soy sauce. In Chinese recipes, an unqualified "soy sauce" almost always means light soy (生抽). Western supermarket soy sauce (like Kikkoman) is closest to light soy.' },
+      { q: 'Which soy sauce for fried rice?', a: 'Mostly light soy sauce for flavor, plus a small dash of dark soy sauce if you want the golden-brown restaurant color.' },
+      { q: 'Is dark soy sauce the same as sweet soy sauce (kecap manis)?', a: 'No. Indonesian kecap manis is much sweeter and thicker, like syrup. Dark soy sauce is only mildly sweet — they are not substitutes.' },
+    ],
+  },
+  fr: {
+    title: 'Sauce soja claire vs sauce soja foncée : quelle différence ?',
+    metaTitle: 'Sauce soja claire vs sauce soja foncée — quelle différence ? | MyPetitWok',
+    metaDescription: "La sauce soja claire (生抽) est fine et salée, pour assaisonner. La sauce soja foncée (老抽) est plus épaisse, moins salée et légèrement sucrée, pour colorer les plats mijotés. Elles ne sont PAS interchangeables — voici quand utiliser chacune.",
+    shortAnswer: "Réponse courte : la sauce soja claire (生抽, shēngchōu) est fine et salée — c'est la sauce d'assaisonnement quotidienne, celle qui apporte le goût. La sauce soja foncée (老抽, lǎochōu) est plus épaisse, plus sombre, moins salée et légèrement sucrée — son rôle est la couleur, ce brillant acajou des plats mijotés « cuits au rouge ». Elles ne sont pas interchangeables.",
+    intro: "C'est l'erreur la plus courante dans les cuisines occidentales qui se mettent à la cuisine chinoise : la recette dit « sauce soja », on attrape la bouteille qui traîne, et le plat ressort soit pâle et fade, soit sombre et amer. La cuisine chinoise les traite comme deux ingrédients totalement différents — la plupart des plats salés utilisent d'ailleurs les deux, en quantités différentes, pour des raisons différentes.",
+    tableHeading: 'Comparaison côte à côte',
+    rows: [
+      { label: 'Nom chinois', light: '生抽 (shēngchōu) — « extraction fraîche »', dark: '老抽 (lǎochōu) — « extraction vieillie »' },
+      { label: 'Rôle principal', light: "Assaisonner — apporte le sel et l'umami", dark: 'Colorer — donne un brun profond et brillant' },
+      { label: 'Salinité', light: 'Plus salée', dark: 'Moins salée, légèrement sucrée (souvent avec mélasse)' },
+      { label: 'Texture & couleur', light: 'Fluide, brun-rouge clair', dark: 'Plus épaisse, presque noire, nappe la cuillère' },
+      { label: 'Usages classiques', light: 'Sautés, sauces pour tremper, marinades, sauce à raviolis, riz sauté', dark: 'Porc braisé rouge (hongshao rou), œufs marinés au soja, nouilles braisées, couleur du char siu' },
+      { label: 'Quand l\'ajouter', light: 'Tout au long de la cuisson, ou crue en sauce', dark: 'Pendant le mijotage ou pour colorer — rarement crue' },
+      { label: 'Quantité typique', light: 'La sauce soja principale — à la cuillère à soupe', dark: 'Une petite quantité suffit — ½ à 1 cuillère à café' },
+    ],
+    verdictHeading: 'Laquelle acheter ?',
+    verdict: "Si vous n'en achetez qu'une, prenez la claire — c'est elle que désignent 90 % des recettes par « sauce soja », celle avec laquelle on assaisonne au quotidien. Mais pour 2-3 € de plus, la bouteille foncée vous ouvre toute la famille des plats mijotés chinois : porc braisé rouge, œufs au soja, lu rou fan. Une vraie cuisine chinoise garde les deux à côté du feu.",
+    swapHeading: "Peut-on remplacer l'une par l'autre ?",
+    swap: "Pas vraiment — et c'est LE remplacement qui gâche réellement les plats. La foncée à la place de la claire : le plat paraît brûlé et manque de sel. La claire à la place de la foncée : le mijoté reste pâle, et en rajouter le rend trop salé. Si une recette liste les deux, il faut les deux. Seul dépannage acceptable : omettre la foncée et accepter un plat plus pâle.",
+    learnMore: "Lire le guide complet de l'ingrédient",
+    faqTitle: 'Questions fréquentes',
+    faqs: [
+      { q: 'Les sauces soja claire et foncée sont-elles interchangeables ?', a: 'Non. La claire sert à saler et parfumer ; la foncée sert à colorer. Les échanger donne des plats soit trop salés et pâles, soit fades et trop sombres.' },
+      { q: 'Quelle sauce soja utiliser si la recette dit juste « sauce soja » ?', a: 'La claire. Dans les recettes chinoises, « sauce soja » sans précision désigne presque toujours la claire (生抽). La sauce soja de supermarché occidental (type Kikkoman) s\'en rapproche le plus.' },
+      { q: 'Quelle sauce soja pour le riz sauté ?', a: "Principalement la claire pour le goût, plus un petit trait de foncée si vous voulez la couleur dorée des restaurants." },
+      { q: 'La sauce soja foncée, c\'est pareil que la sauce soja sucrée (kecap manis) ?', a: 'Non. Le kecap manis indonésien est bien plus sucré et épais, comme un sirop. La foncée n\'est que légèrement sucrée — ce ne sont pas des substituts.' },
+    ],
+  },
+  zh: {
+    title: '生抽和老抽有什么区别？',
+    metaTitle: '生抽 vs 老抽：有什么区别？| MyPetitWok 小锅',
+    metaDescription: '生抽稀薄咸鲜，用于调味；老抽浓稠偏甜，用于上色，是红烧菜亮泽酱色的来源。两者不能互相替代 — 一张对比表说清楚什么时候用哪个。',
+    shortAnswer: '简短回答：生抽稀薄、偏咸，是日常调味的主力，负责提供咸鲜味；老抽更浓稠、颜色更深、咸度更低且微甜，它的任务是上色 — 红烧菜那层漂亮的酱红色就靠它。两者不能互相替代。',
+    intro: '在海外做中餐，最常见的困惑就是：菜谱写"酱油"，随手拿起一瓶，结果菜要么颜色寡淡、要么发黑发苦。在中式厨房里，生抽和老抽是两种完全不同的调料 — 很多菜其实两种都要用，用量不同，作用也不同。这篇也写给想跟法国朋友解释清楚的你。',
+    tableHeading: '对比一览',
+    rows: [
+      { label: '名称由来', light: '生抽 — 头道提取，色浅味鲜', dark: '老抽 — 加晒陈酿，色深质稠' },
+      { label: '主要作用', light: '调味 — 提供咸味和鲜味', dark: '上色 — 赋予菜肴深亮的酱红色' },
+      { label: '咸度', light: '更咸', dark: '咸度较低，微甜（常含焦糖/糖蜜）' },
+      { label: '质地与颜色', light: '稀薄，红棕色偏浅', dark: '浓稠，近乎黑色，挂勺' },
+      { label: '经典用途', light: '炒菜、蘸料、腌肉、饺子蘸汁、炒饭调味', dark: '红烧肉、卤蛋、卤面、叉烧上色' },
+      { label: '何时加入', light: '全程可用，也可生食做蘸料', dark: '炖煮上色阶段加入 — 很少生食' },
+      { label: '常用量', light: '主力酱油 — 按大勺算', dark: '少量即可 — 通常半勺到一小勺' },
+    ],
+    verdictHeading: '只买一瓶的话买哪个？',
+    verdict: '只买一瓶就买生抽 — 90% 的菜谱里说的"酱油"都是它，日常调味全靠它。但多花十几块买瓶老抽，就能解锁整个红烧家族：红烧肉、卤蛋、卤肉饭。真正的中式厨房，灶边永远两瓶都有。',
+    swapHeading: '可以互相替代吗？',
+    swap: '基本不行 — 这是真正会毁掉一道菜的替换。用老抽代替生抽：菜看着发黑，咸味却不够。用生抽代替老抽：红烧菜颜色寡淡，多加只会齁咸。菜谱里两个都写了，就两个都要。唯一可接受的应急方案：省略老抽，接受颜色浅一点的成品。',
+    learnMore: '查看完整食材指南',
+    faqTitle: '常见问题',
+    faqs: [
+      { q: '生抽和老抽可以互换吗？', a: '不行。生抽负责咸鲜调味，老抽负责上色。互换会导致菜要么太咸太淡色，要么味道寡淡颜色发黑。' },
+      { q: '菜谱只写"酱油"，该用哪个？', a: '用生抽。中餐菜谱里不加说明的"酱油"几乎都指生抽。西方超市的酱油（如龟甲万）也更接近生抽。' },
+      { q: '炒饭用生抽还是老抽？', a: '以生抽调味为主，想要餐馆那种金棕色，再点几滴老抽即可。' },
+      { q: '老抽和印尼甜酱油（kecap manis）一样吗？', a: '不一样。印尼甜酱油更甜更稠，像糖浆；老抽只是微甜。两者不能互相替代。' },
+    ],
+  },
+};
+
+const c = copy[lang];
+const slug = 'light-vs-dark-soy-sauce';
+const pageUrl = `https://mypetitwok.com/${lang}/articles/${slug}`;
+const layoutAlternates = {
+  en: `/en/articles/${slug}`,
+  fr: `/fr/articles/${slug}`,
+  zh: `/zh/articles/${slug}`,
+};
+
+const lightSlug = slugify(light.name);
+const darkSlug = slugify(dark.name);
+
+const publishedDate = '2026-06-04';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: c.title,
+  description: c.metaDescription,
+  image: [light.imageUrl, dark.imageUrl].filter(Boolean),
+  inLanguage: lang,
+  datePublished: publishedDate,
+  mainEntityOfPage: pageUrl,
+  author: { '@type': 'Person', name: i.about.founderName, url: `https://mypetitwok.com/${lang}/about` },
+  publisher: {
+    '@type': 'Organization',
+    name: 'MyPetitWok',
+    logo: { '@type': 'ImageObject', url: 'https://mypetitwok.com/icon.png' },
+  },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: c.faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const sauces = [
+  { data: light, slug: lightSlug },
+  { data: dark, slug: darkSlug },
+];
+---
+
+<Layout title={c.metaTitle} description={c.metaDescription} lang={lang} alternates={layoutAlternates} ogImage={light.imageUrl ?? undefined}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <Nav lang={lang} current="articles" alternates={layoutAlternates} />
+
+  <!-- Article header -->
+  <article>
+    <header class="pt-14 pb-8 px-6 bg-[var(--color-cream)]">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold hero-title leading-tight mb-6">{c.title}</h1>
+        <p class="text-lg sm:text-xl text-[var(--color-text)] leading-relaxed bg-white rounded-2xl p-5 border-l-4 border-[var(--color-logo-red)] shadow-sm">
+          {c.shortAnswer}
+        </p>
+        <p class="mt-6 text-lg text-[var(--color-text-muted)] leading-relaxed">{c.intro}</p>
+      </div>
+    </header>
+
+    <!-- The two sauces, side by side -->
+    <section class="py-10 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {sauces.map((s) => (
+          <a href={`/${lang}/ingredients/${s.slug}`} class="group bg-white rounded-2xl overflow-hidden border border-[var(--color-brand)]/15 hover:shadow-lg hover:border-[var(--color-logo-red)]/30 transition-all">
+            {s.data.imageUrl && (
+              <img src={s.data.imageUrl} alt={s.data.name} width="600" height="400" loading="eager" class="w-full h-52 object-cover" />
+            )}
+            <div class="p-5">
+              <h2 class="text-xl font-extrabold text-[var(--color-brand-dark)] group-hover:text-[var(--color-logo-red)] transition-colors">{s.data.name.trim()}</h2>
+              {s.data.asianName && s.data.asianName !== s.data.name && (
+                <div class="text-sm text-[var(--color-text-muted)] mt-0.5">{s.data.asianName}</div>
+              )}
+              <div class="mt-3 text-sm font-bold text-[var(--color-logo-red)]">{c.learnMore} →</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Comparison table -->
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {c.tableHeading}
+        </h2>
+        <div class="overflow-x-auto rounded-2xl border border-[var(--color-brand)]/15">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[var(--color-brand)] text-white">
+                <th class="px-4 py-3 font-bold text-sm w-1/4"></th>
+                <th class="px-4 py-3 font-bold">{light.name.trim()}</th>
+                <th class="px-4 py-3 font-bold">{dark.name.trim()}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {c.rows.map((row, idx) => (
+                <tr class={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--color-cream)]/60'}>
+                  <th class="px-4 py-3.5 font-bold text-[var(--color-brand-dark)] text-sm align-top">{row.label}</th>
+                  <td class="px-4 py-3.5 text-[var(--color-text)] leading-relaxed align-top">{row.light}</td>
+                  <td class="px-4 py-3.5 text-[var(--color-text)] leading-relaxed align-top">{row.dark}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Verdict + substitution -->
+    <section class="py-10 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto space-y-8">
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+            <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+            {c.verdictHeading}
+          </h2>
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{c.verdict}</p>
+        </div>
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+            <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+            {c.swapHeading}
+          </h2>
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{c.swap}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {c.faqTitle}
+        </h2>
+        <div class="space-y-3">
+          {c.faqs.map((f) => (
+            <details class="group bg-[var(--color-cream)] rounded-xl border border-[var(--color-brand)]/10 overflow-hidden">
+              <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer font-semibold text-[var(--color-brand-dark)] list-none [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <svg class="w-5 h-5 flex-shrink-0 text-[var(--color-logo-red)] transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <p class="px-5 pb-4 text-[var(--color-text)] leading-relaxed">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <!-- App CTA -->
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.recipes.saveCtaTitle}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.recipes.saveCtaText}</p>
+      <a href={`/${lang}#download`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.recipes.saveCtaButton}</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>

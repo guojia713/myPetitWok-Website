@@ -1,0 +1,57 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+
+export async function getStaticPaths() {
+  return languages.map((l) => ({ params: { lang: l } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+const layoutAlternates = { en: '/en/articles', fr: '/fr/articles', zh: '/zh/articles' };
+---
+
+<Layout title={`${i.guides.title} — MyPetitWok`} description={i.guides.subtitle} lang={lang} alternates={layoutAlternates}>
+  <Nav lang={lang} current="articles" alternates={layoutAlternates} />
+
+  <!-- Header -->
+  <section class="pt-14 pb-10 px-6 bg-[var(--color-cream)]">
+    <div class="max-w-5xl mx-auto text-center">
+      <h1 class="text-4xl sm:text-5xl font-extrabold hero-title leading-tight mb-5">{i.guides.title}</h1>
+      <p class="text-xl sm:text-2xl text-[var(--color-text)] leading-relaxed max-w-3xl mx-auto">{i.guides.subtitle}</p>
+    </div>
+  </section>
+
+  <!-- Article list -->
+  <section class="py-12 px-6 bg-[var(--color-bg)]">
+    <div class="max-w-3xl mx-auto grid grid-cols-1 gap-6">
+      {i.guides.items.map((g) => (
+        <a href={`/${lang}${g.href}`} class="group bg-white rounded-2xl p-6 border border-[var(--color-brand)]/15 hover:shadow-lg hover:border-[var(--color-logo-red)]/30 transition-all">
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[var(--color-brand-dark)] mb-2 group-hover:text-[var(--color-logo-red)] transition-colors">{g.title}</h2>
+          <p class="text-[var(--color-text-muted)] leading-relaxed">{g.description}</p>
+          <div class="mt-4 text-sm font-bold text-[var(--color-logo-red)]">→</div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- App CTA -->
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.recipes.saveCtaTitle}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.recipes.saveCtaText}</p>
+      <a href={`/${lang}#download`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.recipes.saveCtaButton}</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>

@@ -1,0 +1,315 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+import { fetchIngredients, type IngredientDetail } from '../../../lib/api';
+import { slugify } from '../../../lib/slugify';
+
+const TERIYAKI_ID = 119;
+const YAKITORI_ID = 120;
+
+interface PageProps {
+  teriyaki: IngredientDetail;
+  yakitori: IngredientDetail;
+}
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const l of languages) {
+    const list = await fetchIngredients(l);
+    const teriyaki = list.find((x) => x.id === 119);
+    const yakitori = list.find((x) => x.id === 120);
+    if (!teriyaki || !yakitori) continue;
+    paths.push({ params: { lang: l }, props: { teriyaki, yakitori } });
+  }
+  return paths;
+}
+
+const { teriyaki, yakitori } = Astro.props as PageProps;
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+// Article copy per language — answer-first for GEO.
+const copy: Record<Lang, {
+  title: string;
+  metaTitle: string;
+  metaDescription: string;
+  shortAnswer: string;
+  intro: string;
+  tableHeading: string;
+  rows: { label: string; yakitori: string; teriyaki: string }[];
+  colIngredient: string;
+  verdictHeading: string;
+  verdict: string;
+  swapHeading: string;
+  swap: string;
+  learnMore: string;
+  faqTitle: string;
+  faqs: { q: string; a: string }[];
+  published: string;
+}> = {
+  en: {
+    title: "Yakitori Sauce vs Teriyaki Sauce: What's the Difference?",
+    metaTitle: "Yakitori Sauce vs Teriyaki Sauce — What's the Difference? | MyPetitWok",
+    metaDescription: 'Yakitori and teriyaki sauce share the same base (soy sauce, mirin, sake, sugar) but differ in flavor and use: yakitori is more savory and made for charcoal-grilled skewers, teriyaki is sweeter and used as a glossy glaze.',
+    shortAnswer: 'Short answer: both sauces share the same Japanese base — soy sauce, mirin, sake and sugar — but yakitori sauce is more savory (often deepened with dashi or chicken stock) and made for basting charcoal-grilled skewers, while teriyaki sauce is sweeter and thicker, used as a glossy glaze or marinade for pan-cooked and oven-cooked dishes.',
+    intro: 'They look almost identical in the bottle, and many home cooks use them interchangeably. But in a Japanese kitchen they have distinct jobs. Here is exactly how they differ — and when you can swap one for the other.',
+    tableHeading: 'Side-by-side comparison',
+    colIngredient: '',
+    rows: [
+      { label: 'Made for', yakitori: 'Basting charcoal-grilled skewers (especially chicken)', teriyaki: 'Glazing and marinating pan-fried, grilled or oven-cooked proteins' },
+      { label: 'Base ingredients', yakitori: 'Soy sauce, mirin, sake, sugar', teriyaki: 'Soy sauce, mirin, sake, sugar' },
+      { label: 'The key difference', yakitori: 'Often enriched with dashi or reduced chicken stock for a deeper savory note that stands up to smoke', teriyaki: 'More sugar-forward; the sweetness caramelizes into a shiny glaze' },
+      { label: 'Flavor profile', yakitori: 'Savory-first, umami-rich, balanced sweetness', teriyaki: 'Sweet-first, glossy, mildly salty' },
+      { label: 'Texture', yakitori: 'Thinner — made for repeated dipping and basting during grilling', teriyaki: 'Thicker — clings to meat as a coating' },
+      { label: 'Classic dishes', yakitori: 'Yakitori chicken skewers, grilled meatballs (tsukune)', teriyaki: 'Teriyaki chicken, salmon teriyaki, beef teriyaki bowls' },
+    ],
+    verdictHeading: 'Which one should you buy?',
+    verdict: 'If you cook skewers on a grill or barbecue, get yakitori sauce — its savory depth is built for smoky, charred meat. For everyday pan or oven cooking (chicken thighs, salmon, stir-fried bowls), teriyaki sauce is the more versatile choice and easier to find in regular supermarkets.',
+    swapHeading: 'Can you substitute one for the other?',
+    swap: 'Yes, in a pinch. They share the same backbone, so a dish will still taste good. Going teriyaki → yakitori: your skewers will be slightly sweeter and stickier. Going yakitori → teriyaki: add a pinch of sugar or honey to compensate for the lower sweetness.',
+    learnMore: 'Read the full ingredient guide',
+    faqTitle: 'Frequently asked questions',
+    faqs: [
+      { q: 'Are yakitori sauce and teriyaki sauce the same?', a: 'No. They share the same base of soy sauce, mirin, sake and sugar, but yakitori sauce is more savory and made for grilled skewers, while teriyaki sauce is sweeter and used as a glaze or marinade.' },
+      { q: 'Can I use teriyaki sauce for yakitori?', a: 'Yes — your skewers will simply be slightly sweeter and stickier. For a closer match, cut the teriyaki sauce with a splash of soy sauce or dashi.' },
+      { q: 'Which is sweeter, yakitori or teriyaki?', a: 'Teriyaki sauce is sweeter. Yakitori sauce leans savory, often deepened with dashi or chicken stock.' },
+    ],
+    published: 'Published',
+  },
+  fr: {
+    title: 'Sauce yakitori vs sauce teriyaki : quelle différence ?',
+    metaTitle: 'Sauce yakitori vs sauce teriyaki — quelle différence ? | MyPetitWok',
+    metaDescription: "Les sauces yakitori et teriyaki partagent la même base (sauce soja, mirin, saké, sucre) mais diffèrent par leur goût et leur usage : la yakitori est plus salée, conçue pour les brochettes grillées ; la teriyaki est plus sucrée, utilisée comme glaçage brillant.",
+    shortAnswer: "Réponse courte : les deux sauces partagent la même base japonaise — sauce soja, mirin, saké et sucre — mais la sauce yakitori est plus salée (souvent enrichie de dashi ou de jus de poulet réduit) et conçue pour badigeonner les brochettes grillées au charbon, tandis que la sauce teriyaki est plus sucrée et plus épaisse, utilisée comme glaçage brillant ou marinade pour les cuissons à la poêle ou au four.",
+    intro: "Dans la bouteille, elles se ressemblent presque trait pour trait, et beaucoup de cuisiniers les utilisent indifféremment. Mais dans une cuisine japonaise, chacune a son rôle précis. Voici exactement ce qui les distingue — et quand vous pouvez remplacer l'une par l'autre.",
+    tableHeading: 'Comparaison côte à côte',
+    colIngredient: '',
+    rows: [
+      { label: 'Conçue pour', yakitori: 'Badigeonner les brochettes grillées au charbon (surtout le poulet)', teriyaki: 'Glacer et mariner les viandes et poissons à la poêle, au gril ou au four' },
+      { label: 'Ingrédients de base', yakitori: 'Sauce soja, mirin, saké, sucre', teriyaki: 'Sauce soja, mirin, saké, sucre' },
+      { label: 'La différence clé', yakitori: 'Souvent enrichie de dashi ou de jus de poulet réduit, pour une profondeur salée qui tient tête au fumé', teriyaki: 'Plus sucrée ; le sucre caramélise en un glaçage brillant' },
+      { label: 'Profil de goût', yakitori: "Salé d'abord, riche en umami, douceur équilibrée", teriyaki: 'Sucré d\'abord, brillant, légèrement salé' },
+      { label: 'Texture', yakitori: 'Plus fluide — faite pour tremper et badigeonner pendant la cuisson', teriyaki: 'Plus épaisse — nappe la viande comme un enrobage' },
+      { label: 'Plats classiques', yakitori: 'Brochettes de poulet yakitori, boulettes grillées (tsukune)', teriyaki: 'Poulet teriyaki, saumon teriyaki, bols de bœuf teriyaki' },
+    ],
+    verdictHeading: 'Laquelle acheter ?',
+    verdict: "Si vous cuisinez des brochettes au gril ou au barbecue, prenez la sauce yakitori — sa profondeur salée est faite pour les viandes fumées et grillées. Pour la cuisine de tous les jours à la poêle ou au four (hauts de cuisse, saumon, bols sautés), la sauce teriyaki est plus polyvalente et plus facile à trouver en grande surface.",
+    swapHeading: "Peut-on remplacer l'une par l'autre ?",
+    swap: "Oui, en dépannage. Elles partagent la même ossature, le plat restera bon. Teriyaki → yakitori : vos brochettes seront un peu plus sucrées et collantes. Yakitori → teriyaki : ajoutez une pincée de sucre ou de miel pour compenser la douceur moindre.",
+    learnMore: "Lire le guide complet de l'ingrédient",
+    faqTitle: 'Questions fréquentes',
+    faqs: [
+      { q: 'La sauce yakitori et la sauce teriyaki sont-elles identiques ?', a: 'Non. Elles partagent la même base (sauce soja, mirin, saké, sucre), mais la yakitori est plus salée et conçue pour les brochettes grillées, tandis que la teriyaki est plus sucrée et sert de glaçage ou de marinade.' },
+      { q: 'Puis-je utiliser de la sauce teriyaki pour des yakitori ?', a: "Oui — vos brochettes seront simplement un peu plus sucrées et collantes. Pour vous rapprocher du goût d'origine, allongez la teriyaki d'un trait de sauce soja ou de dashi." },
+      { q: 'Laquelle est la plus sucrée, yakitori ou teriyaki ?', a: 'La sauce teriyaki est la plus sucrée. La yakitori penche vers le salé, souvent enrichie de dashi ou de jus de poulet.' },
+    ],
+    published: 'Publié le',
+  },
+  zh: {
+    title: '烤鸡肉串酱（Yakitori）和照烧酱（Teriyaki）有什么区别？',
+    metaTitle: '烤鸡肉串酱 vs 照烧酱：有什么区别？| MyPetitWok 小锅',
+    metaDescription: '烤鸡肉串酱和照烧酱的基础原料相同（生抽、味醂、清酒、糖），但风味和用途不同：烤串酱更咸鲜，专为炭烤串烧设计；照烧酱更甜更稠，用作亮泽的挂汁或腌料。',
+    shortAnswer: '简短回答：两款酱的日式基础原料相同 — 生抽、味醂、清酒和糖 — 但烤鸡肉串酱更咸鲜（常加入高汤或浓缩鸡骨汁），专为反复涂刷炭烤串烧而设计；照烧酱更甜更稠，用作煎烤料理的亮泽挂汁或腌料。',
+    intro: '两瓶酱看起来几乎一模一样，很多人也确实混着用。但在日本料理里，它们各司其职。下面是它们的具体区别 — 以及什么时候可以互相替代。',
+    tableHeading: '对比一览',
+    colIngredient: '',
+    rows: [
+      { label: '设计用途', yakitori: '反复涂刷炭烤串烧（尤其是烤鸡肉串）', teriyaki: '煎、烤、焗料理的挂汁和腌料' },
+      { label: '基础原料', yakitori: '生抽、味醂、清酒、糖', teriyaki: '生抽、味醂、清酒、糖' },
+      { label: '关键区别', yakitori: '常加入高汤（Dashi）或浓缩鸡骨汁，咸鲜更浓郁，能压住炭火烟熏味', teriyaki: '偏甜；糖分焦糖化后形成明亮的光泽外膜' },
+      { label: '风味', yakitori: '咸鲜为主，鲜味浓郁，甜度适中', teriyaki: '甜味为主，光亮，微咸' },
+      { label: '质地', yakitori: '较稀 — 方便烤制过程中反复浸蘸涂刷', teriyaki: '较稠 — 能挂在肉上形成包裹层' },
+      { label: '经典菜式', yakitori: '日式烤鸡肉串、烤鸡肉丸（つくね）', teriyaki: '照烧鸡、照烧三文鱼、照烧牛肉饭' },
+    ],
+    verdictHeading: '该买哪一瓶？',
+    verdict: '如果你常做烧烤串，选烤鸡肉串酱 — 它的咸鲜深度专为烟熏炭烤而生。日常煎锅或烤箱料理（鸡腿、三文鱼、盖饭），照烧酱更百搭，普通超市也更容易买到。',
+    swapHeading: '可以互相替代吗？',
+    swap: '可以应急。两者骨架相同，做出来依然好吃。照烧酱代替烤串酱：串烧会偏甜偏黏。烤串酱代替照烧酱：加一点糖或蜂蜜补足甜度即可。',
+    learnMore: '查看完整食材指南',
+    faqTitle: '常见问题',
+    faqs: [
+      { q: '烤鸡肉串酱和照烧酱是同一种酱吗？', a: '不是。基础原料相同（生抽、味醂、清酒、糖），但烤串酱更咸鲜、专为烤串设计；照烧酱更甜，用作挂汁或腌料。' },
+      { q: '可以用照烧酱做烤鸡肉串吗？', a: '可以 — 串烧会稍甜稍黏。想更接近原味，可以兑一点生抽或高汤。' },
+      { q: '哪个更甜，烤串酱还是照烧酱？', a: '照烧酱更甜。烤串酱偏咸鲜，常加入高汤或鸡骨汁。' },
+    ],
+    published: '发布于',
+  },
+};
+
+const c = copy[lang];
+const slug = 'yakitori-vs-teriyaki';
+const pageUrl = `https://mypetitwok.com/${lang}/articles/${slug}`;
+const layoutAlternates = {
+  en: `/en/articles/${slug}`,
+  fr: `/fr/articles/${slug}`,
+  zh: `/zh/articles/${slug}`,
+};
+
+const yakitoriSlug = slugify(yakitori.name);
+const teriyakiSlug = slugify(teriyaki.name);
+
+const publishedDate = '2026-06-04';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: c.title,
+  description: c.metaDescription,
+  image: [yakitori.imageUrl, teriyaki.imageUrl].filter(Boolean),
+  inLanguage: lang,
+  datePublished: publishedDate,
+  mainEntityOfPage: pageUrl,
+  author: { '@type': 'Person', name: i.about.founderName, url: `https://mypetitwok.com/${lang}/about` },
+  publisher: {
+    '@type': 'Organization',
+    name: 'MyPetitWok',
+    logo: { '@type': 'ImageObject', url: 'https://mypetitwok.com/icon.png' },
+  },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: c.faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const sauces = [
+  { data: yakitori, slug: yakitoriSlug, key: 'yakitori' as const },
+  { data: teriyaki, slug: teriyakiSlug, key: 'teriyaki' as const },
+];
+---
+
+<Layout title={c.metaTitle} description={c.metaDescription} lang={lang} alternates={layoutAlternates} ogImage={yakitori.imageUrl ?? undefined}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <Nav lang={lang} current="articles" alternates={layoutAlternates} />
+
+  <!-- Article header -->
+  <article>
+    <header class="pt-14 pb-8 px-6 bg-[var(--color-cream)]">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold hero-title leading-tight mb-6">{c.title}</h1>
+        <!-- Answer-first summary (GEO: quotable, extractable) -->
+        <p class="text-lg sm:text-xl text-[var(--color-text)] leading-relaxed bg-white rounded-2xl p-5 border-l-4 border-[var(--color-logo-red)] shadow-sm">
+          {c.shortAnswer}
+        </p>
+        <p class="mt-6 text-lg text-[var(--color-text-muted)] leading-relaxed">{c.intro}</p>
+      </div>
+    </header>
+
+    <!-- The two sauces, side by side -->
+    <section class="py-10 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {sauces.map((s) => (
+          <a href={`/${lang}/ingredients/${s.slug}`} class="group bg-white rounded-2xl overflow-hidden border border-[var(--color-brand)]/15 hover:shadow-lg hover:border-[var(--color-logo-red)]/30 transition-all">
+            {s.data.imageUrl && (
+              <img src={s.data.imageUrl} alt={s.data.name} width="600" height="400" loading="eager" class="w-full h-52 object-cover" />
+            )}
+            <div class="p-5">
+              <h2 class="text-xl font-extrabold text-[var(--color-brand-dark)] group-hover:text-[var(--color-logo-red)] transition-colors">{s.data.name.trim()}</h2>
+              {s.data.asianName && s.data.asianName !== s.data.name && (
+                <div class="text-sm text-[var(--color-text-muted)] mt-0.5">{s.data.asianName}</div>
+              )}
+              <div class="mt-3 text-sm font-bold text-[var(--color-logo-red)]">{c.learnMore} →</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Comparison table -->
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {c.tableHeading}
+        </h2>
+        <div class="overflow-x-auto rounded-2xl border border-[var(--color-brand)]/15">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[var(--color-brand)] text-white">
+                <th class="px-4 py-3 font-bold text-sm w-1/4"></th>
+                <th class="px-4 py-3 font-bold">{yakitori.name.trim()}</th>
+                <th class="px-4 py-3 font-bold">{teriyaki.name.trim()}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {c.rows.map((row, idx) => (
+                <tr class={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--color-cream)]/60'}>
+                  <th class="px-4 py-3.5 font-bold text-[var(--color-brand-dark)] text-sm align-top">{row.label}</th>
+                  <td class="px-4 py-3.5 text-[var(--color-text)] leading-relaxed align-top">{row.yakitori}</td>
+                  <td class="px-4 py-3.5 text-[var(--color-text)] leading-relaxed align-top">{row.teriyaki}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Verdict + substitution -->
+    <section class="py-10 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto space-y-8">
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+            <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+            {c.verdictHeading}
+          </h2>
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{c.verdict}</p>
+        </div>
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+            <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+            {c.swapHeading}
+          </h2>
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{c.swap}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {c.faqTitle}
+        </h2>
+        <div class="space-y-3">
+          {c.faqs.map((f) => (
+            <details class="group bg-[var(--color-cream)] rounded-xl border border-[var(--color-brand)]/10 overflow-hidden">
+              <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer font-semibold text-[var(--color-brand-dark)] list-none [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <svg class="w-5 h-5 flex-shrink-0 text-[var(--color-logo-red)] transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <p class="px-5 pb-4 text-[var(--color-text)] leading-relaxed">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <!-- App CTA -->
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.recipes.saveCtaTitle}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.recipes.saveCtaText}</p>
+      <a href={`/${lang}#download`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.recipes.saveCtaButton}</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>
