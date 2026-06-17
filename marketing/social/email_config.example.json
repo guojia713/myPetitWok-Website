@@ -1,0 +1,10 @@
+{
+  "_comment": "Copy this file to 'email_config.json' (same folder) and fill in app_password. email_config.json is git-ignored and never committed.",
+  "smtp_host": "smtp.zoho.eu",
+  "smtp_port": 587,
+  "username": "mypetitwok@zohomail.eu",
+  "app_password": "PASTE_YOUR_ZOHO_APP_PASSWORD_HERE",
+  "from_addr": "mypetitwok@zohomail.eu",
+  "to_addr": "mypetitwok@zohomail.eu",
+  "subject": "MyPetitWok — this week's social post"
+}

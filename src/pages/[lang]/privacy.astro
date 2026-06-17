@@ -9,9 +9,11 @@ export function getStaticPaths() {
 
 const lang = Astro.params.lang as Lang;
 const p = getPrivacy(lang);
+
+const layoutAlternates = { en: '/en/privacy', fr: '/fr/privacy', zh: '/zh/privacy' };
 ---
 
-<Layout title={`${p.title} — MyPetitWok`} description={p.intro} lang={lang}>
+<Layout title={`${p.title} — MyPetitWok`} description={p.intro} lang={lang} alternates={layoutAlternates}>
   <!-- Nav -->
   <nav class="fixed top-0 w-full z-50 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-brand)]/15">
     <div class="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">

@@ -1,0 +1,739 @@
+---
+// Local-only admin console for creating recipes & ingredients.
+//
+// This page talks directly (from the browser) to the MyPetitWok backend
+// admin API. The backend enforces ROLE_ADMIN on every write, so security
+// does not depend on this page being hidden.
+//
+// It is gated behind `import.meta.env.DEV`: when you run `npm run dev` it is
+// available at http://localhost:4321/admin. In a production build the admin
+// markup and its inline script are NOT emitted at all — only a stub remains.
+// Run it locally only.
+import '@fontsource-variable/inter/index.css';
+import '../../styles/global.css';
+
+const isDev = import.meta.env.DEV;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>MyPetitWok — Admin</title>
+  </head>
+  <body class="antialiased" style="background-color: var(--color-bg);">
+    {!isDev ? (
+      <main style="max-width: 32rem; margin: 4rem auto; padding: 0 1.5rem;">
+        <h1 style="color: var(--color-brand); font-weight: 800;">Admin</h1>
+        <p>This console is only available when running the site locally (<code>npm run dev</code>).</p>
+      </main>
+    ) : (
+      <main class="admin">
+        <header class="admin-bar">
+          <span class="logo">🥢 MyPetitWok <b>Admin</b></span>
+          <span id="who" class="who"></span>
+          <button id="logout" class="btn-ghost" hidden>Log out</button>
+        </header>
+
+        <!-- ── Login ─────────────────────────────────────────────── -->
+        <section id="login-view" class="card" style="max-width: 26rem; margin: 3rem auto;">
+          <h2>Sign in</h2>
+          <label>Email<input id="login-email" type="email" autocomplete="username" /></label>
+          <label>Password<input id="login-password" type="password" autocomplete="current-password" /></label>
+          <details class="api-base">
+            <summary>API base URL</summary>
+            <input id="api-base" type="text" placeholder="https://api.mypetitwok.com" />
+            <small>Change only if pointing at a local backend (e.g. http://localhost:8080).</small>
+          </details>
+          <button id="login-btn" class="btn">Sign in</button>
+          <p id="login-error" class="error" hidden></p>
+        </section>
+
+        <!-- ── App ───────────────────────────────────────────────── -->
+        <div id="app-view" hidden>
+          <nav class="tabs">
+            <button class="tab is-active" data-tab="ingredient">Add ingredient</button>
+            <button class="tab" data-tab="recipe">Add recipe</button>
+            <button class="tab" data-tab="manage">Manage</button>
+          </nav>
+
+          <!-- ── Ingredient panel ──────────────────────────────── -->
+          <section id="panel-ingredient" class="panel card">
+            <h2>New ingredient</h2>
+            <div class="grid2">
+              <label>Native / Asian name *<input id="ing-asianName" type="text" placeholder="e.g. 老抽" /></label>
+              <label>Category
+                <select id="ing-category">
+                  <option value="">—</option>
+                  <option>SAUCE</option><option>SPICE</option><option>VEGETABLE</option>
+                  <option>PROTEIN</option><option>OIL</option><option>OTHER</option>
+                </select>
+              </label>
+              <label class="check"><input id="ing-asian" type="checkbox" /> Asian ingredient (gets its own page)</label>
+              <label>Substitute ingredient ID<input id="ing-substituteId" type="number" placeholder="optional" /></label>
+              <label class="span2">Joybuy URL<input id="ing-joybuyUrl" type="url" placeholder="optional" /></label>
+            </div>
+
+            <h3>Translations</h3>
+            <div class="langgrid" id="ing-langs"></div>
+
+            <label class="filelabel">Photo (uploaded after create)
+              <input id="ing-image" type="file" accept="image/*" />
+            </label>
+
+            <div class="inline-actions">
+              <button id="ing-submit" class="btn">Create ingredient</button>
+              <button id="ing-cancel-edit" class="btn-ghost" type="button" hidden>Cancel edit</button>
+              <button id="ing-reset" class="btn-ghost" type="button">Reset</button>
+            </div>
+            <p id="ing-msg" class="msg" hidden></p>
+          </section>
+
+          <!-- ── Recipe panel ──────────────────────────────────── -->
+          <section id="panel-recipe" class="panel card" hidden>
+            <h2>New recipe</h2>
+            <div class="grid2">
+              <label>Cuisine
+                <select id="rec-cuisine">
+                  <option>CHINESE</option><option>JAPANESE</option><option>KOREAN</option>
+                  <option>THAI</option><option>VIETNAMESE</option>
+                </select>
+              </label>
+              <label>Difficulty
+                <select id="rec-difficulty">
+                  <option>BEGINNER</option><option>INTERMEDIATE</option><option>ADVANCED</option>
+                </select>
+              </label>
+              <label>Prep (min) *<input id="rec-prep" type="number" min="0" /></label>
+              <label>Cook (min) *<input id="rec-cook" type="number" min="0" /></label>
+              <label>Servings *<input id="rec-servings" type="number" min="1" /></label>
+              <label>Spice level (0–5)<input id="rec-spice" type="number" min="0" max="5" value="0" /></label>
+              <label class="span2">Categories (comma-separated)<input id="rec-categories" type="text" placeholder="SIMPLE, WEEKNIGHT" /></label>
+            </div>
+
+            <h3>Translations</h3>
+            <div class="langgrid" id="rec-langs"></div>
+
+            <h3>Ingredients <button id="rec-add-ing" class="btn-sm" type="button">+ row</button></h3>
+            <div id="rec-ingredients" class="rows"></div>
+
+            <h3>Steps <button id="rec-add-step" class="btn-sm" type="button">+ step</button></h3>
+            <div id="rec-steps" class="rows"></div>
+
+            <label class="filelabel">Main dish photo (uploaded after create)
+              <input id="rec-image" type="file" accept="image/*" />
+            </label>
+
+            <div class="inline-actions">
+              <button id="rec-submit" class="btn">Create recipe (draft)</button>
+              <button id="rec-cancel-edit" class="btn-ghost" type="button" hidden>Cancel edit</button>
+              <button id="rec-reset" class="btn-ghost" type="button">Reset</button>
+            </div>
+            <p id="rec-msg" class="msg" hidden></p>
+          </section>
+
+          <!-- ── Manage panel ──────────────────────────────────── -->
+          <section id="panel-manage" class="panel card" hidden>
+            <h2>Manage</h2>
+            <div class="manage-toggle">
+              <button class="mtab is-active" data-mtab="recipe" type="button">Recipes</button>
+              <button class="mtab" data-mtab="ingredient" type="button">Ingredients</button>
+            </div>
+            <input id="manage-search" type="search" placeholder="Search by name…" />
+            <p id="manage-status" class="manage-status">Loading…</p>
+            <div id="manage-list" class="manage-list"></div>
+            <div id="manage-pager" class="pager" hidden>
+              <button id="manage-prev" class="btn-ghost" type="button">‹ Prev</button>
+              <span id="manage-page-info"></span>
+              <button id="manage-next" class="btn-ghost" type="button">Next ›</button>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <style is:inline>
+        .admin { max-width: 70rem; margin: 0 auto; padding: 0 1.25rem 5rem; }
+        .admin-bar { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #0001; }
+        .admin-bar .logo { font-weight: 700; color: var(--color-brand); }
+        .admin-bar .logo b { color: var(--color-logo-red); }
+        .who { margin-left: auto; color: var(--color-text-muted); font-size: .9rem; }
+        .card { background: var(--color-bg-card); border-radius: 14px; padding: 1.5rem; box-shadow: 0 1px 3px #0001; }
+        h2 { color: var(--color-brand); font-weight: 800; margin: 0 0 1rem; }
+        h3 { color: var(--color-brand-dark); font-weight: 700; margin: 1.5rem 0 .75rem; display: flex; align-items: center; gap: .75rem; }
+        label { display: flex; flex-direction: column; gap: .3rem; font-size: .82rem; font-weight: 600; color: var(--color-text-muted); margin-bottom: .85rem; }
+        label.check, label.filelabel { flex-direction: row; align-items: center; gap: .5rem; }
+        input, select, textarea { font: inherit; font-size: .95rem; font-weight: 400; color: var(--color-text); padding: .55rem .7rem; border: 1px solid #0002; border-radius: 9px; background: #fff; width: 100%; }
+        textarea { min-height: 3.5rem; resize: vertical; }
+        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+        .span2 { grid-column: 1 / -1; }
+        .langgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        .langgrid .langcol { border: 1px solid #0001; border-radius: 10px; padding: .9rem; }
+        .langgrid h4 { margin: 0 0 .6rem; color: var(--color-brand); font-size: .8rem; letter-spacing: .04em; }
+        .btn { background: var(--color-brand); color: #fff; border: none; padding: .7rem 1.4rem; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: .95rem; }
+        .btn:hover { background: var(--color-brand-dark); }
+        .btn-sm { background: var(--color-brand-light); color: #fff; border: none; padding: .25rem .65rem; border-radius: 8px; font-size: .75rem; font-weight: 700; cursor: pointer; }
+        .btn-ghost { background: none; border: 1px solid #0002; padding: .4rem .9rem; border-radius: 9px; cursor: pointer; font-weight: 600; }
+        .tabs { display: flex; gap: .5rem; margin: 1.5rem 0; }
+        .tab { background: #0000; border: 1px solid #0002; padding: .55rem 1.1rem; border-radius: 999px; cursor: pointer; font-weight: 700; color: var(--color-text-muted); }
+        .tab.is-active { background: var(--color-brand); color: #fff; border-color: var(--color-brand); }
+        .rows { display: flex; flex-direction: column; gap: .6rem; }
+        .row { display: grid; gap: .5rem; align-items: start; padding: .7rem; border: 1px solid #0001; border-radius: 10px; background: #fafafa; }
+        .row.ing-row { grid-template-columns: 2fr 1fr 1fr auto auto; }
+        .row .row-del { background: var(--color-logo-red); color: #fff; border: none; border-radius: 8px; width: 2rem; cursor: pointer; }
+        .row label { margin: 0; }
+        .steplangs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .6rem; }
+        .error { color: var(--color-logo-red); font-weight: 600; }
+        .msg { font-weight: 600; padding: .7rem .9rem; border-radius: 9px; }
+        .msg.ok { background: #e6f4ea; color: var(--color-brand-dark); }
+        .msg.err { background: #fde7e7; color: var(--color-logo-red-dark); }
+        .api-base summary { cursor: pointer; font-size: .8rem; color: var(--color-text-muted); margin-bottom: .5rem; }
+        .api-base small { color: var(--color-text-muted); font-weight: 400; }
+        .inline-actions { display: flex; gap: .6rem; margin-top: .6rem; align-items: center; }
+        .manage-toggle { display: flex; gap: .4rem; margin-bottom: 1rem; }
+        .mtab { background: #0000; border: 1px solid #0002; padding: .4rem .9rem; border-radius: 999px; cursor: pointer; font-weight: 700; font-size: .85rem; color: var(--color-text-muted); }
+        .mtab.is-active { background: var(--color-brand-light); color: #fff; border-color: var(--color-brand-light); }
+        #manage-search { margin-bottom: 1rem; }
+        .manage-status { color: var(--color-text-muted); font-size: .85rem; font-weight: 600; }
+        .manage-list { display: flex; flex-direction: column; gap: .5rem; }
+        .mrow { display: flex; align-items: center; gap: .8rem; padding: .55rem .7rem; border: 1px solid #0001; border-radius: 10px; background: #fafafa; }
+        .mrow img, .mrow .noimg { width: 46px; height: 46px; border-radius: 8px; object-fit: cover; flex: none; background: #0001; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .mrow .minfo { min-width: 0; flex: 1; }
+        .mrow .mname { font-weight: 700; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mrow .mmeta { font-size: .76rem; color: var(--color-text-muted); }
+        .badge { display: inline-block; padding: .08rem .5rem; border-radius: 999px; font-size: .68rem; font-weight: 800; letter-spacing: .03em; }
+        .badge.pub { background: #e6f4ea; color: var(--color-brand-dark); }
+        .badge.draft { background: #fdf0d5; color: #8a5a00; }
+        .pager { display: flex; align-items: center; gap: 1rem; justify-content: center; margin-top: 1rem; }
+        .pager button:disabled { opacity: .4; cursor: default; }
+        #manage-page-info { font-size: .85rem; color: var(--color-text-muted); font-weight: 600; }
+        @media (max-width: 760px) { .grid2, .langgrid, .steplangs { grid-template-columns: 1fr; } .row.ing-row { grid-template-columns: 1fr 1fr; } }
+      </style>
+
+      <script is:inline>
+        (function () {
+          const LANGS = ['EN', 'FR', 'ZH_CN'];
+          const UNITS = ['g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup', 'piece', 'slice', 'clove', 'pinch', 'bunch', 'can', 'pack', 'to taste'];
+          const UNIT_OPTIONS = '<option value="">—</option>' + UNITS.map((u) => '<option>' + u + '</option>').join('');
+          const TOKEN_KEY = 'mpw_admin_token';
+          const BASE_KEY = 'mpw_api_base';
+          const DEFAULT_BASE = 'https://api.mypetitwok.com';
+
+          const $ = (id) => document.getElementById(id);
+          const apiBase = () => (sessionStorage.getItem(BASE_KEY) || DEFAULT_BASE).replace(/\/+$/, '');
+          const token = () => sessionStorage.getItem(TOKEN_KEY);
+
+          // Edit-mode state: null = creating, a number = editing that id.
+          let editRecipeId = null;
+          let editIngredientId = null;
+
+          // Set a <select> value, adding the option first if it isn't in the list
+          // (e.g. an existing unit that's not one of our presets).
+          function setSelectValue(sel, value) {
+            if (value == null) value = '';
+            value = String(value);
+            if (value && !Array.from(sel.options).some((o) => o.value === value)) {
+              const opt = document.createElement('option');
+              opt.value = value; opt.textContent = value;
+              sel.appendChild(opt);
+            }
+            sel.value = value;
+          }
+
+          async function api(path, { method = 'GET', body, form } = {}) {
+            const headers = {};
+            const t = token();
+            if (t) headers['Authorization'] = 'Bearer ' + t;
+            let payload;
+            if (form) { payload = form; }
+            else if (body !== undefined) { headers['Content-Type'] = 'application/json'; payload = JSON.stringify(body); }
+            const res = await fetch(apiBase() + path, { method, headers, body: payload });
+            const text = await res.text();
+            let data = null;
+            try { data = text ? JSON.parse(text) : null; } catch (_) { data = text; }
+            if (!res.ok) {
+              const msg = (data && data.error) || (data && data.message) || res.status + ' ' + res.statusText;
+              throw new Error(msg);
+            }
+            return data;
+          }
+
+          // ── Auth ──────────────────────────────────────────────
+          function showApp(who) {
+            $('login-view').hidden = true;
+            $('app-view').hidden = false;
+            $('logout').hidden = false;
+            $('who').textContent = who || '';
+          }
+          function showLogin() {
+            $('login-view').hidden = false;
+            $('app-view').hidden = true;
+            $('logout').hidden = true;
+            $('who').textContent = '';
+          }
+
+          $('login-btn').addEventListener('click', async () => {
+            const err = $('login-error');
+            err.hidden = true;
+            const base = $('api-base').value.trim();
+            if (base) sessionStorage.setItem(BASE_KEY, base);
+            try {
+              const res = await api('/api/v1/auth/login', {
+                method: 'POST',
+                body: { email: $('login-email').value.trim(), password: $('login-password').value },
+              });
+              if (!res || !res.token) throw new Error('No token returned');
+              if (res.role !== 'ADMIN' && res.role !== 'ROLE_ADMIN') {
+                throw new Error('This account is not an admin (role: ' + res.role + ')');
+              }
+              sessionStorage.setItem(TOKEN_KEY, res.token);
+              showApp(res.email + ' · ' + res.role);
+              loadIngredientOptions();
+            } catch (e) {
+              err.textContent = 'Login failed: ' + e.message;
+              err.hidden = false;
+            }
+          });
+
+          $('logout').addEventListener('click', () => {
+            sessionStorage.removeItem(TOKEN_KEY);
+            showLogin();
+          });
+
+          // ── Tabs ──────────────────────────────────────────────
+          function activateTab(tab) {
+            document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tab === tab));
+            $('panel-ingredient').hidden = tab !== 'ingredient';
+            $('panel-recipe').hidden = tab !== 'recipe';
+            $('panel-manage').hidden = tab !== 'manage';
+            if (tab === 'manage') loadManageList();
+          }
+          document.querySelectorAll('.tab').forEach((btn) => {
+            btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+          });
+
+          // ── Build language sub-forms ──────────────────────────
+          function langBlock(prefix, fields) {
+            const wrap = $(prefix + '-langs');
+            wrap.innerHTML = '';
+            LANGS.forEach((lng) => {
+              const col = document.createElement('div');
+              col.className = 'langcol';
+              let html = '<h4>' + lng + '</h4>';
+              fields.forEach((f) => {
+                const id = prefix + '-' + f.key + '-' + lng;
+                const req = f.key === 'name' && lng === 'EN' ? ' *' : '';
+                if (f.area) html += '<label>' + f.label + req + '<textarea id="' + id + '"></textarea></label>';
+                else html += '<label>' + f.label + req + '<input id="' + id + '" type="text" /></label>';
+              });
+              col.innerHTML = html;
+              wrap.appendChild(col);
+            });
+          }
+          langBlock('ing', [
+            { key: 'name', label: 'Name' },
+            { key: 'description', label: 'Description', area: true },
+            { key: 'whereToFind', label: 'Where to find', area: true },
+          ]);
+          langBlock('rec', [
+            { key: 'name', label: 'Name' },
+            { key: 'description', label: 'Description', area: true },
+            { key: 'phonetic', label: 'Phonetic' },
+          ]);
+
+          function collectTranslations(prefix, fields) {
+            const out = {};
+            LANGS.forEach((lng) => {
+              const t = {};
+              let any = false;
+              fields.forEach((f) => {
+                const v = $(prefix + '-' + f + '-' + lng).value.trim();
+                if (v) any = true;
+                t[f] = v || null;
+              });
+              // Always include EN; include others only if they have a name.
+              if (lng === 'EN' || t.name) out[lng] = t;
+            });
+            return out;
+          }
+
+          // ── Ingredient create ─────────────────────────────────
+          $('ing-submit').addEventListener('click', async () => {
+            const msg = $('ing-msg');
+            msg.hidden = true;
+            try {
+              const body = {
+                asianName: $('ing-asianName').value.trim(),
+                category: $('ing-category').value || null,
+                asianIngredient: $('ing-asian').checked,
+                substituteId: $('ing-substituteId').value ? Number($('ing-substituteId').value) : null,
+                joybuyUrl: $('ing-joybuyUrl').value.trim() || null,
+                translations: collectTranslations('ing', ['name', 'description', 'whereToFind']),
+              };
+              if (!body.asianName) throw new Error('Native/Asian name is required');
+              if (!body.translations.EN || !body.translations.EN.name) throw new Error('English name is required');
+              const editing = editIngredientId != null;
+              const saved = editing
+                ? await api('/api/v1/ingredients/' + editIngredientId, { method: 'PUT', body })
+                : await api('/api/v1/ingredients', { method: 'POST', body });
+              let extra = '';
+              const file = $('ing-image').files[0];
+              if (file) {
+                const fd = new FormData(); fd.append('file', file);
+                await api('/api/v1/ingredients/' + saved.id + '/image', { method: 'POST', form: fd });
+                extra = ' (with photo)';
+              }
+              msg.className = 'msg ok';
+              msg.textContent = (editing ? '✓ Updated' : '✓ Created') + ' ingredient #' + saved.id + ': ' + saved.name + extra;
+              msg.hidden = false;
+              if (editing) setIngredientEditMode(null);
+              loadIngredientOptions();
+            } catch (e) {
+              msg.className = 'msg err';
+              msg.textContent = '✗ ' + e.message;
+              msg.hidden = false;
+            }
+          });
+
+          // ── Recipe: ingredient picker options ─────────────────
+          let ingredientOptions = '<option value="">— pick ingredient —</option>';
+          async function loadIngredientOptions() {
+            try {
+              const list = await api('/api/v1/ingredients?lang=EN');
+              const items = Array.isArray(list) ? list : (list && list.content) || [];
+              ingredientOptions = '<option value="">— pick ingredient —</option>' +
+                items.map((x) => '<option value="' + x.id + '">' + (x.name || x.asianName) + ' (#' + x.id + ')</option>').join('');
+              document.querySelectorAll('.ing-select').forEach((sel) => {
+                const v = sel.value; sel.innerHTML = ingredientOptions; sel.value = v;
+              });
+            } catch (_) { /* ignore — picker stays empty */ }
+          }
+
+          // ── Recipe: dynamic ingredient rows ───────────────────
+          function addIngredientRow(data) {
+            const row = document.createElement('div');
+            row.className = 'row ing-row';
+            row.innerHTML =
+              '<label>Ingredient<select class="ing-select">' + ingredientOptions + '</select></label>' +
+              '<label>Qty<input class="ing-qty" type="text" placeholder="2" /></label>' +
+              '<label>Unit<select class="ing-unit">' + UNIT_OPTIONS + '</select></label>' +
+              '<label class="check">Opt<input class="ing-opt" type="checkbox" /></label>' +
+              '<button class="row-del" type="button" title="Remove">×</button>';
+            row.querySelector('.row-del').addEventListener('click', () => row.remove());
+            $('rec-ingredients').appendChild(row);
+            if (data) {
+              setSelectValue(row.querySelector('.ing-select'), data.ingredientId);
+              row.querySelector('.ing-qty').value = data.quantity || '';
+              setSelectValue(row.querySelector('.ing-unit'), data.unit || '');
+              row.querySelector('.ing-opt').checked = !!data.optional;
+            }
+            return row;
+          }
+          $('rec-add-ing').addEventListener('click', () => addIngredientRow());
+
+          // ── Recipe: dynamic step rows ─────────────────────────
+          // data = { durationMinutes, translations: { EN: {instruction, tip}, ... } }
+          function addStepRow(data) {
+            const idx = $('rec-steps').children.length + 1;
+            const row = document.createElement('div');
+            row.className = 'row';
+            let langHtml = '<div class="steplangs">';
+            LANGS.forEach((lng) => {
+              langHtml += '<div><strong style="font-size:.75rem;color:var(--color-brand)">' + lng + '</strong>' +
+                '<label>Instruction<textarea class="step-instr" data-lng="' + lng + '"></textarea></label>' +
+                '<label>Tip<input class="step-tip" data-lng="' + lng + '" type="text" /></label></div>';
+            });
+            langHtml += '</div>';
+            row.innerHTML =
+              '<div style="display:flex;align-items:center;gap:.75rem"><strong>Step <span class="step-num">' + idx + '</span></strong>' +
+              '<label style="margin:0">Duration (min)<input class="step-dur" type="number" min="0" style="width:6rem" /></label>' +
+              '<button class="row-del" type="button" style="margin-left:auto" title="Remove">×</button></div>' + langHtml;
+            row.querySelector('.row-del').addEventListener('click', () => { row.remove(); renumberSteps(); });
+            $('rec-steps').appendChild(row);
+            if (data) {
+              if (data.durationMinutes != null) row.querySelector('.step-dur').value = data.durationMinutes;
+              LANGS.forEach((lng) => {
+                const tr = (data.translations && data.translations[lng]) || {};
+                row.querySelector('.step-instr[data-lng="' + lng + '"]').value = tr.instruction || '';
+                row.querySelector('.step-tip[data-lng="' + lng + '"]').value = tr.tip || '';
+              });
+            }
+            return row;
+          }
+          function renumberSteps() {
+            $('rec-steps').querySelectorAll('.step-num').forEach((el, i) => { el.textContent = i + 1; });
+          }
+          $('rec-add-step').addEventListener('click', () => addStepRow());
+
+          // ── Recipe create ─────────────────────────────────────
+          $('rec-submit').addEventListener('click', async () => {
+            const msg = $('rec-msg');
+            msg.hidden = true;
+            try {
+              const ingredients = [];
+              $('rec-ingredients').querySelectorAll('.ing-row').forEach((r, i) => {
+                const id = r.querySelector('.ing-select').value;
+                if (!id) return;
+                ingredients.push({
+                  ingredientId: Number(id),
+                  quantity: r.querySelector('.ing-qty').value.trim() || null,
+                  unit: r.querySelector('.ing-unit').value.trim() || null,
+                  optional: r.querySelector('.ing-opt').checked,
+                  sortOrder: i,
+                });
+              });
+              const steps = [];
+              $('rec-steps').children && Array.from($('rec-steps').children).forEach((r, i) => {
+                const translations = {};
+                LANGS.forEach((lng) => {
+                  const instr = r.querySelector('.step-instr[data-lng="' + lng + '"]').value.trim();
+                  const tip = r.querySelector('.step-tip[data-lng="' + lng + '"]').value.trim();
+                  if (lng === 'EN' || instr) translations[lng] = { instruction: instr, tip: tip || null };
+                });
+                const dur = r.querySelector('.step-dur').value;
+                steps.push({ stepOrder: i + 1, durationMinutes: dur ? Number(dur) : null, translations });
+              });
+
+              const cats = $('rec-categories').value.split(',').map((s) => s.trim()).filter(Boolean);
+              const body = {
+                cuisineType: $('rec-cuisine').value,
+                difficulty: $('rec-difficulty').value,
+                prepTimeMinutes: Number($('rec-prep').value),
+                cookTimeMinutes: Number($('rec-cook').value),
+                servings: Number($('rec-servings').value),
+                spiceLevel: Number($('rec-spice').value || 0),
+                categories: cats,
+                tagIds: [],
+                translations: collectTranslations('rec', ['name', 'description', 'phonetic']),
+                ingredients,
+                steps,
+              };
+              if (!body.translations.EN || !body.translations.EN.name) throw new Error('English recipe name is required');
+              if (!body.prepTimeMinutes && body.prepTimeMinutes !== 0) throw new Error('Prep time is required');
+
+              const editing = editRecipeId != null;
+              const saved = editing
+                ? await api('/api/v1/recipes/' + editRecipeId, { method: 'PUT', body })
+                : await api('/api/v1/recipes', { method: 'POST', body });
+              let extra = '';
+              const file = $('rec-image').files[0];
+              if (file) {
+                const fd = new FormData(); fd.append('file', file);
+                await api('/api/v1/recipes/' + saved.id + '/image', { method: 'POST', form: fd });
+                extra = ' (with photo)';
+              }
+              msg.className = 'msg ok';
+              msg.innerHTML = (editing ? '✓ Updated recipe #' : '✓ Created draft recipe #') + saved.id + ': ' + saved.name + extra +
+                '<div class="inline-actions"><span style="font-size:.8rem;color:var(--color-text-muted)">' +
+                (editing ? 'Changes saved — visible in the app after a refresh.' : 'Saved as a draft — publish it from your app.') + '</span></div>';
+              msg.hidden = false;
+              if (editing) setRecipeEditMode(null);
+            } catch (e) {
+              msg.className = 'msg err';
+              msg.textContent = '✗ ' + e.message;
+              msg.hidden = false;
+            }
+          });
+
+          // ── Reset ─────────────────────────────────────────────
+          function clearPanel(panelId) {
+            const panel = $(panelId);
+            panel.querySelectorAll('input, textarea').forEach((el) => {
+              if (el.type === 'checkbox') el.checked = false;
+              else el.value = '';
+            });
+            panel.querySelectorAll('select').forEach((el) => { el.selectedIndex = 0; });
+            const msg = panel.querySelector('.msg');
+            if (msg) msg.hidden = true;
+          }
+          $('ing-reset').addEventListener('click', () => clearPanel('panel-ingredient'));
+          $('rec-reset').addEventListener('click', () => {
+            clearPanel('panel-recipe');
+            $('rec-ingredients').innerHTML = '';
+            $('rec-steps').innerHTML = '';
+            addIngredientRow();
+            addStepRow();
+          });
+
+          // ── Edit-mode toggles ─────────────────────────────────
+          function setRecipeEditMode(id) {
+            editRecipeId = id;
+            $('rec-submit').textContent = id != null ? 'Save changes' : 'Create recipe (draft)';
+            $('rec-cancel-edit').hidden = id == null;
+            $('panel-recipe').querySelector('h2').textContent = id != null ? 'Edit recipe #' + id : 'New recipe';
+          }
+          function setIngredientEditMode(id) {
+            editIngredientId = id;
+            $('ing-submit').textContent = id != null ? 'Save changes' : 'Create ingredient';
+            $('ing-cancel-edit').hidden = id == null;
+            $('panel-ingredient').querySelector('h2').textContent = id != null ? 'Edit ingredient #' + id : 'New ingredient';
+          }
+          $('ing-cancel-edit').addEventListener('click', () => { clearPanel('panel-ingredient'); setIngredientEditMode(null); });
+          $('rec-cancel-edit').addEventListener('click', () => {
+            clearPanel('panel-recipe');
+            $('rec-ingredients').innerHTML = ''; $('rec-steps').innerHTML = '';
+            addIngredientRow(); addStepRow();
+            setRecipeEditMode(null);
+          });
+
+          // ── Load an ingredient into the form for editing ──────
+          async function editIngredient(id) {
+            activateTab('ingredient');
+            const msg = $('ing-msg'); msg.hidden = true;
+            try {
+              const results = await Promise.all(LANGS.map((l) => api('/api/v1/ingredients/' + id + '?lang=' + l)));
+              const byLang = { EN: results[0], FR: results[1], ZH_CN: results[2] };
+              const base = results.find(Boolean);
+              if (!base) throw new Error('Ingredient not found');
+              clearPanel('panel-ingredient');
+              $('ing-asianName').value = base.asianName || '';
+              setSelectValue($('ing-category'), base.category || '');
+              $('ing-asian').checked = !!base.asianIngredient;
+              $('ing-substituteId').value = base.substitute ? base.substitute.id : '';
+              $('ing-joybuyUrl').value = base.joybuyUrl || '';
+              LANGS.forEach((lng) => {
+                const r = byLang[lng]; if (!r) return;
+                $('ing-name-' + lng).value = r.name || '';
+                $('ing-description-' + lng).value = r.description || '';
+                $('ing-whereToFind-' + lng).value = r.whereToFind || '';
+              });
+              setIngredientEditMode(id);
+            } catch (e) { msg.className = 'msg err'; msg.textContent = '✗ ' + e.message; msg.hidden = false; }
+          }
+
+          // ── Load a recipe into the form for editing ───────────
+          async function editRecipe(id) {
+            activateTab('recipe');
+            const msg = $('rec-msg'); msg.hidden = true;
+            try {
+              await loadIngredientOptions();
+              const results = await Promise.all(LANGS.map((l) => api('/api/v1/recipes/admin/' + id + '?lang=' + l)));
+              const byLang = { EN: results[0], FR: results[1], ZH_CN: results[2] };
+              const base = results.find(Boolean);
+              if (!base) throw new Error('Recipe not found');
+              clearPanel('panel-recipe');
+              setSelectValue($('rec-cuisine'), base.cuisineType);
+              setSelectValue($('rec-difficulty'), base.difficulty);
+              $('rec-prep').value = base.prepTimeMinutes != null ? base.prepTimeMinutes : '';
+              $('rec-cook').value = base.cookTimeMinutes != null ? base.cookTimeMinutes : '';
+              $('rec-servings').value = base.servings != null ? base.servings : '';
+              $('rec-spice').value = base.spiceLevel != null ? base.spiceLevel : 0;
+              $('rec-categories').value = (base.categories || []).join(', ');
+              LANGS.forEach((lng) => {
+                const r = byLang[lng]; if (!r) return;
+                $('rec-name-' + lng).value = r.name || '';
+                $('rec-description-' + lng).value = r.description || '';
+                $('rec-phonetic-' + lng).value = r.phonetic || '';
+              });
+              $('rec-ingredients').innerHTML = '';
+              (base.ingredients || []).forEach((ing) => addIngredientRow({
+                ingredientId: ing.ingredientId, quantity: ing.quantity, unit: ing.unit, optional: ing.optional,
+              }));
+              if (!$('rec-ingredients').children.length) addIngredientRow();
+              $('rec-steps').innerHTML = '';
+              const baseSteps = (base.steps || []).slice().sort((a, b) => a.stepOrder - b.stepOrder);
+              baseSteps.forEach((s) => {
+                const translations = {};
+                LANGS.forEach((lng) => {
+                  const r = byLang[lng]; if (!r || !r.steps) return;
+                  const match = r.steps.find((x) => x.stepOrder === s.stepOrder);
+                  if (match) translations[lng] = { instruction: match.instruction, tip: match.tip };
+                });
+                addStepRow({ durationMinutes: s.durationMinutes, translations });
+              });
+              if (!$('rec-steps').children.length) addStepRow();
+              setRecipeEditMode(id);
+            } catch (e) { msg.className = 'msg err'; msg.textContent = '✗ ' + e.message; msg.hidden = false; }
+          }
+
+          // ── Manage list ───────────────────────────────────────
+          let manageType = 'recipe';
+          let managePage = 0;
+          let manageLast = true;
+          let manageSearchTimer = null;
+
+          function escapeHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+          }
+          function rowEl(opts) {
+            const row = document.createElement('div');
+            row.className = 'mrow';
+            row.innerHTML =
+              (opts.img ? '<img src="' + opts.img + '" alt="" />' : '<span class="noimg">🍜</span>') +
+              '<div class="minfo"><div class="mname">' + escapeHtml(opts.name) + '</div>' +
+              '<div class="mmeta">' + opts.meta + ' ' + (opts.badge || '') + '</div></div>' +
+              '<button class="btn-sm" type="button">Edit</button>';
+            row.querySelector('button').addEventListener('click', opts.onEdit);
+            return row;
+          }
+
+          document.querySelectorAll('.mtab').forEach((btn) => btn.addEventListener('click', () => {
+            document.querySelectorAll('.mtab').forEach((b) => b.classList.toggle('is-active', b === btn));
+            manageType = btn.dataset.mtab;
+            managePage = 0;
+            loadManageList();
+          }));
+          $('manage-search').addEventListener('input', () => {
+            clearTimeout(manageSearchTimer);
+            manageSearchTimer = setTimeout(() => { managePage = 0; loadManageList(); }, 300);
+          });
+          $('manage-prev').addEventListener('click', () => { if (managePage > 0) { managePage--; loadManageList(); } });
+          $('manage-next').addEventListener('click', () => { if (!manageLast) { managePage++; loadManageList(); } });
+
+          async function loadManageList() {
+            const listEl = $('manage-list');
+            const statusEl = $('manage-status');
+            const pager = $('manage-pager');
+            listEl.innerHTML = '';
+            statusEl.hidden = false; statusEl.textContent = 'Loading…';
+            const search = $('manage-search').value.trim();
+            try {
+              if (manageType === 'recipe') {
+                const q = '?lang=EN&page=' + managePage + '&size=20' + (search ? '&search=' + encodeURIComponent(search) : '');
+                const res = await api('/api/v1/recipes/admin' + q);
+                const items = (res && res.content) || [];
+                manageLast = !res || res.last;
+                items.forEach((r) => listEl.appendChild(rowEl({
+                  img: r.imageUrl,
+                  name: r.name || ('Recipe #' + r.id),
+                  meta: '#' + r.id + ' · ' + (r.cuisineType || '') + (r.difficulty ? ' · ' + r.difficulty : ''),
+                  badge: r.published ? '<span class="badge pub">Published</span>' : '<span class="badge draft">Draft</span>',
+                  onEdit: () => editRecipe(r.id),
+                })));
+                pager.hidden = false;
+                $('manage-prev').disabled = managePage === 0;
+                $('manage-next').disabled = manageLast;
+                $('manage-page-info').textContent = 'Page ' + (managePage + 1) + (res ? ' / ' + (res.totalPages || 1) : '');
+                statusEl.hidden = items.length > 0;
+                if (!items.length) statusEl.textContent = 'No recipes found.';
+              } else {
+                const q = '?lang=EN' + (search ? '&search=' + encodeURIComponent(search) : '');
+                const list = await api('/api/v1/ingredients' + q);
+                const items = Array.isArray(list) ? list : (list && list.content) || [];
+                items.forEach((x) => listEl.appendChild(rowEl({
+                  img: x.imageUrl,
+                  name: x.name || x.asianName || ('Ingredient #' + x.id),
+                  meta: '#' + x.id + ' · ' + (x.category || '') + (x.asianName ? ' · ' + x.asianName : ''),
+                  badge: x.asianIngredient ? '<span class="badge pub">Asian</span>' : '',
+                  onEdit: () => editIngredient(x.id),
+                })));
+                pager.hidden = true;
+                statusEl.hidden = items.length > 0;
+                if (!items.length) statusEl.textContent = 'No ingredients found.';
+              }
+            } catch (e) {
+              statusEl.hidden = false; statusEl.textContent = 'Failed to load: ' + e.message;
+            }
+          }
+
+          // ── Boot ──────────────────────────────────────────────
+          $('api-base').value = sessionStorage.getItem(BASE_KEY) || '';
+          addIngredientRow();
+          addStepRow();
+          if (token()) { showApp(''); loadIngredientOptions(); } else { showLogin(); }
+        })();
+      </script>
+    )}
+  </body>
+</html>

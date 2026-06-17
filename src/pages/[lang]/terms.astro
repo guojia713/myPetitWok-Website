@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import { languages, type Lang } from '../../i18n/content';
+import { getTerms } from '../../i18n/legal';
+
+export function getStaticPaths() {
+  return languages.map((l) => ({ params: { lang: l } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const doc = getTerms(lang);
+const layoutAlternates = { en: '/en/terms', fr: '/fr/terms', zh: '/zh/terms' };
+---
+
+<Layout title={`${doc.title} — MyPetitWok`} description={doc.intro} lang={lang} alternates={layoutAlternates}>
+  <Nav lang={lang} alternates={layoutAlternates} />
+
+  <main class="py-12 px-6 bg-[var(--color-cream)] min-h-screen">
+    <article class="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-[var(--color-brand)]/15 p-8 sm:p-12">
+      <h1 class="text-4xl font-extrabold text-[var(--color-brand-dark)] mb-2">{doc.title}</h1>
+      <p class="text-sm text-[var(--color-text-muted)] mb-6">{doc.lastUpdated}</p>
+      <p class="text-lg text-[var(--color-text)] leading-relaxed mb-10">{doc.intro}</p>
+
+      <div class="flex flex-col gap-8">
+        {doc.sections.map((s) => (
+          <section>
+            <h2 class="text-xl font-bold text-[var(--color-logo-red)] mb-3">{s.heading}</h2>
+            <p class="text-[var(--color-text)] leading-relaxed whitespace-pre-line">{s.body}</p>
+          </section>
+        ))}
+      </div>
+
+      <div class="mt-12 pt-8 border-t border-[var(--color-brand)]/15">
+        <a href={`/${lang}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{doc.back}</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="py-8 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center text-sm text-[var(--color-text-muted)]">
+      <span>&copy; {new Date().getFullYear()} MyPetitWok</span>
+    </div>
+  </footer>
+</Layout>

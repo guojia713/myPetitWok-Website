@@ -20,7 +20,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '1. Who we are',
         body:
-          'MyPetitWok is operated by My Petit Wok, a French micro-entreprise registered in France. You can contact us at hello@mypetitwok.com for any privacy-related question or to exercise your rights.',
+          'MyPetitWok is operated by Jia Guo, a French sole trader (entrepreneur individuel) trading as "MY PETIT WOK", SIRET 104 407 721 00026, registered office at 27 Avenue Jean Médecin, 06000 Nice, France. You can contact us at hello@mypetitwok.com for any privacy-related question or to exercise your rights.',
       },
       {
         heading: '2. Data we collect',
@@ -88,7 +88,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '1. Qui sommes-nous',
         body:
-          "MyPetitWok est édité par My Petit Wok, micro-entreprise immatriculée en France. Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez-nous à hello@mypetitwok.com.",
+          "MyPetitWok est édité par Jia Guo, entrepreneur individuel exerçant sous le nom « MY PETIT WOK », SIRET 104 407 721 00026, siège social au 27 Avenue Jean Médecin, 06000 Nice, France. Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez-nous à hello@mypetitwok.com.",
       },
       {
         heading: '2. Données collectées',
@@ -156,7 +156,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '1. 关于我们',
         body:
-          'MyPetitWok 由 My Petit Wok（在法国注册的微型企业 micro-entreprise）运营。如有任何隐私相关问题或需行使您的权利，请通过 hello@mypetitwok.com 联系我们。',
+          'MyPetitWok 由 Jia Guo（郭佳）以个体经营者身份运营，经营名称「MY PETIT WOK」，SIRET 104 407 721 00026，注册地址 27 Avenue Jean Médecin, 06000 Nice, France。如有任何隐私相关问题或需行使您的权利，请通过 hello@mypetitwok.com 联系我们。',
       },
       {
         heading: '2. 我们收集的数据',

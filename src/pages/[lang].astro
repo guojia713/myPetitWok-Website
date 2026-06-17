@@ -5,11 +5,10 @@ import Nav from '../components/Nav.astro';
 import { t, languages, langLabels, launchDate, type Lang } from '../i18n/content';
 import iconImg from '../assets/icon.png';
 import familyImg from '../assets/family.png';
-import feature1 from '../assets/screenshots/feature-1.jpg';
-import feature1_1 from '../assets/screenshots/feature-1.1.png';
-import feature2 from '../assets/screenshots/feature-2.jpg';
-import feature2_1 from '../assets/screenshots/feature-2.1.jpg';
-import feature3 from '../assets/screenshots/feature-3.jpg';
+import exploreShot from '../assets/screenshots/explore.png';
+import collectionShot from '../assets/screenshots/collection-summer.png';
+import ingredientsShot from '../assets/screenshots/ingredients.png';
+import shareShot from '../assets/screenshots/share.jpg';
 
 export function getStaticPaths() {
   return languages.map((l) => ({ params: { lang: l } }));
@@ -21,14 +20,11 @@ const i = t(lang);
 // App screenshots paired to each feature deep-dive (imported assets + raw paths for lightbox)
 const featureShots: { src: ImageMetadata; full: string }[][] = [
   [
-    { src: feature1, full: feature1.src },
-    { src: feature1_1, full: feature1_1.src },
+    { src: exploreShot, full: exploreShot.src },
+    { src: collectionShot, full: collectionShot.src },
   ],
-  [
-    { src: feature2, full: feature2.src },
-    { src: feature2_1, full: feature2_1.src },
-  ],
-  [{ src: feature3, full: feature3.src }],
+  [{ src: ingredientsShot, full: ingredientsShot.src }],
+  [{ src: shareShot, full: shareShot.src }],
 ];
 
 const featureIcons = [
@@ -95,8 +91,8 @@ const storeBadges = [
       </div>
       <!-- Right: hero phone -->
       <div class="flex-shrink-0">
-        <button class="photo-trigger" type="button" data-fullscreen-photo={feature1.src} aria-label="Open app preview full screen">
-          <Image src={feature1} alt="MyPetitWok app preview" width={680} height={1360} class="phone-shot phone-shot--hero" loading="eager" fetchpriority="high" />
+        <button class="photo-trigger" type="button" data-fullscreen-photo={exploreShot.src} aria-label="Open app preview full screen">
+          <Image src={exploreShot} alt="MyPetitWok app preview" width={680} height={1360} class="phone-shot phone-shot--hero" loading="eager" fetchpriority="high" />
         </button>
       </div>
     </div>
@@ -198,9 +194,15 @@ const storeBadges = [
     <div class="max-w-4xl mx-auto text-center">
       <p class="text-[var(--color-text-muted)] mb-2 text-lg">{i.footer.contact}</p>
       <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] text-lg font-bold hover:underline">{i.footer.email}</a>
-      <div class="mt-6">
-        <a href={`/${lang}/privacy`} class="text-[var(--color-text-muted)] text-sm hover:text-[var(--color-logo-red)] hover:underline">
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
+        <a href={`/${lang}/privacy`} class="text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] hover:underline">
           {lang === 'fr' ? 'Politique de confidentialité' : lang === 'zh' ? '隐私政策' : 'Privacy Policy'}
+        </a>
+        <a href={`/${lang}/legal-notice`} class="text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] hover:underline">
+          {lang === 'fr' ? 'Mentions légales' : lang === 'zh' ? '法律声明' : 'Legal Notice'}
+        </a>
+        <a href={`/${lang}/terms`} class="text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] hover:underline">
+          {lang === 'fr' ? 'CGU' : lang === 'zh' ? '服务条款' : 'Terms of Service'}
         </a>
       </div>
       <div class="mt-8 flex items-center justify-center gap-2 text-base text-[var(--color-text-muted)]">

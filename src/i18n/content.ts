@@ -145,8 +145,8 @@ const translations: Record<Lang, {
           text: "Not sure what that sauce or spice is, or where to buy it? Browse clear descriptions of Asian ingredients, with tips on how to find them in your local Asian store.",
         },
         {
-          heading: 'Save your favourites',
-          text: 'Heart the recipes you love and find them again in a single tap. Your personal Asian cookbook, always in your pocket.',
+          heading: 'Share what you cook',
+          text: 'Export any recipe as a clean photo card to send to friends and family — and heart the ones you love to find them again in a single tap.',
         },
       ],
     },
@@ -308,8 +308,8 @@ const translations: Record<Lang, {
           text: "Vous ne savez pas ce qu'est cette sauce ou cette épice, ni où l'acheter ? Parcourez des descriptions claires des ingrédients asiatiques, avec des conseils pour les trouver dans votre épicerie asiatique.",
         },
         {
-          heading: 'Sauvegardez vos favoris',
-          text: 'Ajoutez un cœur aux recettes que vous aimez et retrouvez-les en un clic. Votre livre de cuisine asiatique personnel, toujours dans votre poche.',
+          heading: 'Partagez ce que vous cuisinez',
+          text: "Exportez n'importe quelle recette en une jolie image à envoyer à vos proches — et ajoutez un cœur à vos préférées pour les retrouver en un clic.",
         },
       ],
     },
@@ -471,8 +471,8 @@ const translations: Record<Lang, {
           text: '不认识那种酱料或香料，也不知道去哪买？查看清晰的食材介绍，教你在亚洲超市里轻松找到它们。',
         },
         {
-          heading: '收藏你的最爱',
-          text: '一键收藏喜爱的菜谱，随时再次找到。你的私人亚洲菜谱，随身携带。',
+          heading: '分享你的美食',
+          text: '把任何菜谱导出成精美图片，分享给亲友 — 也可以收藏喜爱的菜谱，一键再次找到。',
         },
       ],
     },
