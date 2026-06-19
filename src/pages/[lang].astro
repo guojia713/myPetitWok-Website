@@ -195,6 +195,9 @@ const storeBadges = [
       <p class="text-[var(--color-text-muted)] mb-2 text-lg">{i.footer.contact}</p>
       <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] text-lg font-bold hover:underline">{i.footer.email}</a>
       <div class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
+        <a href={`/${lang}/support`} class="text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] hover:underline">
+          {lang === 'fr' ? 'Assistance' : lang === 'zh' ? '帮助与支持' : 'Support'}
+        </a>
         <a href={`/${lang}/privacy`} class="text-[var(--color-text-muted)] hover:text-[var(--color-logo-red)] hover:underline">
           {lang === 'fr' ? 'Politique de confidentialité' : lang === 'zh' ? '隐私政策' : 'Privacy Policy'}
         </a>

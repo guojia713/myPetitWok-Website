@@ -1,0 +1,85 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { languages, langLabels, type Lang } from '../../i18n/content';
+import { getSupport } from '../../i18n/support';
+
+export function getStaticPaths() {
+  return languages.map((l) => ({ params: { lang: l } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const s = getSupport(lang);
+---
+
+<Layout title={`${s.title} — MyPetitWok`} description={s.intro} lang={lang}>
+  <!-- Nav -->
+  <nav class="fixed top-0 w-full z-50 bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-brand)]/15">
+    <div class="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
+      <a href={`/${lang}`} class="flex items-center gap-2">
+        <img src="/icon.png" alt="MyPetitWok" class="w-11 h-11 rounded-xl shadow-sm" />
+        <span class="text-xl font-bold text-[var(--color-brand)]">MyPetitWok</span>
+      </a>
+      <div class="flex items-center gap-6 text-base">
+        <div class="flex gap-1">
+          {languages.map((l) => (
+            <a
+              href={`/${l}/support`}
+              class={`px-3 py-1.5 rounded-full text-sm font-bold transition-colors ${
+                l === lang
+                  ? 'bg-[var(--color-logo-red)] text-white'
+                  : 'text-[var(--color-text-muted)] hover:bg-[var(--color-brand)]/10'
+              }`}
+            >
+              {langLabels[l]}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pt-28 pb-16 px-6 bg-[var(--color-cream)] min-h-screen">
+    <article class="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-[var(--color-brand)]/15 p-8 sm:p-12">
+      <h1 class="text-4xl font-extrabold text-[var(--color-brand-dark)] mb-4">{s.title}</h1>
+      <p class="text-lg text-[var(--color-text)] leading-relaxed mb-10">{s.intro}</p>
+
+      <div class="flex flex-col gap-8">
+        <!-- Contact -->
+        <section class="bg-[var(--color-cream)] rounded-xl p-6 border border-[var(--color-brand)]/10">
+          <h2 class="text-xl font-bold text-[var(--color-logo-red)] mb-3">{s.contactTitle}</h2>
+          <p class="text-[var(--color-text)] leading-relaxed mb-3">{s.contactBody}</p>
+          <a
+            href={`mailto:${s.email}`}
+            class="inline-block text-lg font-bold text-[var(--color-brand-dark)] hover:underline"
+          >
+            {s.email}
+          </a>
+          <p class="text-sm text-[var(--color-text-muted)] mt-3">{s.responseNote}</p>
+        </section>
+
+        <!-- FAQ -->
+        <section>
+          <h2 class="text-xl font-bold text-[var(--color-logo-red)] mb-4">{s.faqTitle}</h2>
+          <div class="flex flex-col gap-6">
+            {s.faqs.map((faq) => (
+              <div>
+                <h3 class="font-bold text-[var(--color-text)] mb-1">{faq.q}</h3>
+                <p class="text-[var(--color-text-muted)] leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <div class="mt-12 pt-8 border-t border-[var(--color-brand)]/15">
+        <a href={`/${lang}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{s.back}</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="py-8 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center text-sm text-[var(--color-text-muted)]">
+      <span>&copy; {new Date().getFullYear()} MyPetitWok</span>
+    </div>
+  </footer>
+</Layout>
