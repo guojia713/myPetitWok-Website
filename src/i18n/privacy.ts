@@ -13,7 +13,7 @@ type PrivacyContent = {
 const privacyTranslations: Record<Lang, PrivacyContent> = {
   en: {
     title: 'Privacy Policy',
-    lastUpdated: 'Last updated: 10 May 2026',
+    lastUpdated: 'Last updated: 22 June 2026',
     intro:
       'This Privacy Policy explains how MyPetitWok ("we", "us") collects, uses, and protects your personal data when you use our mobile application.',
     sections: [
@@ -25,7 +25,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '2. Data we collect',
         body:
-          'Account data: email address, display name, optional profile photo.\n\nUsage data: recipes you favourite, feedback messages you submit, ratings and reviews.\n\nDevice data: device model, OS version, language, push notification token, advertising ID (IDFA on iOS / AAID on Android), approximate region.\n\nWe do not collect bank, payment, or government identification data.',
+          'Account data: email address, display name, optional profile photo.\n\nUsage data: recipes you favourite, feedback messages you submit, ratings and reviews.\n\nDevice data: device model, OS version, language, push notification token, advertising ID (IDFA on iOS / AAID on Android), approximate region.\n\nDiagnostic data: crash reports, error logs, and technical performance data used to keep the app stable.\n\nWe do not collect bank, payment, or government identification data.',
       },
       {
         heading: '3. How we use your data',
@@ -40,7 +40,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '5. Third-party services',
         body:
-          'We use the following processors:\n\n• Google AdMob — mobile advertising. See https://policies.google.com/privacy.\n• Google Firebase Analytics — anonymised app usage statistics.\n• Amazon Web Services (AWS) — hosting, in the EU (Frankfurt).\n• Expo Push Notifications — to deliver notifications.\n\nThese services may process limited technical data (IP, device ID, advertising ID) on our behalf.',
+          'We use the following processors:\n\n• Google AdMob — mobile advertising. See https://policies.google.com/privacy.\n• Google Firebase Analytics — anonymised app usage statistics.\n• Sentry — crash and error diagnostics to improve app stability.\n• Amazon Web Services (AWS) — hosting, in the EU (Frankfurt).\n• Expo Push Notifications — to deliver notifications.\n\nThese services may process limited technical data (IP, device ID, advertising ID) on our behalf.',
       },
       {
         heading: '6. Advertising and consent',
@@ -81,7 +81,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
   },
   fr: {
     title: 'Politique de confidentialité',
-    lastUpdated: 'Dernière mise à jour : 10 mai 2026',
+    lastUpdated: 'Dernière mise à jour : 22 juin 2026',
     intro:
       "La présente politique explique comment MyPetitWok (« nous ») collecte, utilise et protège vos données personnelles lorsque vous utilisez notre application mobile.",
     sections: [
@@ -93,7 +93,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '2. Données collectées',
         body:
-          "Données de compte : adresse e-mail, nom d'affichage, photo de profil (facultative).\n\nDonnées d'usage : recettes mises en favori, messages de retour, notes et avis.\n\nDonnées techniques : modèle d'appareil, version du système, langue, jeton de notification push, identifiant publicitaire (IDFA iOS / AAID Android), région approximative.\n\nNous ne collectons aucune donnée bancaire, de paiement ou d'identité officielle.",
+          "Données de compte : adresse e-mail, nom d'affichage, photo de profil (facultative).\n\nDonnées d'usage : recettes mises en favori, messages de retour, notes et avis.\n\nDonnées techniques : modèle d'appareil, version du système, langue, jeton de notification push, identifiant publicitaire (IDFA iOS / AAID Android), région approximative.\n\nDonnées de diagnostic : rapports de plantage, journaux d'erreurs et données de performance technique servant à maintenir la stabilité de l'application.\n\nNous ne collectons aucune donnée bancaire, de paiement ou d'identité officielle.",
       },
       {
         heading: '3. Finalités du traitement',
@@ -108,7 +108,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '5. Services tiers',
         body:
-          "Nous utilisons les sous-traitants suivants :\n\n• Google AdMob — publicité mobile. Voir https://policies.google.com/privacy.\n• Google Firebase Analytics — statistiques d'usage anonymisées.\n• Amazon Web Services (AWS) — hébergement, dans l'UE (Francfort).\n• Expo Push Notifications — diffusion des notifications.\n\nCes services peuvent traiter pour notre compte des données techniques limitées (IP, identifiant d'appareil, identifiant publicitaire).",
+          "Nous utilisons les sous-traitants suivants :\n\n• Google AdMob — publicité mobile. Voir https://policies.google.com/privacy.\n• Google Firebase Analytics — statistiques d'usage anonymisées.\n• Sentry — diagnostics de plantage et d'erreurs pour améliorer la stabilité de l'application.\n• Amazon Web Services (AWS) — hébergement, dans l'UE (Francfort).\n• Expo Push Notifications — diffusion des notifications.\n\nCes services peuvent traiter pour notre compte des données techniques limitées (IP, identifiant d'appareil, identifiant publicitaire).",
       },
       {
         heading: '6. Publicité et consentement',
@@ -149,7 +149,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
   },
   zh: {
     title: '隐私政策',
-    lastUpdated: '最后更新：2026年5月10日',
+    lastUpdated: '最后更新：2026年6月22日',
     intro:
       '本隐私政策说明 MyPetitWok（"我们"）在您使用我们的移动应用程序时如何收集、使用和保护您的个人数据。',
     sections: [
@@ -161,7 +161,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '2. 我们收集的数据',
         body:
-          '账户数据：电子邮件地址、显示名、可选的头像。\n\n使用数据：您收藏的菜谱、提交的反馈消息、评分与评论。\n\n设备数据：设备型号、操作系统版本、语言、推送通知令牌、广告标识符（iOS 的 IDFA / Android 的 AAID）、大致地区。\n\n我们不收集任何银行、支付或官方身份证件信息。',
+          '账户数据：电子邮件地址、显示名、可选的头像。\n\n使用数据：您收藏的菜谱、提交的反馈消息、评分与评论。\n\n设备数据：设备型号、操作系统版本、语言、推送通知令牌、广告标识符（iOS 的 IDFA / Android 的 AAID）、大致地区。\n\n诊断数据：崩溃报告、错误日志和技术性能数据，用于保持应用稳定。\n\n我们不收集任何银行、支付或官方身份证件信息。',
       },
       {
         heading: '3. 数据用途',
@@ -176,7 +176,7 @@ const privacyTranslations: Record<Lang, PrivacyContent> = {
       {
         heading: '5. 第三方服务',
         body:
-          '我们使用以下处理方：\n\n• Google AdMob — 移动广告。详见 https://policies.google.com/privacy。\n• Google Firebase Analytics — 匿名应用使用统计。\n• Amazon Web Services (AWS) — 数据托管，位于欧盟（法兰克福）。\n• Expo Push Notifications — 用于发送推送通知。\n\n这些服务可能代表我们处理有限的技术数据（IP、设备 ID、广告 ID）。',
+          '我们使用以下处理方：\n\n• Google AdMob — 移动广告。详见 https://policies.google.com/privacy。\n• Google Firebase Analytics — 匿名应用使用统计。\n• Sentry — 崩溃与错误诊断，用于改进应用稳定性。\n• Amazon Web Services (AWS) — 数据托管，位于欧盟（法兰克福）。\n• Expo Push Notifications — 用于发送推送通知。\n\n这些服务可能代表我们处理有限的技术数据（IP、设备 ID、广告 ID）。',
       },
       {
         heading: '6. 广告与同意',
