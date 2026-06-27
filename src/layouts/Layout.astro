@@ -1,7 +1,6 @@
 ---
 import '@fontsource-variable/inter/index.css';
 import '../styles/global.css';
-import { t, launchDate, type Lang } from '../i18n/content';
 
 interface Props {
   title: string;
@@ -15,7 +14,6 @@ interface Props {
 
 const { title, description, lang = 'en', alternates, ogImage } = Astro.props;
 const resolvedOgImage = ogImage ?? 'https://mypetitwok.com/icon.png';
-const i = t(lang as Lang);
 
 const siteUrl = 'https://mypetitwok.com';
 const langs = ['en', 'fr', 'zh'] as const;
@@ -100,69 +98,6 @@ const canonicalUrl = `${siteUrl}${resolvedAlternates[lang as 'en' | 'fr' | 'zh']
     </script>
   </head>
   <body class="antialiased">
-    <!-- Launch countdown banner -->
-    <div class="launch-banner text-white">
-      <div class="max-w-6xl mx-auto px-6 py-2.5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-center">
-        <span class="font-semibold text-sm sm:text-base">{i.launch.prefix}</span>
-        <div id="countdown" class="countdown" data-launch={launchDate}>
-          <span class="cd-unit"><b data-cd="days">--</b><i>{i.countdown.days}</i></span>
-          <span class="cd-sep">:</span>
-          <span class="cd-unit"><b data-cd="hours">--</b><i>{i.countdown.hours}</i></span>
-          <span class="cd-sep">:</span>
-          <span class="cd-unit"><b data-cd="minutes">--</b><i>{i.countdown.minutes}</i></span>
-          <span class="cd-sep">:</span>
-          <span class="cd-unit"><b data-cd="seconds">--</b><i>{i.countdown.seconds}</i></span>
-        </div>
-        <span id="countdown-live" class="font-semibold text-sm sm:text-base hidden" data-live-text={i.launch.live}></span>
-      </div>
-    </div>
-
     <slot />
-
-    <!-- Launch countdown script -->
-    <script>
-      const root = document.getElementById('countdown');
-      const liveEl = document.getElementById('countdown-live');
-
-      if (root) {
-        const target = new Date(root.dataset.launch ?? '').getTime();
-        const fields: Record<string, HTMLElement | null> = {
-          days: root.querySelector('[data-cd="days"]'),
-          hours: root.querySelector('[data-cd="hours"]'),
-          minutes: root.querySelector('[data-cd="minutes"]'),
-          seconds: root.querySelector('[data-cd="seconds"]'),
-        };
-
-        const pad = (n: number) => String(n).padStart(2, '0');
-
-        const tick = () => {
-          const diff = target - Date.now();
-          if (diff <= 0) {
-            root.classList.add('hidden');
-            if (liveEl) {
-              liveEl.textContent = liveEl.dataset.liveText ?? '';
-              liveEl.classList.remove('hidden');
-            }
-            return false;
-          }
-          const totalSeconds = Math.floor(diff / 1000);
-          const days = Math.floor(totalSeconds / 86400);
-          const hours = Math.floor((totalSeconds % 86400) / 3600);
-          const minutes = Math.floor((totalSeconds % 3600) / 60);
-          const seconds = totalSeconds % 60;
-          if (fields.days) fields.days.textContent = String(days);
-          if (fields.hours) fields.hours.textContent = pad(hours);
-          if (fields.minutes) fields.minutes.textContent = pad(minutes);
-          if (fields.seconds) fields.seconds.textContent = pad(seconds);
-          return true;
-        };
-
-        if (tick()) {
-          const timer = setInterval(() => {
-            if (!tick()) clearInterval(timer);
-          }, 1000);
-        }
-      }
-    </script>
   </body>
 </html>

@@ -35,43 +35,6 @@ body {
     3px 3px 0 rgb(0 72 35 / 0.18);
 }
 
-/* Launch countdown banner */
-.launch-banner {
-  background-color: var(--color-logo-red);
-}
-
-.countdown {
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.45rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.cd-unit {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.22rem;
-}
-
-.cd-unit b {
-  font-size: 1.1rem;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.cd-unit i {
-  font-style: normal;
-  font-size: 0.72rem;
-  opacity: 0.85;
-}
-
-.cd-sep {
-  opacity: 0.55;
-  font-weight: 700;
-}
-
 /* App screenshots — large enough to read */
 .phone-shot {
   width: clamp(220px, 72vw, 300px);

@@ -9,15 +9,10 @@ export const langLabels: Record<Lang, string> = {
 
 export const defaultLang: Lang = 'en';
 
-// Launch date - 13 July 2026 (used by the countdown banner)
-export const launchDate = '2026-07-13T00:00:00';
-
 const translations: Record<Lang, {
   pageTitle: string;
   metaDescription: string;
   nav: { features: string; story: string; download: string };
-  launch: { prefix: string; live: string };
-  countdown: { days: string; hours: string; minutes: string; seconds: string };
   hero: {
     headline: string;
     tagline: string;
@@ -114,18 +109,13 @@ const translations: Record<Lang, {
 }> = {
   en: {
     pageTitle: 'MyPetitWok — Free Asian Recipe App for Authentic Home Cooking',
-    metaDescription: 'Discover authentic Chinese, Thai, Vietnamese, Japanese and Korean recipes. MyPetitWok helps you cook Asian food at home with recipes, ingredient guides and shopping tips. Launching July 13, 2026 — free on iPhone & Android.',
+    metaDescription: 'Discover authentic Chinese, Thai, Vietnamese, Japanese and Korean recipes. MyPetitWok helps you cook Asian food at home with recipes, ingredient guides and shopping tips. Available now — free on iPhone & Android.',
     nav: { features: 'Features', story: 'Our story', download: 'Get the app' },
-    launch: {
-      prefix: 'MyPetitWok launches July 13, 2026 - free on iPhone & Android',
-      live: 'MyPetitWok is live - download it free today!',
-    },
-    countdown: { days: 'days', hours: 'hrs', minutes: 'min', seconds: 'sec' },
     hero: {
       headline: 'The easiest way to cook authentic Asian food at home',
       tagline: 'Discover, cook and save authentic Asian recipes - Chinese, Thai, Vietnamese, Japanese & Korean. Sweet, sour, spicy, all made simple.',
-      launchPill: 'Free · Launching July 13, 2026',
-      badgeWhen: 'July 13',
+      launchPill: 'Free · Available now',
+      badgeWhen: 'Free on',
       trust: ['100% free', '3 languages', 'iPhone & Android'],
     },
     overview: {
@@ -166,9 +156,9 @@ const translations: Record<Lang, {
       text: "A dedicated foodie, raised in Xi'an, China - a historic and gastronomic city - who became a developer in France, then a mom of two boys. With a deeply rooted love for Chinese cuisine, even after 12 years in France, I still love cooking delicious Asian meals for the whole family.\n\nPassionate about life, coding, food and social connection, this warm little tool was born: my petit wok / 小锅.\n\nYou love Asian cuisine but don't know how to cook it? Not sure where to buy the ingredients? All-in-one solution! MyPetitWok helps you easily make authentic homemade Asian dishes - good for your health and absolutely delicious.",
     },
     download: {
-      title: 'Be ready for launch day',
-      subtitle: 'MyPetitWok arrives July 13, 2026 on the App Store and Google Play - free.',
-      webNote: 'In the meantime, browse our recipes online →',
+      title: 'Get cooking today',
+      subtitle: 'MyPetitWok is available now on Google Play and the App Store - free.',
+      webNote: 'Prefer to browse first? Explore our recipes online →',
     },
     footer: {
       contact: 'Have a suggestion or a recipe to share? We\'d love to hear from you.',
@@ -277,18 +267,13 @@ const translations: Record<Lang, {
   },
   fr: {
     pageTitle: 'MyPetitWok — Application gratuite de recettes asiatiques maison',
-    metaDescription: 'Découvrez des recettes asiatiques authentiques — chinoises, thaïes, vietnamiennes, japonaises et coréennes. MyPetitWok vous aide à cuisiner asiatique chez vous avec recettes, guide des ingrédients et conseils pour les courses. Lancement le 13 juillet 2026 — gratuit sur iPhone et Android.',
+    metaDescription: 'Découvrez des recettes asiatiques authentiques — chinoises, thaïes, vietnamiennes, japonaises et coréennes. MyPetitWok vous aide à cuisiner asiatique chez vous avec recettes, guide des ingrédients et conseils pour les courses. Disponible maintenant — gratuit sur iPhone et Android.',
     nav: { features: 'Fonctions', story: 'Notre histoire', download: "Obtenir l'app" },
-    launch: {
-      prefix: 'MyPetitWok arrive le 13 juillet 2026 - gratuit sur iPhone & Android',
-      live: 'MyPetitWok est disponible - téléchargez-le gratuitement !',
-    },
-    countdown: { days: 'jours', hours: 'h', minutes: 'min', seconds: 'sec' },
     hero: {
       headline: 'La façon la plus simple de cuisiner asiatique à la maison',
       tagline: 'Découvrez, cuisinez et sauvegardez des recettes asiatiques authentiques - chinoises, thaïes, vietnamiennes, japonaises et coréennes. Sucré, acide, épicé, tout en simplicité.',
-      launchPill: 'Gratuit · Sortie le 13 juillet 2026',
-      badgeWhen: '13 juillet',
+      launchPill: 'Gratuit · Disponible maintenant',
+      badgeWhen: 'Gratuit sur',
       trust: ['100% gratuit', '3 langues', 'iPhone & Android'],
     },
     overview: {
@@ -329,9 +314,9 @@ const translations: Record<Lang, {
       text: "Gourmande confirmée, élevée à Xi'an en Chine, une ville historique et gastronomique, devenue développeuse en France, puis maman de deux garçons. Avec un goût profondément ancré pour la cuisine chinoise, même après 12 ans en France, j'adore toujours cuisiner de bons plats asiatiques pour toute la famille.\n\nPassionnée de vie, de programmation, de gastronomie et de lien social, est né cet outil chaleureux : my petit wok / 小锅.\n\nTu adores la cuisine asiatique mais tu ne sais pas comment la cuisiner ? Tu ne sais pas où acheter les ingrédients ? Solution tout-en-un ! MyPetitWok t'aide à réaliser facilement des plats asiatiques maison authentiques, bien pour ta santé et délicieux !",
     },
     download: {
-      title: 'Prêt pour le jour du lancement',
-      subtitle: "MyPetitWok arrive le 13 juillet 2026 sur l'App Store et Google Play - gratuitement.",
-      webNote: 'En attendant, découvrez nos recettes en ligne →',
+      title: "Cuisinez dès aujourd'hui",
+      subtitle: "MyPetitWok est disponible maintenant sur Google Play et l'App Store - gratuitement.",
+      webNote: "Envie de jeter un œil d'abord ? Découvrez nos recettes en ligne →",
     },
     footer: {
       contact: 'Une suggestion ou une recette à partager ? Écrivez-nous.',
@@ -440,18 +425,13 @@ const translations: Record<Lang, {
   },
   zh: {
     pageTitle: 'MyPetitWok 小锅 — 免费亚洲菜谱应用',
-    metaDescription: '发现地道的中餐、泰餐、越南菜、日料和韩餐菜谱。小锅 MyPetitWok 帮你在家轻松烹饪亚洲美食，提供菜谱、食材指南和购物建议。2026 年 7 月 13 日上线 — iPhone 与安卓免费下载。',
+    metaDescription: '发现地道的中餐、泰餐、越南菜、日料和韩餐菜谱。小锅 MyPetitWok 帮你在家轻松烹饪亚洲美食，提供菜谱、食材指南和购物建议。现已上线 — iPhone 与安卓免费下载。',
     nav: { features: '功能', story: '我们的故事', download: '下载应用' },
-    launch: {
-      prefix: '小锅将于 2026 年 7 月 13 日上线 - iPhone 与安卓免费下载',
-      live: '小锅已上线 - 立即免费下载！',
-    },
-    countdown: { days: '天', hours: '时', minutes: '分', seconds: '秒' },
     hero: {
       headline: '地道亚洲美食, 在家轻松搞定',
       tagline: '发现、烹饪并收藏地道的亚洲菜谱 - 中餐、泰餐、越南菜、日料与韩餐。酸甜苦辣，一锅搞定。',
-      launchPill: '免费 · 2026 年 7 月 13 日上线',
-      badgeWhen: '7 月 13 日',
+      launchPill: '免费 · 现已上线',
+      badgeWhen: '免费下载',
       trust: ['完全免费', '三种语言', 'iPhone 与安卓'],
     },
     overview: {
@@ -492,9 +472,9 @@ const translations: Record<Lang, {
       text: '西安碳水养大的资深吃货，养成了程序媛，又养成了俩娃的宝妈。养成了身在法国依然根深蒂固的中餐口味，也养成了自己开伙做全家美食的"实战能力"。\n\n爱生活，爱编程，爱美食，爱社交，于是诞生了这个温暖的小工具--my petit wok / 小锅。\n\n爱吃中餐不会做？不知道上哪买食材？一站式解决！小锅帮你轻松做出地道的家常中餐！还有其他亚洲美味',
     },
     download: {
-      title: '为上线日做好准备',
-      subtitle: '小锅将于 2026 年 7 月 13 日登陆 App Store 和 Google Play - 完全免费。',
-      webNote: '在此期间，先浏览我们的在线菜谱 →',
+      title: '今天就开做',
+      subtitle: '小锅现已登陆 Google Play 和 App Store - 完全免费。',
+      webNote: '想先逛逛？浏览我们的在线菜谱 →',
     },
     footer: {
       contact: '有建议或想分享菜谱？欢迎联系我们。',

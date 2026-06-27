@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
-import { t, languages, langLabels, launchDate, type Lang } from '../i18n/content';
+import { t, languages, type Lang } from '../i18n/content';
 import iconImg from '../assets/icon.png';
 import familyImg from '../assets/family.png';
 import exploreShot from '../assets/screenshots/explore.png';
@@ -36,14 +36,22 @@ const featureIcons = [
   `<svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>`,
 ];
 
+// Store listing URLs.
+const storeUrls = {
+  googlePlay: 'https://play.google.com/store/apps/details?id=com.jiaguo.mypetitwok',
+  appStore: 'https://apps.apple.com/us/app/my-petit-wok/id6768055249',
+};
+
 const storeBadges = [
   {
-    name: 'App Store',
-    icon: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>`,
+    name: 'Google Play',
+    url: storeUrls.googlePlay,
+    icon: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35m13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27m.91-.91L19.59 12l-1.86-2.21L14.27 13.25l3.45 3.96M6.05 2.66l10.76 6.22-2.27 2.27-8.49-8.49z"/></svg>`,
   },
   {
-    name: 'Google Play',
-    icon: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35m13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27m.91-.91L19.59 12l-1.86-2.21L14.27 13.25l3.45 3.96M6.05 2.66l10.76 6.22-2.27 2.27-8.49-8.49z"/></svg>`,
+    name: 'App Store',
+    url: storeUrls.appStore,
+    icon: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>`,
   },
 ];
 ---
@@ -70,13 +78,13 @@ const storeBadges = [
         <!-- Store badges -->
         <div id="download" class="mt-8 flex flex-wrap gap-3 justify-center md:justify-start scroll-mt-28">
           {storeBadges.map((b) => (
-            <div class="bg-[var(--color-brand-dark)] text-white px-5 py-3 rounded-xl flex items-center gap-2.5">
+            <a href={b.url} target="_blank" rel="noopener" aria-label={`${i.hero.badgeWhen} ${b.name}`} class="bg-[var(--color-brand-dark)] text-white px-5 py-3 rounded-xl flex items-center gap-2.5 hover:opacity-90 transition-opacity">
               <Fragment set:html={b.icon} />
               <div class="text-left">
                 <div class="text-xs leading-tight opacity-85">{i.hero.badgeWhen}</div>
                 <div class="text-base font-semibold leading-tight">{b.name}</div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
         <!-- Trust line -->
@@ -176,13 +184,13 @@ const storeBadges = [
       <p class="text-xl sm:text-2xl text-white/90 leading-relaxed mb-8">{i.download.subtitle}</p>
       <div class="flex flex-wrap gap-3 justify-center">
         {storeBadges.map((b) => (
-          <div class="bg-white text-[var(--color-brand-dark)] px-5 py-3 rounded-xl flex items-center gap-2.5">
+          <a href={b.url} target="_blank" rel="noopener" aria-label={`${i.hero.badgeWhen} ${b.name}`} class="bg-white text-[var(--color-brand-dark)] px-5 py-3 rounded-xl flex items-center gap-2.5 hover:opacity-90 transition-opacity">
             <Fragment set:html={b.icon} />
             <div class="text-left">
               <div class="text-xs leading-tight opacity-70">{i.hero.badgeWhen}</div>
               <div class="text-base font-semibold leading-tight">{b.name}</div>
             </div>
-          </div>
+          </a>
         ))}
       </div>
       <a href={`/${lang}/recipes`} class="inline-block mt-6 text-white/90 text-base font-semibold underline underline-offset-4 hover:text-white transition-colors">{i.download.webNote}</a>
