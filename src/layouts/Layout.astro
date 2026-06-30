@@ -25,6 +25,14 @@ const resolvedAlternates: Record<'en' | 'fr' | 'zh', string> = {
 };
 
 const canonicalUrl = `${siteUrl}${resolvedAlternates[lang as 'en' | 'fr' | 'zh']}`;
+
+// OG locale wants the full ll_CC form, not just the language code.
+const ogLocaleMap: Record<'en' | 'fr' | 'zh', string> = {
+  en: 'en_US',
+  fr: 'fr_FR',
+  zh: 'zh_CN',
+};
+const ogLocale = ogLocaleMap[lang as 'en' | 'fr' | 'zh'] ?? 'en_US';
 ---
 
 <!doctype html>
@@ -37,6 +45,9 @@ const canonicalUrl = `${siteUrl}${resolvedAlternates[lang as 'en' | 'fr' | 'zh']
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/icon.png" />
 
+    <!-- App Store smart banner — fill in app-id once the app is live on the App Store. -->
+    <!-- <meta name="apple-itunes-app" content="app-id=XXXXXXXXX" /> -->
+
     <!-- hreflang for multilingual SEO -->
     {langs.map((l) => (
       <link rel="alternate" hreflang={l} href={`${siteUrl}${resolvedAlternates[l]}`} />
@@ -45,13 +56,14 @@ const canonicalUrl = `${siteUrl}${resolvedAlternates[lang as 'en' | 'fr' | 'zh']
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="My Petit Wok" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={resolvedOgImage} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={resolvedOgImage} />
-    <meta property="og:locale" content={lang} />
+    <meta property="og:locale" content={ogLocale} />
     <title>{title}</title>
 
     <!-- Structured data: MobileApplication -->

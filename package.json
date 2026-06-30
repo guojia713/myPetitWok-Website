@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "indexnow": "node tools/indexnow-submit.mjs",
     "astro": "astro"
   },
   "dependencies": {
