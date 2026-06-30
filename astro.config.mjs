@@ -9,6 +9,8 @@ export default defineConfig({
   output: 'static',
   integrations: [
     sitemap({
+      // Keep the local-only admin console out of search engines (it's also noindex'd).
+      filter: (page) => !/\/admin\/?$/.test(page),
       i18n: {
         defaultLocale: 'en',
         locales: {
