@@ -94,6 +94,15 @@ const isDev = import.meta.env.DEV;
           <!-- ── Recipe panel ──────────────────────────────────── -->
           <section id="panel-recipe" class="panel card" hidden>
             <h2>New recipe</h2>
+            <div class="aibox">
+              <label>✨ AI fill — paste the recipe in any language, however rough
+                <textarea id="ai-text" placeholder="e.g. Kung pao chicken. Diced chicken, peanuts, dried chili. Marinate, fry, add soy/vinegar/sugar sauce, toss with peanuts. ~25 min, serves 2, medium spicy."></textarea>
+              </label>
+              <div class="inline-actions">
+                <button id="ai-fill" class="btn-sm" type="button">Generate &amp; fill form</button>
+                <span id="ai-status" class="aistatus"></span>
+              </div>
+            </div>
             <div class="grid2">
               <label>Cuisine
                 <select id="rec-cuisine">
@@ -208,6 +217,11 @@ const isDev = import.meta.env.DEV;
         .pager { display: flex; align-items: center; gap: 1rem; justify-content: center; margin-top: 1rem; }
         .pager button:disabled { opacity: .4; cursor: default; }
         #manage-page-info { font-size: .85rem; color: var(--color-text-muted); font-weight: 600; }
+        .aibox { border: 1px dashed var(--color-brand-light); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; background: #f6fbf7; }
+        .aibox textarea { min-height: 4.5rem; }
+        .aistatus { font-size: .82rem; font-weight: 600; color: var(--color-text-muted); }
+        .aistatus.err { color: var(--color-logo-red); }
+        .aistatus.ok { color: var(--color-brand-dark); }
         @media (max-width: 760px) { .grid2, .langgrid, .steplangs { grid-template-columns: 1fr; } .row.ing-row { grid-template-columns: 1fr 1fr; } }
       </style>
 
@@ -398,10 +412,12 @@ const isDev = import.meta.env.DEV;
 
           // ── Recipe: ingredient picker options ─────────────────
           let ingredientOptions = '<option value="">— pick ingredient —</option>';
+          let ingredientList = [];
           async function loadIngredientOptions() {
             try {
               const list = await api('/api/v1/ingredients?lang=EN');
               const items = Array.isArray(list) ? list : (list && list.content) || [];
+              ingredientList = items.map((x) => ({ id: x.id, name: x.name || x.asianName }));
               ingredientOptions = '<option value="">— pick ingredient —</option>' +
                 items.map((x) => '<option value="' + x.id + '">' + (x.name || x.asianName) + ' (#' + x.id + ')</option>').join('');
               document.querySelectorAll('.ing-select').forEach((sel) => {
@@ -724,6 +740,68 @@ const isDev = import.meta.env.DEV;
               }
             } catch (e) {
               statusEl.hidden = false; statusEl.textContent = 'Failed to load: ' + e.message;
+            }
+          }
+
+          // ── AI fill (calls the local helper at :8787) ─────────
+          const AI_HELPER = 'http://localhost:8787';
+          $('ai-fill').addEventListener('click', async () => {
+            const status = $('ai-status');
+            status.className = 'aistatus';
+            const text = $('ai-text').value.trim();
+            if (!text) { status.className = 'aistatus err'; status.textContent = 'Paste a recipe first.'; return; }
+            status.textContent = 'Generating…';
+            try {
+              await loadIngredientOptions();
+              const res = await fetch(AI_HELPER + '/generate', {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({ text, ingredients: ingredientList }),
+              });
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || res.status);
+              applyAiRecipe(data.recipe);
+              status.className = 'aistatus ok';
+              status.textContent = '✓ Filled — review the form, fix anything, then Create.';
+            } catch (e) {
+              status.className = 'aistatus err';
+              status.textContent = (String(e).includes('fetch') || String(e).includes('Failed'))
+                ? '✗ Helper not running. In a terminal: ANTHROPIC_API_KEY=… node tools/ai-recipe.mjs'
+                : '✗ ' + e.message;
+            }
+          });
+
+          function applyAiRecipe(r) {
+            setRecipeEditMode(null);
+            clearPanel('panel-recipe');
+            $('ai-text').value = $('ai-text').value; // keep the source text
+            setSelectValue($('rec-cuisine'), r.cuisineType);
+            setSelectValue($('rec-difficulty'), r.difficulty);
+            $('rec-prep').value = r.prepTimeMinutes != null ? r.prepTimeMinutes : '';
+            $('rec-cook').value = r.cookTimeMinutes != null ? r.cookTimeMinutes : '';
+            $('rec-servings').value = r.servings != null ? r.servings : '';
+            $('rec-spice').value = r.spiceLevel != null ? r.spiceLevel : 0;
+            $('rec-categories').value = (r.categories || []).join(', ');
+            LANGS.forEach((lng) => {
+              const t = (r.translations && r.translations[lng]) || {};
+              $('rec-name-' + lng).value = t.name || '';
+              $('rec-description-' + lng).value = t.description || '';
+              $('rec-phonetic-' + lng).value = t.phonetic || '';
+            });
+            $('rec-ingredients').innerHTML = '';
+            const unmatched = [];
+            (r.ingredients || []).forEach((ing) => {
+              addIngredientRow({ ingredientId: ing.ingredientId, quantity: ing.quantity, unit: ing.unit, optional: ing.optional });
+              if (ing.ingredientId == null) unmatched.push(ing.nameGuess);
+            });
+            if (!$('rec-ingredients').children.length) addIngredientRow();
+            $('rec-steps').innerHTML = '';
+            (r.steps || []).forEach((s) => addStepRow({ durationMinutes: s.durationMinutes, translations: s.translations }));
+            if (!$('rec-steps').children.length) addStepRow();
+            if (unmatched.length) {
+              const s = $('ai-status');
+              s.className = 'aistatus err';
+              s.textContent = 'Pick ingredients for: ' + unmatched.join(', ') + ' (not in your DB — add them first or choose manually).';
             }
           }
 
