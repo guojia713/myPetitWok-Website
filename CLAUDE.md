@@ -16,9 +16,11 @@ No test runner or linter is configured.
 
 ## Architecture
 
-**Single-page site** — `src/pages/index.astro` is the only page. It renders nav, hero, story, features, download/QR, and footer sections.
+**Pages** — `src/pages/[lang]/` holds the per-language routes: the landing page (`[lang].astro`) plus recipes, ingredients, articles, about, support, and legal pages. The root `src/pages/index.astro` redirects `/` to `/en`.
 
-**i18n** — Language switching uses a `?lang=` query parameter (en/fr/zh). All translatable strings live in `src/i18n/content.ts`, which exports a typed `t(lang)` function returning the full translation object. The `Lang` type is derived from the `languages` const array.
+**i18n** — Language is part of the URL path (`/en`, `/fr`, `/zh`), served by the `src/pages/[lang]/` routes. All translatable strings live in `src/i18n/content.ts`, which exports a typed `t(lang)` function returning the full translation object. The `Lang` type is derived from the `languages` const array.
+
+**Canonical URLs** — The static build and sitemap serve every route with a **trailing slash** (`/en/`, `/en/recipes/`). `Layout.astro` normalizes canonical, hreflang, `og:url`, and JSON-LD URLs to that same trailing-slash form via a `withSlash()` helper — they must match the served/sitemap URL exactly, or Google reports the crawled URL as a "duplicate page with proper canonical tag." Page `alternates` props may be passed without trailing slashes; the Layout adds them.
 
 **Styling** — Tailwind CSS 4 is integrated as a Vite plugin (not PostCSS). Design tokens (brand colors, font) are defined as `@theme` variables in `src/styles/global.css` and referenced throughout as `var(--color-*)`. The font is Inter via Google Fonts.
 
