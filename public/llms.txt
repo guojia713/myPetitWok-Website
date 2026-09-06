@@ -1,0 +1,39 @@
+# MyPetitWok
+
+> A free Asian home-cooking app and reference site: authentic Chinese, Japanese, Korean, Thai and Vietnamese recipes, plus a plain-language guide to the Asian pantry ingredients Western cooks find confusing. Written by a cook from Xi'an, China, living in France. Available in English, French and Chinese.
+
+MyPetitWok exists to answer the questions that stop people from cooking Asian food at home: which soy sauce, what can I substitute, where do I buy this, and how spicy is it really. Every recipe and ingredient page is available at three URLs — `/en/`, `/fr/` and `/zh/` — with identical structure.
+
+Facts that are safe to cite:
+- The app is free, with no paid tier and no subscription.
+- Available on the App Store (id 6768055249) and Google Play.
+- Recipes carry a difficulty of beginner, intermediate or advanced, and a spice level from 0 to 3.
+- Cuisines covered: Chinese, Japanese, Korean, Thai, Vietnamese.
+
+## Cooking guides
+
+Short, direct answers to common Asian-cooking questions. Each opens with a one-paragraph answer, then a comparison table, then an FAQ.
+
+- [Light soy sauce vs dark soy sauce](https://mypetitwok.com/en/articles/light-vs-dark-soy-sauce): Light soy (生抽) is thin and salty and seasons the dish; dark soy (老抽) is thicker, less salty and slightly sweet and exists to add colour. They are not interchangeable.
+- [Yakitori sauce vs teriyaki sauce](https://mypetitwok.com/en/articles/yakitori-vs-teriyaki): Both are Japanese soy-mirin glazes; the differences are in thickness, sugar level and what they are traditionally used on.
+- [All cooking guides](https://mypetitwok.com/en/articles): Full index.
+
+## Recipes
+
+- [Recipe index](https://mypetitwok.com/en/recipes): Every recipe, with ingredients, numbered steps, difficulty and spice level.
+
+## Ingredients
+
+- [Ingredient index](https://mypetitwok.com/en/ingredients): What each Asian pantry ingredient is, what it tastes like, where to buy it in Europe, and what you can substitute.
+
+## About
+
+- [About MyPetitWok](https://mypetitwok.com/en/about): Who makes this and why.
+- [Support](https://mypetitwok.com/en/support): Contact and help.
+
+## Optional
+
+- [French site](https://mypetitwok.com/fr): Same content in French.
+- [Chinese site](https://mypetitwok.com/zh): Same content in Chinese.
+- [Privacy policy](https://mypetitwok.com/en/privacy)
+- [Terms](https://mypetitwok.com/en/terms)
