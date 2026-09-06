@@ -1,0 +1,307 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+import { fetchIngredients, type IngredientDetail } from '../../../lib/api';
+import { slugify } from '../../../lib/slugify';
+
+interface PageProps {
+  gochujang: IngredientDetail;
+  doubanjiang: IngredientDetail;
+}
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const l of languages) {
+    const list = await fetchIngredients(l);
+    const gochujang = list.find((x) => x.id === 24);
+    const doubanjiang = list.find((x) => x.id === 4);
+    if (!gochujang || !doubanjiang) continue;
+    paths.push({ params: { lang: l }, props: { gochujang, doubanjiang } });
+  }
+  return paths;
+}
+
+const { gochujang, doubanjiang } = Astro.props as PageProps;
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+const copy: Record<Lang, {
+  title: string;
+  metaTitle: string;
+  metaDescription: string;
+  shortAnswer: string;
+  intro: string;
+  tableHeading: string;
+  rows: { label: string; gochujang: string; doubanjiang: string }[];
+  verdictHeading: string;
+  verdict: string;
+  swapHeading: string;
+  swap: string;
+  learnMore: string;
+  faqTitle: string;
+  faqs: { q: string; a: string }[];
+}> = {
+  en: {
+    title: 'Gochujang vs Doubanjiang: Two Red Chilli Pastes, Two Different Cuisines',
+    metaTitle: 'Gochujang vs Doubanjiang — What Is the Difference? | MyPetitWok',
+    metaDescription: 'Gochujang is a sweet, thick Korean chilli paste made with glutinous rice. Doubanjiang is a salty, funky Chinese fermented broad bean paste and the backbone of Sichuan cooking. They look alike and taste nothing alike.',
+    shortAnswer: 'Short answer: gochujang (고추장) is Korean, made from chilli, fermented soybean and glutinous rice — thick, sticky, noticeably sweet, and mild-to-medium in heat. Doubanjiang (豆瓣酱) is Chinese, made from fermented broad beans and chilli — salty, deeply savoury, coarse with visible bean pieces, and not sweet at all. Both are red pastes in a tub, and that is where the similarity ends.',
+    intro: 'These two get confused constantly, partly because Western supermarkets shelve them together as "chilli paste" and partly because the photos look identical. But gochujang is built on rice and carries sugar, while doubanjiang is built on broad beans and carries salt. Put a teaspoon of each on your tongue and the difference is immediate: one is sweet-hot like a glaze, the other is salty-funky like a miso that got angry.',
+    tableHeading: 'Side-by-side comparison',
+    rows: [
+      { label: 'Origin', gochujang: 'Korea', doubanjiang: 'China (Pixian, Sichuan is the benchmark)' },
+      { label: 'Made from', gochujang: 'Chilli powder, fermented soybean, glutinous rice, salt', doubanjiang: 'Fermented broad (fava) beans, chilli, salt, sometimes wheat flour' },
+      { label: 'Taste', gochujang: 'Sweet first, then warm heat; rounded', doubanjiang: 'Salty and funky first; savoury depth, moderate heat' },
+      { label: 'Texture', gochujang: 'Smooth, thick, sticky like tomato paste', doubanjiang: 'Coarse and chunky, visible bean and chilli pieces' },
+      { label: 'Heat level', gochujang: 'Mild to medium', doubanjiang: 'Mild to medium — the salt hits harder than the chilli' },
+      { label: 'Classic uses', gochujang: 'Bibimbap sauce, tteokbokki, bulgogi marinade, Korean fried chicken glaze, stews', doubanjiang: 'Mapo tofu, twice-cooked pork, dan dan noodles, Sichuan braises, hot pot base' },
+      { label: 'How it is used', gochujang: 'Often stirred in raw or at the end; also thinned into sauces', doubanjiang: 'Fried in oil at the start until the oil turns red — this step is not optional' },
+      { label: 'Sweetness', gochujang: 'Yes — rice sugars are part of the recipe', doubanjiang: 'None' },
+    ],
+    verdictHeading: 'Which one should you buy?',
+    verdict: 'Buy for the cuisine you actually cook, not as a general "chilli paste". If Korean food is the draw — bibimbap, tteokbokki, Korean fried chicken — gochujang is essential and one tub lasts months in the fridge. If you are heading into Sichuan cooking, doubanjiang is non-negotiable: mapo tofu, twice-cooked pork and dan dan noodles are all built on it, and look for Pixian doubanjiang (郫县豆瓣酱) specifically, ideally aged. If you cook both cuisines, you need both — there is no single paste that covers them.',
+    swapHeading: 'Can you substitute one for the other?',
+    swap: 'Only in an emergency, and the result will be recognisably off. Gochujang in mapo tofu makes it sweet and one-dimensional, and it misses the fermented bean funk that gives Sichuan dishes their backbone. Doubanjiang in tteokbokki makes it harshly salty and strips out the sweetness the dish depends on. If you must improvise: to fake gochujang, thin doubanjiang with a little sugar and miso; to fake doubanjiang, mix miso paste with chilli flakes and a splash of soy. Neither is convincing, but both are better than nothing.',
+    learnMore: 'Read the full ingredient guide',
+    faqTitle: 'Frequently asked questions',
+    faqs: [
+      { q: 'Is gochujang the same as doubanjiang?', a: 'No. Gochujang is a sweet Korean paste made with glutinous rice; doubanjiang is a salty Chinese paste made with fermented broad beans. They are used in different cuisines and are not interchangeable without noticeably changing the dish.' },
+      { q: 'Which is spicier, gochujang or doubanjiang?', a: 'Both sit in the mild-to-medium range, and neither is as hot as people expect. Gochujang tends to read hotter because the sweetness makes the chilli more noticeable; doubanjiang reads saltier than it does spicy.' },
+      { q: 'Which paste do I need for mapo tofu?', a: 'Doubanjiang — ideally Pixian doubanjiang. It has to be fried in oil until the oil turns red before anything else goes in the wok. Gochujang will not give you mapo tofu.' },
+      { q: 'Do I need to cook doubanjiang before using it?', a: 'Yes. Frying it in oil over medium heat until the oil turns red and it smells fragrant is what unlocks its flavour and colour. Adding it raw at the end leaves the dish tasting flatly salty.' },
+      { q: 'How long do they keep?', a: 'Both keep for months to over a year in the fridge once opened, thanks to their salt content. Keep the surface covered and use a clean spoon each time.' },
+    ],
+  },
+  fr: {
+    title: 'Gochujang vs doubanjiang : deux pâtes de piment rouges, deux cuisines',
+    metaTitle: 'Gochujang vs doubanjiang — quelle différence ? | MyPetitWok',
+    metaDescription: "Le gochujang est une pâte de piment coréenne sucrée et épaisse, à base de riz gluant. Le doubanjiang est une pâte chinoise salée de fèves fermentées, colonne vertébrale de la cuisine du Sichuan. Elles se ressemblent et n'ont rien à voir au goût.",
+    shortAnswer: "Réponse courte : le gochujang (고추장) est coréen, fait de piment, de soja fermenté et de riz gluant — épais, collant, nettement sucré, piquant doux à moyen. Le doubanjiang (豆瓣酱) est chinois, fait de fèves fermentées et de piment — salé, profondément savoureux, grossier avec des morceaux de fève visibles, et pas sucré du tout. Ce sont deux pâtes rouges en pot, et la ressemblance s'arrête là.",
+    intro: "On les confond sans arrêt, en partie parce que les supermarchés occidentaux les rangent ensemble sous « pâte de piment », en partie parce que les photos sont identiques. Mais le gochujang est bâti sur du riz et apporte du sucre, tandis que le doubanjiang est bâti sur des fèves et apporte du sel. Goûtez une cuillère de chaque : la différence est immédiate. L'un est sucré-piquant comme un glaçage, l'autre est salé-fermenté comme un miso en colère.",
+    tableHeading: 'Comparaison côte à côte',
+    rows: [
+      { label: 'Origine', gochujang: 'Corée', doubanjiang: 'Chine (la référence est le Pixian, Sichuan)' },
+      { label: 'Composition', gochujang: 'Piment en poudre, soja fermenté, riz gluant, sel', doubanjiang: 'Fèves fermentées, piment, sel, parfois farine de blé' },
+      { label: 'Goût', gochujang: "D'abord sucré, puis une chaleur douce ; rond", doubanjiang: "D'abord salé et fermenté ; profondeur savoureuse, piquant modéré" },
+      { label: 'Texture', gochujang: 'Lisse, épaisse, collante comme du concentré de tomate', doubanjiang: 'Grossière, avec morceaux de fève et de piment visibles' },
+      { label: 'Niveau de piquant', gochujang: 'Doux à moyen', doubanjiang: 'Doux à moyen — le sel frappe plus fort que le piment' },
+      { label: 'Usages classiques', gochujang: 'Sauce bibimbap, tteokbokki, marinade bulgogi, glaçage du poulet frit coréen, ragoûts', doubanjiang: 'Mapo tofu, porc deux fois cuit, nouilles dan dan, braisés sichuanais, base de fondue chinoise' },
+      { label: "Mode d'emploi", gochujang: 'Souvent ajouté cru ou en fin de cuisson ; aussi délayé en sauce', doubanjiang: "Frit dans l'huile dès le départ jusqu'à ce que l'huile rougisse — étape non facultative" },
+      { label: 'Sucre', gochujang: 'Oui — les sucres du riz font partie de la recette', doubanjiang: 'Aucun' },
+    ],
+    verdictHeading: 'Lequel acheter ?',
+    verdict: "Achetez selon la cuisine que vous faites réellement, pas comme une « pâte de piment » générique. Si c'est la cuisine coréenne qui vous attire — bibimbap, tteokbokki, poulet frit coréen — le gochujang est indispensable et un pot tient des mois au frigo. Si vous vous dirigez vers le Sichuan, le doubanjiang n'est pas négociable : mapo tofu, porc deux fois cuit et nouilles dan dan reposent tous dessus. Cherchez précisément du doubanjiang de Pixian (郫县豆瓣酱), idéalement vieilli. Si vous cuisinez les deux, il vous faut les deux : aucune pâte unique ne les couvre.",
+    swapHeading: "Peut-on remplacer l'une par l'autre ?",
+    swap: "Seulement en dépannage, et le résultat sera visiblement à côté. Du gochujang dans un mapo tofu le rend sucré et plat, et il manque le côté fermenté des fèves qui donne aux plats sichuanais leur colonne vertébrale. Du doubanjiang dans un tteokbokki le rend agressivement salé et supprime le sucré dont le plat dépend. Si vous devez improviser : pour imiter le gochujang, délayez du doubanjiang avec un peu de sucre et du miso ; pour imiter le doubanjiang, mélangez du miso avec des flocons de piment et un trait de soja. Ni l'un ni l'autre n'est convaincant, mais c'est mieux que rien.",
+    learnMore: "Lire le guide complet de l'ingrédient",
+    faqTitle: 'Questions fréquentes',
+    faqs: [
+      { q: 'Le gochujang et le doubanjiang, c\'est pareil ?', a: "Non. Le gochujang est une pâte coréenne sucrée au riz gluant ; le doubanjiang est une pâte chinoise salée aux fèves fermentées. Elles appartiennent à des cuisines différentes et ne s'échangent pas sans changer nettement le plat." },
+      { q: 'Laquelle pique le plus ?', a: "Les deux sont dans la fourchette doux à moyen, et aucune n'est aussi forte qu'on l'imagine. Le gochujang paraît plus piquant parce que le sucre met le piment en avant ; le doubanjiang paraît surtout salé." },
+      { q: 'Quelle pâte pour le mapo tofu ?', a: "Le doubanjiang — idéalement de Pixian. Il doit être frit dans l'huile jusqu'à ce qu'elle rougisse avant tout le reste. Le gochujang ne vous donnera pas un mapo tofu." },
+      { q: 'Faut-il cuire le doubanjiang avant de l\'utiliser ?', a: "Oui. Le faire frire à feu moyen dans l'huile jusqu'à ce qu'elle rougisse et qu'il embaume, c'est ce qui libère son goût et sa couleur. Ajouté cru en fin de cuisson, il ne donne qu'un salé plat." },
+      { q: 'Combien de temps se conservent-ils ?', a: "Les deux tiennent de plusieurs mois à plus d'un an au frigo une fois ouverts, grâce au sel. Gardez la surface couverte et utilisez une cuillère propre à chaque fois." },
+    ],
+  },
+  zh: {
+    title: '韩国辣椒酱和豆瓣酱有什么区别？',
+    metaTitle: '고추장 vs 豆瓣酱：有什么区别？| MyPetitWok 小锅',
+    metaDescription: '韩国辣椒酱（고추장）以糯米制成，浓稠带甜；豆瓣酱以蚕豆发酵制成，咸香醇厚，是川菜的骨架。看起来像，吃起来完全不是一回事。',
+    shortAnswer: '简短回答：韩国辣椒酱（고추장）来自韩国，用辣椒、发酵大豆和糯米做成 — 浓稠、黏、明显带甜，辣度中低。豆瓣酱来自中国，用发酵蚕豆和辣椒做成 — 咸、酱香醇厚、颗粒粗看得见豆瓣，完全不甜。两者都是一罐红色的酱，相似之处也就到此为止。',
+    intro: '这两样经常被搞混，一半是因为西方超市把它们并排摆在"辣椒酱"货架上，一半是因为照片看着一模一样。但韩式辣酱的底子是米，带的是糖；豆瓣酱的底子是蚕豆，带的是盐。各挖一小勺放舌头上，差别立刻就出来了：一个是甜辣的，像刷在肉上的酱；一个是咸香发酵的，像发了脾气的味噌。',
+    tableHeading: '对比一览',
+    rows: [
+      { label: '产地', gochujang: '韩国', doubanjiang: '中国（以四川郫县为标杆）' },
+      { label: '原料', gochujang: '辣椒粉、发酵大豆、糯米、盐', doubanjiang: '发酵蚕豆、辣椒、盐，有时加小麦粉' },
+      { label: '味道', gochujang: '先甜，后是温和的辣；圆润', doubanjiang: '先咸香发酵味；酱香醇厚，辣度中等' },
+      { label: '质地', gochujang: '细腻、浓稠、黏，像番茄膏', doubanjiang: '粗、有颗粒，看得见豆瓣和辣椒碎' },
+      { label: '辣度', gochujang: '中低', doubanjiang: '中低 — 咸味比辣味更冲' },
+      { label: '经典用途', gochujang: '拌饭酱、炒年糕、烤肉腌料、韩式炸鸡酱、汤锅', doubanjiang: '麻婆豆腐、回锅肉、担担面、川式红烧、火锅底料' },
+      { label: '用法', gochujang: '常直接生拌或最后加入；也可调稀做酱汁', doubanjiang: '一开始就下油锅炒到油变红 — 这一步不能省' },
+      { label: '甜度', gochujang: '有 — 米的糖分本就是配方的一部分', doubanjiang: '没有' },
+    ],
+    verdictHeading: '只买一罐的话买哪个？',
+    verdict: '按你真正会做的菜系买，别当成通用"辣椒酱"。喜欢韩餐 — 拌饭、炒年糕、韩式炸鸡 — 韩国辣椒酱是必备，一罐放冰箱能用好几个月。要走川菜路线，豆瓣酱没得商量：麻婆豆腐、回锅肉、担担面全靠它，认准郫县豆瓣酱，最好是陈酿的。两个菜系都做，就两罐都要 — 没有哪一罐能同时顶两边。',
+    swapHeading: '可以互相替代吗？',
+    swap: '只能应急，而且吃得出不对。用韩式辣酱做麻婆豆腐，会变得偏甜、层次单薄，缺了那股给川菜撑骨架的豆瓣发酵香。用豆瓣酱做炒年糕，会咸得发冲，把这道菜赖以成立的甜味整个抹掉。真要凑合：仿韩式辣酱，用豆瓣酱加一点糖和味噌调稀；仿豆瓣酱，用味噌加辣椒碎和少许酱油。两种都不像，但总比没有强。',
+    learnMore: '查看完整食材指南',
+    faqTitle: '常见问题',
+    faqs: [
+      { q: '韩国辣椒酱和豆瓣酱一样吗？', a: '不一样。韩国辣椒酱是用糯米做的甜口韩式酱；豆瓣酱是用发酵蚕豆做的咸口中式酱。属于不同菜系，互换会明显改变菜的味道。' },
+      { q: '哪个更辣？', a: '两者都在中低辣度，都没有大家想象中辣。韩式辣酱因为有甜味衬托，辣感更明显；豆瓣酱给人的第一印象是咸而不是辣。' },
+      { q: '做麻婆豆腐用哪个？', a: '用豆瓣酱，最好是郫县豆瓣。必须先下油锅炒到油变红，其他材料才下锅。用韩式辣酱做不出麻婆豆腐。' },
+      { q: '豆瓣酱一定要先炒吗？', a: '要。中火下油炒到油色变红、香气出来，才能把味道和颜色释放出来。最后生加进去，菜只会剩下一股死咸味。' },
+      { q: '能放多久？', a: '含盐量高，开封后放冰箱都能存几个月到一年以上。注意表面盖好，每次用干净的勺子取。' },
+    ],
+  },
+};
+
+const c = copy[lang];
+const slug = 'gochujang-vs-doubanjiang';
+const pageUrl = `https://mypetitwok.com/${lang}/articles/${slug}`;
+const layoutAlternates = {
+  en: `/en/articles/${slug}`,
+  fr: `/fr/articles/${slug}`,
+  zh: `/zh/articles/${slug}`,
+};
+
+const gochujangSlug = slugify(gochujang.name);
+const doubanjiangSlug = slugify(doubanjiang.name);
+
+const publishedDate = '2026-07-20';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: c.title,
+  description: c.metaDescription,
+  image: [gochujang.imageUrl, doubanjiang.imageUrl].filter(Boolean),
+  inLanguage: lang,
+  datePublished: publishedDate,
+  mainEntityOfPage: pageUrl,
+  author: { '@type': 'Person', name: i.about.founderName, url: `https://mypetitwok.com/${lang}/about` },
+  publisher: {
+    '@type': 'Organization',
+    name: 'MyPetitWok',
+    logo: { '@type': 'ImageObject', url: 'https://mypetitwok.com/icon.png' },
+  },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: c.faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const pastes = [
+  { data: gochujang, slug: gochujangSlug },
+  { data: doubanjiang, slug: doubanjiangSlug },
+];
+---
+
+<Layout title={c.metaTitle} description={c.metaDescription} lang={lang} alternates={layoutAlternates} ogImage={gochujang.imageUrl ?? undefined}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <Nav lang={lang} current="articles" alternates={layoutAlternates} />
+
+  <article>
+    <header class="pt-14 pb-8 px-6 bg-[var(--color-cream)]">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold hero-title leading-tight mb-6">{c.title}</h1>
+        <p class="text-lg sm:text-xl text-[var(--color-text)] leading-relaxed bg-white rounded-2xl p-5 border-l-4 border-[var(--color-logo-red)] shadow-sm">
+          {c.shortAnswer}
+        </p>
+        <p class="mt-6 text-lg text-[var(--color-text-muted)] leading-relaxed">{c.intro}</p>
+      </div>
+    </header>
+
+    <section class="py-10 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {pastes.map((s) => (
+          <a href={`/${lang}/ingredients/${s.slug}`} class="group bg-white rounded-2xl overflow-hidden border border-[var(--color-brand)]/15 hover:shadow-lg hover:border-[var(--color-logo-red)]/30 transition-all">
+            {s.data.imageUrl && (
+              <img src={s.data.imageUrl} alt={s.data.name} width="600" height="400" loading="eager" class="w-full h-52 object-cover" />
+            )}
+            <div class="p-5">
+              <h2 class="text-xl font-extrabold text-[var(--color-brand-dark)] group-hover:text-[var(--color-logo-red)] transition-colors">{s.data.name.trim()}</h2>
+              {s.data.asianName && s.data.asianName !== s.data.name && (
+                <div class="text-sm text-[var(--color-text-muted)] mt-0.5">{s.data.asianName}</div>
+              )}
+              <div class="mt-3 text-sm font-bold text-[var(--color-logo-red)]">{c.learnMore} →</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {c.tableHeading}
+        </h2>
+        <div class="overflow-x-auto rounded-2xl border border-[var(--color-brand)]/15">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[var(--color-brand)] text-white">
+                <th class="px-4 py-3 font-bold text-sm w-1/4"></th>
+                <th class="px-4 py-3 font-bold">{gochujang.name.trim()}</th>
+                <th class="px-4 py-3 font-bold">{doubanjiang.name.trim()}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {c.rows.map((row, idx) => (
+                <tr class={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--color-cream)]/60'}>
+                  <th class="px-4 py-3.5 font-bold text-[var(--color-brand-dark)] text-sm align-top">{row.label}</th>
+                  <td class="px-4 py-3.5 text-[var(--color-text)] leading-relaxed align-top">{row.gochujang}</td>
+                  <td class="px-4 py-3.5 text-[var(--color-text)] leading-relaxed align-top">{row.doubanjiang}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-10 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto space-y-8">
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+            <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+            {c.verdictHeading}
+          </h2>
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{c.verdict}</p>
+        </div>
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+            <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+            {c.swapHeading}
+          </h2>
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{c.swap}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {c.faqTitle}
+        </h2>
+        <div class="space-y-3">
+          {c.faqs.map((f) => (
+            <details class="group bg-[var(--color-cream)] rounded-xl border border-[var(--color-brand)]/10 overflow-hidden">
+              <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer font-semibold text-[var(--color-brand-dark)] list-none [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <svg class="w-5 h-5 flex-shrink-0 text-[var(--color-logo-red)] transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <p class="px-5 pb-4 text-[var(--color-text)] leading-relaxed">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.recipes.saveCtaTitle}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.recipes.saveCtaText}</p>
+      <a href={`/${lang}#download`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.recipes.saveCtaButton}</a>
+    </div>
+  </section>
+
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>

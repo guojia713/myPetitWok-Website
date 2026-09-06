@@ -1,0 +1,304 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+import { fetchIngredients, type IngredientDetail } from '../../../lib/api';
+import { slugify } from '../../../lib/slugify';
+
+interface PageProps {
+  firm: IngredientDetail;
+  silken: IngredientDetail;
+}
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const l of languages) {
+    const list = await fetchIngredients(l);
+    const firm = list.find((x) => x.id === 10);
+    const silken = list.find((x) => x.id === 9);
+    if (!firm || !silken) continue;
+    paths.push({ params: { lang: l }, props: { firm, silken } });
+  }
+  return paths;
+}
+
+const { firm, silken } = Astro.props as PageProps;
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+const copy: Record<Lang, {
+  title: string;
+  metaTitle: string;
+  metaDescription: string;
+  shortAnswer: string;
+  intro: string;
+  tableHeading: string;
+  rows: { label: string; firm: string; silken: string }[];
+  verdictHeading: string;
+  verdict: string;
+  swapHeading: string;
+  swap: string;
+  learnMore: string;
+  faqTitle: string;
+  faqs: { q: string; a: string }[];
+}> = {
+  en: {
+    title: 'Firm Tofu vs Silken Tofu: Which One Does Your Recipe Need?',
+    metaTitle: 'Firm Tofu vs Silken Tofu — Which One Do You Need? | MyPetitWok',
+    metaDescription: 'Firm tofu (老豆腐) holds its shape and is for stir-frying, frying and braising. Silken tofu (嫩豆腐) is custard-soft and is for soups, mapo tofu and steaming. Using the wrong one is why your tofu falls apart.',
+    shortAnswer: 'Short answer: firm tofu (老豆腐) has been pressed, so it holds its shape — use it whenever the tofu needs to survive a spatula: stir-fries, pan-frying, deep-frying, skewers. Silken tofu (嫩豆腐) is unpressed and sets like custard — use it when softness is the point: soups, steamed dishes, mapo tofu, or eaten cold. Swapping them is the single most common reason home-made tofu dishes turn to mush.',
+    intro: 'Almost every "my tofu disintegrated" problem traces back to this one choice at the shop. Tofu is not one ingredient with a texture setting — the two types are made differently, absorb sauce differently, and behave completely differently under heat. The good news is the rule is simple, and once you know it you will never buy the wrong block again.',
+    tableHeading: 'Side-by-side comparison',
+    rows: [
+      { label: 'Chinese name', firm: '老豆腐 / 北豆腐 — "old" or northern tofu', silken: '嫩豆腐 / 南豆腐 — "tender" or southern tofu' },
+      { label: 'How it is made', firm: 'Curds pressed to squeeze out water', silken: 'Set in the container, never pressed or drained' },
+      { label: 'Texture', firm: 'Springy, sliceable, slightly chewy', silken: 'Custard-like, wobbles, breaks under a fork' },
+      { label: 'Best for', firm: 'Stir-fries, pan-frying, deep-frying, braising, skewers, tofu "steaks"', silken: 'Mapo tofu, miso soup, steamed tofu, hot and sour soup, cold tofu with soy and scallion' },
+      { label: 'Behaviour under heat', firm: 'Browns and crisps; keeps its cubes', silken: 'Warms through and softens; will break if stirred hard' },
+      { label: 'Sauce absorption', firm: 'Soaks up marinade well, especially after pressing', silken: 'Absorbs little — it is coated by the sauce rather than filled with it' },
+      { label: 'Handling tip', firm: 'Press 20-30 min under a weight for the best sear', silken: 'Slide it in off the packet; push it around with the back of a spoon, never a spatula' },
+    ],
+    verdictHeading: 'Which one should you buy?',
+    verdict: 'If you are buying one block to keep in the fridge, buy firm — it is the more forgiving of the two and it covers the whole stir-fry family, which is where most people start. Buy silken specifically when a recipe names it, and buy it fresh: it is at its best within a day or two, and mapo tofu made with firm tofu simply is not mapo tofu. Many Chinese kitchens keep both, because they are not competing products.',
+    swapHeading: 'Can you substitute one for the other?',
+    swap: 'In one direction, cautiously. You can use firm tofu in a soup or in mapo tofu — the dish will work, it will just be chewier and less luxurious than it should be. Going the other way rarely ends well: silken tofu in a stir-fry breaks into a scramble the moment you toss it, and it will not brown or crisp at all. If a recipe calls for silken and you only have firm, accept a firmer dish. If it calls for firm and you only have silken, change the plan and make something steamed or souped instead.',
+    learnMore: 'Read the full ingredient guide',
+    faqTitle: 'Frequently asked questions',
+    faqs: [
+      { q: 'Which tofu do I use for mapo tofu?', a: 'Silken (soft) tofu. The contrast between the silky cubes and the spicy doubanjiang sauce is the whole point of the dish. Slide the cubes in at the end and move them with the back of a spoon rather than stirring.' },
+      { q: 'Why does my tofu fall apart in the wok?', a: 'Almost always because it is silken tofu, or firm tofu that was not pressed and drained. Press firm tofu under a weight for 20-30 minutes, pat it dry, and let it sit undisturbed in the hot oil until a crust forms before you move it.' },
+      { q: 'Do I need to press silken tofu?', a: 'No. Pressing silken tofu just destroys it. Drain the packet liquid and use it straight away.' },
+      { q: 'Is extra-firm tofu the same as firm tofu?', a: 'It is the same type, pressed further. Extra-firm is drier and chewier, which is excellent for deep-frying and skewers but can be tough in a quick stir-fry. Firm is the safer default.' },
+      { q: 'Can I freeze tofu?', a: 'Firm tofu, yes — freezing makes it spongy and full of holes, which soak up sauce beautifully in braises and hot pot. Do not freeze silken tofu; it collapses into a watery mess when thawed.' },
+    ],
+  },
+  fr: {
+    title: 'Tofu ferme vs tofu soyeux : lequel votre recette demande-t-elle ?',
+    metaTitle: 'Tofu ferme vs tofu soyeux — lequel choisir ? | MyPetitWok',
+    metaDescription: 'Le tofu ferme (老豆腐) garde sa forme : sautés, poêlé, frit, braisé. Le tofu soyeux (嫩豆腐) a la texture d\'un flan : soupes, mapo tofu, vapeur. Se tromper de tofu, c\'est pour ça qu\'il part en morceaux.',
+    shortAnswer: "Réponse courte : le tofu ferme (老豆腐) a été pressé, il garde donc sa forme — utilisez-le dès que le tofu doit survivre à une spatule : sautés, poêlé, frit, brochettes. Le tofu soyeux (嫩豆腐) n'est pas pressé et prend comme un flan — utilisez-le quand la douceur est le but : soupes, plats vapeur, mapo tofu, ou froid. Les intervertir est la première cause de tofu en bouillie.",
+    intro: "Presque tous les « mon tofu s'est désintégré » remontent à ce choix fait en magasin. Le tofu n'est pas un ingrédient unique avec un réglage de texture : les deux types sont fabriqués différemment, absorbent la sauce différemment et réagissent à la chaleur de manière totalement différente. Bonne nouvelle : la règle est simple, et une fois connue vous ne vous tromperez plus de bloc.",
+    tableHeading: 'Comparaison côte à côte',
+    rows: [
+      { label: 'Nom chinois', firm: '老豆腐 / 北豆腐 — tofu « vieux » ou du Nord', silken: '嫩豆腐 / 南豆腐 — tofu « tendre » ou du Sud' },
+      { label: 'Fabrication', firm: "Caillé pressé pour en extraire l'eau", silken: 'Pris directement dans son contenant, jamais pressé ni égoutté' },
+      { label: 'Texture', firm: 'Élastique, se tranche, légèrement ferme sous la dent', silken: 'Comme un flan, tremblotant, se casse à la fourchette' },
+      { label: 'Idéal pour', firm: 'Sautés, poêlé, friture, braisé, brochettes, « steaks » de tofu', silken: 'Mapo tofu, soupe miso, tofu vapeur, soupe aigre-piquante, tofu froid au soja et ciboule' },
+      { label: 'À la cuisson', firm: 'Dore et croustille ; garde ses cubes', silken: 'Se réchauffe et s\'attendrit ; se casse si on remue fort' },
+      { label: 'Absorption de la sauce', firm: 'Absorbe bien la marinade, surtout après pressage', silken: "Absorbe peu — il est enrobé par la sauce plutôt qu'imprégné" },
+      { label: 'Astuce de manipulation', firm: 'Presser 20-30 min sous un poids pour une belle coloration', silken: "Le faire glisser hors du paquet ; le déplacer avec le dos d'une cuillère, jamais une spatule" },
+    ],
+    verdictHeading: 'Lequel acheter ?',
+    verdict: "Si vous n'achetez qu'un bloc à garder au frigo, prenez le ferme — c'est le plus indulgent des deux et il couvre toute la famille des sautés, là où la plupart des gens commencent. Achetez du soyeux quand une recette le nomme explicitement, et achetez-le frais : il est à son meilleur dans les deux jours. Un mapo tofu au tofu ferme n'est tout simplement pas un mapo tofu. Beaucoup de cuisines chinoises gardent les deux, car ce ne sont pas des produits concurrents.",
+    swapHeading: "Peut-on remplacer l'un par l'autre ?",
+    swap: "Dans un sens seulement, et avec prudence. Vous pouvez mettre du tofu ferme dans une soupe ou dans un mapo tofu — le plat fonctionnera, il sera juste plus ferme sous la dent et moins fondant qu'il ne devrait. L'inverse finit rarement bien : le tofu soyeux dans un sauté se transforme en bouillie dès le premier mouvement, et ne dorera jamais. Si la recette demande du soyeux et que vous n'avez que du ferme, acceptez un plat plus ferme. Si elle demande du ferme et que vous n'avez que du soyeux, changez de plan et partez sur une vapeur ou une soupe.",
+    learnMore: "Lire le guide complet de l'ingrédient",
+    faqTitle: 'Questions fréquentes',
+    faqs: [
+      { q: 'Quel tofu pour le mapo tofu ?', a: "Le tofu soyeux. Le contraste entre les cubes fondants et la sauce pimentée au doubanjiang est tout l'intérêt du plat. Ajoutez les cubes à la fin et déplacez-les avec le dos d'une cuillère plutôt que de remuer." },
+      { q: 'Pourquoi mon tofu se casse-t-il dans le wok ?', a: "Presque toujours parce que c'est du tofu soyeux, ou du tofu ferme qui n'a pas été pressé et séché. Pressez le tofu ferme sous un poids 20-30 minutes, séchez-le, et laissez-le tranquille dans l'huile chaude jusqu'à ce qu'une croûte se forme avant de le bouger." },
+      { q: 'Faut-il presser le tofu soyeux ?', a: "Non. Presser du tofu soyeux ne fait que le détruire. Égouttez le liquide du paquet et utilisez-le immédiatement." },
+      { q: 'Le tofu extra-ferme, c\'est pareil que le ferme ?', a: "C'est le même type, pressé plus longtemps. L'extra-ferme est plus sec et plus ferme, excellent pour la friture et les brochettes, mais parfois coriace dans un sauté rapide. Le ferme reste le choix par défaut le plus sûr." },
+      { q: 'Peut-on congeler le tofu ?', a: "Le ferme, oui — la congélation le rend spongieux et plein de trous, ce qui absorbe magnifiquement la sauce dans les braisés et la fondue chinoise. Ne congelez pas le soyeux : il s'effondre en bouillie aqueuse à la décongélation." },
+    ],
+  },
+  zh: {
+    title: '老豆腐和嫩豆腐有什么区别？该用哪一种？',
+    metaTitle: '老豆腐 vs 嫩豆腐：该用哪一种？| MyPetitWok 小锅',
+    metaDescription: '老豆腐（北豆腐）压过水、成型好，适合炒、煎、炸、烧；嫩豆腐（南豆腐）不压水、口感似布丁，适合做汤、蒸、麻婆豆腐。用错豆腐，正是豆腐一炒就碎的原因。',
+    shortAnswer: '简短回答：老豆腐（北豆腐）压过水，结构结实 — 凡是需要经得起锅铲的做法都用它：炒、煎、炸、串烤。嫩豆腐（南豆腐）不压水，凝固后像布丁 — 凡是要那口滑嫩的都用它：做汤、清蒸、麻婆豆腐、凉拌。两者用反，是家常豆腐菜变成一锅糊的头号原因。',
+    intro: '几乎所有"我的豆腐一下锅就散了"，问题都出在买豆腐那一刻。豆腐不是一种食材加一个软硬档位 — 两种豆腐的做法不同、吸味方式不同、遇热的表现也完全不同。好消息是规则很简单，弄清一次就再也不会买错。',
+    tableHeading: '对比一览',
+    rows: [
+      { label: '常见叫法', firm: '老豆腐 / 北豆腐', silken: '嫩豆腐 / 南豆腐' },
+      { label: '制作方式', firm: '豆花压制去水成型', silken: '直接在盒中点制凝固，不压不滤' },
+      { label: '口感', firm: '有弹性、能切块、略带嚼头', silken: '像布丁，颤巍巍，筷子一夹就断' },
+      { label: '适合做', firm: '炒、煎、炸、红烧、串烤、香煎豆腐排', silken: '麻婆豆腐、味增汤、清蒸豆腐、酸辣汤、小葱拌豆腐' },
+      { label: '遇热表现', firm: '能上色起壳，块型不散', silken: '受热变软，大力翻动即碎' },
+      { label: '吸味能力', firm: '吸汁好，压过水后尤其明显', silken: '几乎不吸味 — 靠酱汁裹在外面' },
+      { label: '处理要点', firm: '压重物 20-30 分钟再煎，成品最漂亮', silken: '整块滑入锅中，用勺背推动，别用锅铲翻' },
+    ],
+    verdictHeading: '只买一种的话买哪个？',
+    verdict: '如果冰箱里只常备一种，买老豆腐 — 它更容错，覆盖整个炒菜家族，也是大多数人入门的地方。菜谱明确写嫩豆腐时再买嫩豆腐，而且要买新鲜的：一两天内口感最好。用老豆腐做的麻婆豆腐，根本不算麻婆豆腐。很多中式厨房两种都常备，因为它们本来就不是替代关系。',
+    swapHeading: '可以互相替代吗？',
+    swap: '单向可以，且要小心。老豆腐拿来做汤或麻婆豆腐是能成的 — 菜能吃，只是偏硬、少了那份滑。反过来基本行不通：嫩豆腐下锅炒，一翻就碎成豆腐渣，而且完全煎不出焦壳。菜谱要嫩豆腐而你只有老豆腐，就接受口感硬一些；菜谱要老豆腐而你只有嫩豆腐，不如改主意做个蒸的或汤的。',
+    learnMore: '查看完整食材指南',
+    faqTitle: '常见问题',
+    faqs: [
+      { q: '麻婆豆腐用哪种豆腐？', a: '用嫩豆腐。滑嫩的豆腐块和豆瓣酱辣汁之间的对比，就是这道菜的灵魂。最后再下豆腐，用勺背轻推，不要翻炒。' },
+      { q: '豆腐一下锅就碎是为什么？', a: '基本上不是用了嫩豆腐，就是老豆腐没压水没擦干。老豆腐压重物 20-30 分钟，擦干表面，下热油后先别动，等结出一层壳再翻。' },
+      { q: '嫩豆腐需要压水吗？', a:'不需要。压嫩豆腐只会把它压坏。倒掉盒中的水，直接用。' },
+      { q: '特硬豆腐和老豆腐一样吗？', a: '是同一类，只是压得更久。特硬豆腐更干更有嚼劲，油炸和串烤很好，但快炒时可能偏柴。老豆腐是更稳妥的默认选择。' },
+      { q: '豆腐可以冷冻吗？', a: '老豆腐可以 — 冻过会变成蜂窝状的冻豆腐，炖菜和火锅里吸汁特别香。嫩豆腐不要冷冻，解冻后会塌成一摊水。' },
+    ],
+  },
+};
+
+const c = copy[lang];
+const slug = 'firm-vs-silken-tofu';
+const pageUrl = `https://mypetitwok.com/${lang}/articles/${slug}`;
+const layoutAlternates = {
+  en: `/en/articles/${slug}`,
+  fr: `/fr/articles/${slug}`,
+  zh: `/zh/articles/${slug}`,
+};
+
+const firmSlug = slugify(firm.name);
+const silkenSlug = slugify(silken.name);
+
+const publishedDate = '2026-07-20';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: c.title,
+  description: c.metaDescription,
+  image: [firm.imageUrl, silken.imageUrl].filter(Boolean),
+  inLanguage: lang,
+  datePublished: publishedDate,
+  mainEntityOfPage: pageUrl,
+  author: { '@type': 'Person', name: i.about.founderName, url: `https://mypetitwok.com/${lang}/about` },
+  publisher: {
+    '@type': 'Organization',
+    name: 'MyPetitWok',
+    logo: { '@type': 'ImageObject', url: 'https://mypetitwok.com/icon.png' },
+  },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: c.faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const tofus = [
+  { data: firm, slug: firmSlug },
+  { data: silken, slug: silkenSlug },
+];
+---
+
+<Layout title={c.metaTitle} description={c.metaDescription} lang={lang} alternates={layoutAlternates} ogImage={firm.imageUrl ?? undefined}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <Nav lang={lang} current="articles" alternates={layoutAlternates} />
+
+  <article>
+    <header class="pt-14 pb-8 px-6 bg-[var(--color-cream)]">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold hero-title leading-tight mb-6">{c.title}</h1>
+        <p class="text-lg sm:text-xl text-[var(--color-text)] leading-relaxed bg-white rounded-2xl p-5 border-l-4 border-[var(--color-logo-red)] shadow-sm">
+          {c.shortAnswer}
+        </p>
+        <p class="mt-6 text-lg text-[var(--color-text-muted)] leading-relaxed">{c.intro}</p>
+      </div>
+    </header>
+
+    <section class="py-10 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {tofus.map((s) => (
+          <a href={`/${lang}/ingredients/${s.slug}`} class="group bg-white rounded-2xl overflow-hidden border border-[var(--color-brand)]/15 hover:shadow-lg hover:border-[var(--color-logo-red)]/30 transition-all">
+            {s.data.imageUrl && (
+              <img src={s.data.imageUrl} alt={s.data.name} width="600" height="400" loading="eager" class="w-full h-52 object-cover" />
+            )}
+            <div class="p-5">
+              <h2 class="text-xl font-extrabold text-[var(--color-brand-dark)] group-hover:text-[var(--color-logo-red)] transition-colors">{s.data.name.trim()}</h2>
+              {s.data.asianName && s.data.asianName !== s.data.name && (
+                <div class="text-sm text-[var(--color-text-muted)] mt-0.5">{s.data.asianName}</div>
+              )}
+              <div class="mt-3 text-sm font-bold text-[var(--color-logo-red)]">{c.learnMore} →</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {c.tableHeading}
+        </h2>
+        <div class="overflow-x-auto rounded-2xl border border-[var(--color-brand)]/15">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[var(--color-brand)] text-white">
+                <th class="px-4 py-3 font-bold text-sm w-1/4"></th>
+                <th class="px-4 py-3 font-bold">{firm.name.trim()}</th>
+                <th class="px-4 py-3 font-bold">{silken.name.trim()}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {c.rows.map((row, idx) => (
+                <tr class={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--color-cream)]/60'}>
+                  <th class="px-4 py-3.5 font-bold text-[var(--color-brand-dark)] text-sm align-top">{row.label}</th>
+                  <td class="px-4 py-3.5 text-[var(--color-text)] leading-relaxed align-top">{row.firm}</td>
+                  <td class="px-4 py-3.5 text-[var(--color-text)] leading-relaxed align-top">{row.silken}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-10 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto space-y-8">
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+            <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+            {c.verdictHeading}
+          </h2>
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{c.verdict}</p>
+        </div>
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+            <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+            {c.swapHeading}
+          </h2>
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{c.swap}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {c.faqTitle}
+        </h2>
+        <div class="space-y-3">
+          {c.faqs.map((f) => (
+            <details class="group bg-[var(--color-cream)] rounded-xl border border-[var(--color-brand)]/10 overflow-hidden">
+              <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer font-semibold text-[var(--color-brand-dark)] list-none [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <svg class="w-5 h-5 flex-shrink-0 text-[var(--color-logo-red)] transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <p class="px-5 pb-4 text-[var(--color-text)] leading-relaxed">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.recipes.saveCtaTitle}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.recipes.saveCtaText}</p>
+      <a href={`/${lang}#download`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.recipes.saveCtaButton}</a>
+    </div>
+  </section>
+
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>

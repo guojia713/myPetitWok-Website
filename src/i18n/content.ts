@@ -227,6 +227,21 @@ const translations: Record<Lang, {
           description: 'Same Japanese base, two different jobs. A side-by-side comparison — and when you can swap one for the other.',
           href: '/articles/yakitori-vs-teriyaki',
         },
+        {
+          title: 'Firm tofu vs silken tofu: which one does your recipe need?',
+          description: 'One holds its shape in the wok, the other is meant to fall apart. This is why your tofu turns to mush.',
+          href: '/articles/firm-vs-silken-tofu',
+        },
+        {
+          title: 'Mirin vs Shaoxing cooking wine: what is the difference?',
+          description: 'Both say "rice wine" on the bottle. One sweetens and glazes, the other removes odours and adds depth.',
+          href: '/articles/mirin-vs-shaoxing-wine',
+        },
+        {
+          title: 'Gochujang vs doubanjiang: two red chilli pastes, two cuisines',
+          description: 'Sweet Korean rice-based paste, or salty Chinese broad-bean paste? They look alike and taste nothing alike.',
+          href: '/articles/gochujang-vs-doubanjiang',
+        },
       ],
     },
     about: {
@@ -385,6 +400,21 @@ const translations: Record<Lang, {
           description: "Même base japonaise, deux rôles différents. Une comparaison côte à côte — et quand remplacer l'une par l'autre.",
           href: '/articles/yakitori-vs-teriyaki',
         },
+        {
+          title: 'Tofu ferme vs tofu soyeux : lequel votre recette demande-t-elle ?',
+          description: "L'un garde sa forme dans le wok, l'autre est fait pour fondre. Voici pourquoi votre tofu part en morceaux.",
+          href: '/articles/firm-vs-silken-tofu',
+        },
+        {
+          title: 'Mirin vs vin de riz Shaoxing : quelle différence ?',
+          description: "Les deux portent la mention « vin de riz ». L'un sucre et fait briller, l'autre ôte les odeurs et apporte de la profondeur.",
+          href: '/articles/mirin-vs-shaoxing-wine',
+        },
+        {
+          title: 'Gochujang vs doubanjiang : deux pâtes de piment, deux cuisines',
+          description: "Pâte coréenne sucrée au riz, ou pâte chinoise salée aux fèves ? Elles se ressemblent et n'ont rien à voir au goût.",
+          href: '/articles/gochujang-vs-doubanjiang',
+        },
       ],
     },
     about: {
@@ -542,6 +572,21 @@ const translations: Record<Lang, {
           title: '烤鸡肉串酱和照烧酱有什么区别？',
           description: '基础原料相同，用途各异。一张对比表看懂区别 — 以及什么时候可以互相替代。',
           href: '/articles/yakitori-vs-teriyaki',
+        },
+        {
+          title: '老豆腐和嫩豆腐有什么区别？该用哪一种？',
+          description: '一个下锅不散，一个本来就该入口即化。豆腐一炒就碎，原因就在这里。',
+          href: '/articles/firm-vs-silken-tofu',
+        },
+        {
+          title: '味醂和料酒有什么区别？',
+          description: '瓶身上都写着"米酒"。一个添甜上光，一个去腥增香。',
+          href: '/articles/mirin-vs-shaoxing-wine',
+        },
+        {
+          title: '韩国辣椒酱和豆瓣酱有什么区别？',
+          description: '甜口的韩式糯米辣酱，还是咸香的中式蚕豆酱？看起来像，吃起来完全不是一回事。',
+          href: '/articles/gochujang-vs-doubanjiang',
         },
       ],
     },

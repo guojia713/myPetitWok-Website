@@ -1,0 +1,304 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import { t, languages, type Lang } from '../../../i18n/content';
+import { fetchIngredients, type IngredientDetail } from '../../../lib/api';
+import { slugify } from '../../../lib/slugify';
+
+interface PageProps {
+  mirin: IngredientDetail;
+  wine: IngredientDetail;
+}
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const l of languages) {
+    const list = await fetchIngredients(l);
+    const mirin = list.find((x) => x.id === 22);
+    const wine = list.find((x) => x.id === 1);
+    if (!mirin || !wine) continue;
+    paths.push({ params: { lang: l }, props: { mirin, wine } });
+  }
+  return paths;
+}
+
+const { mirin, wine } = Astro.props as PageProps;
+const lang = Astro.params.lang as Lang;
+const i = t(lang);
+
+const copy: Record<Lang, {
+  title: string;
+  metaTitle: string;
+  metaDescription: string;
+  shortAnswer: string;
+  intro: string;
+  tableHeading: string;
+  rows: { label: string; mirin: string; wine: string }[];
+  verdictHeading: string;
+  verdict: string;
+  swapHeading: string;
+  swap: string;
+  learnMore: string;
+  faqTitle: string;
+  faqs: { q: string; a: string }[];
+}> = {
+  en: {
+    title: 'Mirin vs Shaoxing Cooking Wine: What Is the Difference?',
+    metaTitle: 'Mirin vs Shaoxing Cooking Wine — What Is the Difference? | MyPetitWok',
+    metaDescription: 'Mirin is a sweet Japanese rice wine used for glaze, shine and gentle sweetness. Shaoxing wine is a dry, savoury Chinese rice wine used to remove meaty smells and add depth. They are not substitutes for each other.',
+    shortAnswer: 'Short answer: mirin (みりん) is Japanese, sweet and low in alcohol — its job is to add gloss, roundness and a gentle sugar note to glazes like teriyaki. Shaoxing wine (料酒 / 绍兴酒) is Chinese, dry and savoury with a sherry-like depth — its job is to strip the raw smell from meat and fish and add fermented complexity to stir-fries and braises. One sweetens, the other cleans and deepens.',
+    intro: 'Both bottles say "rice wine" on the label, both sit in the same aisle of the Asian grocery, and both are described in recipes as "cooking wine" — which is exactly how people end up with sweet, sticky mapo tofu or flat, fishy teriyaki. They come from different cuisines and do genuinely different jobs. Once you have tasted them side by side, straight from the spoon, you will never mix them up again.',
+    tableHeading: 'Side-by-side comparison',
+    rows: [
+      { label: 'Origin', mirin: 'Japan', wine: 'China (Shaoxing, Zhejiang)' },
+      { label: 'Taste', mirin: 'Distinctly sweet, mild, slightly syrupy', wine: 'Dry, savoury, nutty — closest to dry sherry' },
+      { label: 'Main job', mirin: 'Sweetness, shine and glaze; balances salty soy', wine: 'Removes raw meat and fish odours; adds fermented depth' },
+      { label: 'Alcohol', mirin: 'Around 14% for true hon-mirin; much lower in "aji-mirin" seasoning', wine: 'Around 15-18%, usually salted in supermarket "cooking wine"' },
+      { label: 'Classic uses', mirin: 'Teriyaki, yakitori sauce, sukiyaki, simmered dishes (nimono), tamagoyaki', wine: 'Stir-fried meat marinades, red-braised pork, drunken chicken, dumpling filling, soups' },
+      { label: 'When it goes in', mirin: 'With the soy and sugar when building the glaze', wine: 'Early — into the marinade, or splashed around the hot wok before the meat browns' },
+      { label: 'If you cannot find it', mirin: 'Dry sherry or sake plus a little sugar', wine: 'Dry sherry is the standard substitute; dry vermouth at a push' },
+    ],
+    verdictHeading: 'Which one should you buy?',
+    verdict: 'It depends entirely on what you cook. If you are drawn to Japanese food — teriyaki, yakitori, donburi, anything glossy and glazed — buy mirin first, and look for hon-mirin (本みりん) rather than "aji-mirin" seasoning, which is mostly corn syrup. If Chinese food is your entry point, buy Shaoxing wine: it appears in a huge share of Chinese savoury recipes and there is no convincing way to fake it. Both keep for months in a cupboard, so cooks who roam across both cuisines usually end up with both bottles.',
+    swapHeading: 'Can you substitute one for the other?',
+    swap: 'Not directly. Using mirin where a recipe wants Shaoxing adds sugar the dish was never designed for — a stir-fry or braise turns cloyingly sweet and loses its savoury backbone. Using Shaoxing where a recipe wants mirin leaves a glaze thin, harsh and lacking shine. If you are stuck, the workable emergency fixes are: for mirin, use dry sherry or sake with a pinch of sugar; for Shaoxing, use dry sherry on its own. Do not reach for rice vinegar for either — it is acidic, not alcoholic, and will take the dish somewhere else entirely.',
+    learnMore: 'Read the full ingredient guide',
+    faqTitle: 'Frequently asked questions',
+    faqs: [
+      { q: 'Can I use mirin instead of Shaoxing wine?', a: 'Not really. Mirin is sweet and Shaoxing is dry and savoury, so mirin will make Chinese stir-fries and braises noticeably sweeter than intended. Dry sherry is a much closer substitute for Shaoxing wine.' },
+      { q: 'Is mirin the same as sake?', a: 'No. Sake is a dry drinking rice wine; mirin is sweeter, thicker and made specifically for cooking. You can approximate mirin with sake plus sugar, but not the reverse.' },
+      { q: 'What is the difference between hon-mirin and aji-mirin?', a: 'Hon-mirin (本みりん) is genuinely brewed and contains around 14% alcohol. Aji-mirin is a seasoning imitation built on corn syrup and additives with very little alcohol. Hon-mirin gives a noticeably better glaze.' },
+      { q: 'Is supermarket "cooking wine" the same as Shaoxing wine?', a: 'Chinese 料酒 sold as cooking wine is usually Shaoxing-style rice wine with salt added, which makes it non-drinkable and exempt from alcohol taxes. It works fine for cooking — just account for the extra salt.' },
+      { q: 'Can I cook these without alcohol?', a: 'The alcohol largely cooks off, but if you avoid it entirely, use unsalted stock with a splash of rice vinegar in place of Shaoxing, and a sugar-and-water syrup with a little rice vinegar in place of mirin. Expect a flatter result — these ingredients are doing real work.' },
+    ],
+  },
+  fr: {
+    title: 'Mirin vs vin de riz Shaoxing : quelle différence ?',
+    metaTitle: 'Mirin vs vin de cuisine Shaoxing — quelle différence ? | MyPetitWok',
+    metaDescription: "Le mirin est un vin de riz japonais sucré, pour le glaçage, la brillance et une douceur légère. Le Shaoxing est un vin de riz chinois sec et salé, pour ôter l'odeur des viandes et apporter de la profondeur. Ce ne sont pas des substituts.",
+    shortAnswer: "Réponse courte : le mirin (みりん) est japonais, sucré et peu alcoolisé — son rôle est d'apporter brillance, rondeur et une note sucrée douce aux glaçages comme le teriyaki. Le vin de Shaoxing (料酒 / 绍兴酒) est chinois, sec et savoureux, avec une profondeur proche du xérès — son rôle est d'ôter l'odeur crue des viandes et poissons et d'ajouter une complexité fermentée aux sautés et aux braisés. L'un sucre, l'autre nettoie et approfondit.",
+    intro: "Les deux bouteilles portent la mention « vin de riz », se trouvent dans le même rayon de l'épicerie asiatique, et les recettes les appellent toutes deux « vin de cuisine » — c'est exactement comme ça qu'on se retrouve avec un mapo tofu sucré et collant ou un teriyaki fade qui sent le poisson. Ils viennent de cuisines différentes et font des travaux réellement différents. Une fois goûtés côte à côte, à la cuillère, vous ne les confondrez plus.",
+    tableHeading: 'Comparaison côte à côte',
+    rows: [
+      { label: 'Origine', mirin: 'Japon', wine: 'Chine (Shaoxing, Zhejiang)' },
+      { label: 'Goût', mirin: 'Nettement sucré, doux, légèrement sirupeux', wine: 'Sec, savoureux, avec une note de noisette — proche du xérès sec' },
+      { label: 'Rôle principal', mirin: 'Sucrer, faire briller, glacer ; équilibre le soja salé', wine: "Ôter l'odeur crue de la viande et du poisson ; apporter de la profondeur fermentée" },
+      { label: 'Alcool', mirin: 'Environ 14 % pour le vrai hon-mirin ; bien moins dans l\'« aji-mirin »', wine: 'Environ 15-18 %, généralement salé dans les « vins de cuisine » de supermarché' },
+      { label: 'Usages classiques', mirin: 'Teriyaki, sauce yakitori, sukiyaki, plats mijotés (nimono), tamagoyaki', wine: 'Marinades de viande pour sautés, porc braisé rouge, poulet ivre, farce à raviolis, soupes' },
+      { label: "Quand l'ajouter", mirin: 'Avec le soja et le sucre au moment de monter le glaçage', wine: 'Tôt — dans la marinade, ou versé sur les parois du wok chaud avant que la viande ne colore' },
+      { label: 'Si vous n\'en trouvez pas', mirin: 'Xérès sec ou saké avec un peu de sucre', wine: 'Le xérès sec est le substitut standard ; du vermouth sec à la rigueur' },
+    ],
+    verdictHeading: 'Lequel acheter ?',
+    verdict: "Tout dépend de ce que vous cuisinez. Si la cuisine japonaise vous attire — teriyaki, yakitori, donburi, tout ce qui est brillant et glacé — achetez d'abord du mirin, et cherchez du hon-mirin (本みりん) plutôt que de l'« aji-mirin », qui est surtout du sirop de glucose. Si votre porte d'entrée est la cuisine chinoise, achetez du Shaoxing : il apparaît dans une énorme part des recettes salées chinoises et rien ne l'imite vraiment. Les deux se conservent des mois dans un placard, donc ceux qui naviguent entre les deux cuisines finissent en général avec les deux bouteilles.",
+    swapHeading: "Peut-on remplacer l'un par l'autre ?",
+    swap: "Pas directement. Mettre du mirin là où la recette veut du Shaoxing ajoute un sucre que le plat n'a jamais prévu : un sauté ou un braisé devient écœurant et perd sa colonne vertébrale salée. Mettre du Shaoxing là où la recette veut du mirin donne un glaçage fin, âpre et sans brillance. En dépannage : pour le mirin, du xérès sec ou du saké avec une pincée de sucre ; pour le Shaoxing, du xérès sec seul. N'utilisez pas de vinaigre de riz pour l'un ou l'autre — il est acide, pas alcoolisé, et emmène le plat ailleurs.",
+    learnMore: "Lire le guide complet de l'ingrédient",
+    faqTitle: 'Questions fréquentes',
+    faqs: [
+      { q: 'Peut-on utiliser du mirin à la place du Shaoxing ?', a: "Pas vraiment. Le mirin est sucré, le Shaoxing sec et savoureux : le mirin rendra vos sautés et braisés chinois nettement plus sucrés que prévu. Le xérès sec est un bien meilleur substitut au Shaoxing." },
+      { q: 'Le mirin, c\'est pareil que le saké ?', a: "Non. Le saké est un vin de riz sec que l'on boit ; le mirin est plus sucré, plus épais et conçu pour la cuisine. On peut approcher le mirin avec du saké et du sucre, mais pas l'inverse." },
+      { q: 'Quelle différence entre hon-mirin et aji-mirin ?', a: "Le hon-mirin (本みりん) est réellement brassé et titre environ 14 % d'alcool. L'aji-mirin est une imitation d'assaisonnement à base de sirop de glucose et d'additifs, très peu alcoolisée. Le hon-mirin donne un glaçage nettement meilleur." },
+      { q: 'Le « vin de cuisine » de supermarché, c\'est du Shaoxing ?', a: "Le 料酒 chinois vendu comme vin de cuisine est en général un vin de riz de style Shaoxing additionné de sel, ce qui le rend imbuvable et l'exempte de taxes sur l'alcool. Il fonctionne très bien en cuisine — tenez juste compte du sel supplémentaire." },
+      { q: 'Peut-on cuisiner sans alcool ?', a: "L'alcool s'évapore en grande partie, mais si vous l'évitez totalement : remplacez le Shaoxing par du bouillon non salé avec un trait de vinaigre de riz, et le mirin par un sirop sucre-eau avec un peu de vinaigre de riz. Le résultat sera plus plat — ces ingrédients font un vrai travail." },
+    ],
+  },
+  zh: {
+    title: '味醂和料酒有什么区别？',
+    metaTitle: '味醂 vs 料酒（绍兴酒）：有什么区别？| MyPetitWok 小锅',
+    metaDescription: '味醂是日本的甜米酒，用来上光、增亮、添一层温和的甜味；料酒（绍兴酒）是中国的干型米酒，用来去腥、增香、添发酵的醇厚。两者不能互相替代。',
+    shortAnswer: '简短回答：味醂（みりん）来自日本，味甜、酒精度低 — 它的任务是给照烧一类的酱汁带来光泽、圆润和一点柔和的甜。料酒 / 绍兴酒来自中国，口感干、偏咸鲜，带有类似雪莉酒的醇厚 — 它的任务是去掉肉和鱼的腥味，给炒菜和红烧菜添上发酵的层次。一个负责添甜，一个负责去腥增香。',
+    intro: '两瓶标签上都写着"米酒"，在亚洲超市摆在同一排，菜谱里也都被叫作"料酒" — 于是就有了甜得发腻的麻婆豆腐，和寡淡带腥的照烧。它们来自不同的菜系，做的是完全不同的事。倒一勺各尝一口，你就再也不会搞混。',
+    tableHeading: '对比一览',
+    rows: [
+      { label: '产地', mirin: '日本', wine: '中国（浙江绍兴）' },
+      { label: '味道', mirin: '明显偏甜、柔和、略带糖浆感', wine: '干、鲜、带坚果香 — 最接近干型雪莉酒' },
+      { label: '主要作用', mirin: '增甜、上光、挂汁；平衡酱油的咸', wine: '去肉腥鱼腥；增加发酵的醇厚层次' },
+      { label: '酒精度', mirin: '本味醂约 14%；"味醂风调味料"低得多', wine: '约 15-18%，超市料酒通常加了盐' },
+      { label: '经典用途', mirin: '照烧、烤鸡串酱、寿喜烧、日式煮物、玉子烧', wine: '炒肉腌料、红烧肉、醉鸡、饺子馅、汤品' },
+      { label: '什么时候放', mirin: '调酱汁时和酱油、糖一起下', wine: '早放 — 拌进腌料，或热锅时沿锅边淋入' },
+      { label: '买不到怎么办', mirin: '干雪莉酒或清酒加一点糖', wine: '干雪莉酒是标准替代；实在没有用干味美思' },
+    ],
+    verdictHeading: '只买一瓶的话买哪个？',
+    verdict: '完全取决于你做什么菜。如果你被日料吸引 — 照烧、烤串、盖饭，那些油亮挂汁的菜 — 先买味醂，并且认准本味醂（本みりん），别买主要成分是玉米糖浆的"味醂风调味料"。如果你从中餐入门，就买料酒：中式咸口菜里出现的频率极高，也没有什么能真正替代它。两者放橱柜都能存几个月，所以在两个菜系之间来回跑的人，最后一般两瓶都有。',
+    swapHeading: '可以互相替代吗？',
+    swap: '不能直接替代。菜谱要料酒你放味醂，等于加了一份这道菜从没打算要的糖 — 炒菜和红烧会变得腻甜，失去咸鲜的骨架。菜谱要味醂你放料酒，酱汁会显得寡薄、发冲、不挂光。真要应急：味醂用干雪莉酒或清酒加一撮糖；料酒直接用干雪莉酒。两者都不要用米醋代替 — 米醋是酸的不是酒，会把菜带到完全不同的方向。',
+    learnMore: '查看完整食材指南',
+    faqTitle: '常见问题',
+    faqs: [
+      { q: '可以用味醂代替料酒吗？', a: '基本不行。味醂是甜的，料酒是干的咸鲜型，用味醂会让中式炒菜和红烧明显比预期甜。干雪莉酒才是更接近料酒的替代品。' },
+      { q: '味醂和清酒一样吗？', a: '不一样。清酒是可以喝的干型米酒；味醂更甜、更稠，专门为烹饪而做。可以用清酒加糖近似味醂，反过来不行。' },
+      { q: '本味醂和味醂风调味料有什么区别？', a: '本味醂（本みりん）是真正酿造的，酒精度约 14%。味醂风调味料是以玉米糖浆和添加剂做的仿制调味品，几乎不含酒精。本味醂上光效果明显更好。' },
+      { q: '超市的"料酒"就是绍兴酒吗？', a: '中国市售料酒通常是绍兴风格的米酒加盐，加盐后不可饮用，因此免征酒类税。做菜完全够用 — 只要把额外的盐算进去。' },
+      { q: '不用酒可以做吗？', a: '酒精大部分会挥发，但如果你要完全避开：料酒可用无盐高汤加一点米醋代替，味醂可用糖水加少许米醋代替。成品会更平淡 — 这两样东西确实在干活。' },
+    ],
+  },
+};
+
+const c = copy[lang];
+const slug = 'mirin-vs-shaoxing-wine';
+const pageUrl = `https://mypetitwok.com/${lang}/articles/${slug}`;
+const layoutAlternates = {
+  en: `/en/articles/${slug}`,
+  fr: `/fr/articles/${slug}`,
+  zh: `/zh/articles/${slug}`,
+};
+
+const mirinSlug = slugify(mirin.name);
+const wineSlug = slugify(wine.name);
+
+const publishedDate = '2026-07-20';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: c.title,
+  description: c.metaDescription,
+  image: [mirin.imageUrl, wine.imageUrl].filter(Boolean),
+  inLanguage: lang,
+  datePublished: publishedDate,
+  mainEntityOfPage: pageUrl,
+  author: { '@type': 'Person', name: i.about.founderName, url: `https://mypetitwok.com/${lang}/about` },
+  publisher: {
+    '@type': 'Organization',
+    name: 'MyPetitWok',
+    logo: { '@type': 'ImageObject', url: 'https://mypetitwok.com/icon.png' },
+  },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: c.faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const wines = [
+  { data: mirin, slug: mirinSlug },
+  { data: wine, slug: wineSlug },
+];
+---
+
+<Layout title={c.metaTitle} description={c.metaDescription} lang={lang} alternates={layoutAlternates} ogImage={mirin.imageUrl ?? undefined}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <Nav lang={lang} current="articles" alternates={layoutAlternates} />
+
+  <article>
+    <header class="pt-14 pb-8 px-6 bg-[var(--color-cream)]">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold hero-title leading-tight mb-6">{c.title}</h1>
+        <p class="text-lg sm:text-xl text-[var(--color-text)] leading-relaxed bg-white rounded-2xl p-5 border-l-4 border-[var(--color-logo-red)] shadow-sm">
+          {c.shortAnswer}
+        </p>
+        <p class="mt-6 text-lg text-[var(--color-text-muted)] leading-relaxed">{c.intro}</p>
+      </div>
+    </header>
+
+    <section class="py-10 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {wines.map((s) => (
+          <a href={`/${lang}/ingredients/${s.slug}`} class="group bg-white rounded-2xl overflow-hidden border border-[var(--color-brand)]/15 hover:shadow-lg hover:border-[var(--color-logo-red)]/30 transition-all">
+            {s.data.imageUrl && (
+              <img src={s.data.imageUrl} alt={s.data.name} width="600" height="400" loading="eager" class="w-full h-52 object-cover" />
+            )}
+            <div class="p-5">
+              <h2 class="text-xl font-extrabold text-[var(--color-brand-dark)] group-hover:text-[var(--color-logo-red)] transition-colors">{s.data.name.trim()}</h2>
+              {s.data.asianName && s.data.asianName !== s.data.name && (
+                <div class="text-sm text-[var(--color-text-muted)] mt-0.5">{s.data.asianName}</div>
+              )}
+              <div class="mt-3 text-sm font-bold text-[var(--color-logo-red)]">{c.learnMore} →</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {c.tableHeading}
+        </h2>
+        <div class="overflow-x-auto rounded-2xl border border-[var(--color-brand)]/15">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[var(--color-brand)] text-white">
+                <th class="px-4 py-3 font-bold text-sm w-1/4"></th>
+                <th class="px-4 py-3 font-bold">{mirin.name.trim()}</th>
+                <th class="px-4 py-3 font-bold">{wine.name.trim()}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {c.rows.map((row, idx) => (
+                <tr class={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--color-cream)]/60'}>
+                  <th class="px-4 py-3.5 font-bold text-[var(--color-brand-dark)] text-sm align-top">{row.label}</th>
+                  <td class="px-4 py-3.5 text-[var(--color-text)] leading-relaxed align-top">{row.mirin}</td>
+                  <td class="px-4 py-3.5 text-[var(--color-text)] leading-relaxed align-top">{row.wine}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-10 px-6 bg-[var(--color-bg)]">
+      <div class="max-w-3xl mx-auto space-y-8">
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+            <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+            {c.verdictHeading}
+          </h2>
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{c.verdict}</p>
+        </div>
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-3 flex items-center gap-2">
+            <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+            {c.swapHeading}
+          </h2>
+          <p class="text-lg text-[var(--color-text)] leading-relaxed">{c.swap}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-[var(--color-brand-dark)] mb-6 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-6 bg-[var(--color-logo-red)] rounded-full"></span>
+          {c.faqTitle}
+        </h2>
+        <div class="space-y-3">
+          {c.faqs.map((f) => (
+            <details class="group bg-[var(--color-cream)] rounded-xl border border-[var(--color-brand)]/10 overflow-hidden">
+              <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer font-semibold text-[var(--color-brand-dark)] list-none [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <svg class="w-5 h-5 flex-shrink-0 text-[var(--color-logo-red)] transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <p class="px-5 pb-4 text-[var(--color-text)] leading-relaxed">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <section class="py-16 px-6 bg-[var(--color-brand)] text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-extrabold mb-4">{i.recipes.saveCtaTitle}</h2>
+      <p class="text-lg sm:text-xl text-white/90 leading-relaxed mb-6">{i.recipes.saveCtaText}</p>
+      <a href={`/${lang}#download`} class="inline-block bg-white text-[var(--color-brand-dark)] font-bold px-6 py-3 rounded-xl hover:bg-[var(--color-cream)] transition-colors">{i.recipes.saveCtaButton}</a>
+    </div>
+  </section>
+
+  <footer class="py-10 px-6 border-t border-[var(--color-brand)]/15 bg-[var(--color-cream)]">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-[var(--color-text-muted)] mb-2">{i.footer.contact}</p>
+      <a href={`mailto:${i.footer.email}`} class="text-[var(--color-logo-red)] font-bold hover:underline">{i.footer.email}</a>
+      <div class="mt-6 text-sm text-[var(--color-text-muted)]">&copy; {new Date().getFullYear()} MyPetitWok. {i.footer.rights}</div>
+    </div>
+  </footer>
+</Layout>
